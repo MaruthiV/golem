@@ -1,0 +1,19 @@
+[project]
+name = "golem"
+version = "0.0.1"
+requires-python = ">=3.11"
+dependencies = [
+    "mlx>=0.20",
+    "tokenizers>=0.20",
+    "huggingface_hub>=0.26",
+    "numpy>=1.26",
+]
+
+[dependency-groups]
+dev = ["pytest>=8", "ruff>=0.8"]
+
+[tool.ruff]
+line-length = 100
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
