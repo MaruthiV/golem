@@ -1,0 +1,26 @@
+# planning/research docs stay local
+docs/
+
+.DS_Store
+__pycache__/
+*.pyc
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# training artifacts
+data/
+checkpoints/
+runs/
+wandb/
+
+# sim/hardware build artifacts
+obj_dir/
+build/
+*.vcd
+*.fst
+*.bit
+*.fs
+results/
