@@ -74,6 +74,11 @@ class FloatRef:
 class IntGolem:
     def __init__(self, q):
         self.q = q
+        self.capture = None
+
+    def cap(self, name, arr):
+        if self.capture is not None:
+            self.capture[name] = np.array(arr)
 
     def linear(self, x_i8, name):
         q = self.q
@@ -87,32 +92,45 @@ class IntGolem:
         a = ops.requant(tok, int(q["emb_tok.m"]), int(q["emb_tok.s"]))
         b = ops.requant(pos, int(q["emb_pos.m"]), int(q["emb_pos.s"]))
         x = ops.sat8(a + b)
+        self.cap("x0", x)
         for i in range(config.N_LAYERS):
             p = f"layers.{i}."
             an = ops.int_rmsnorm(x, q[p + "attn_norm.w"], int(q[p + "attn_norm.m"]),
                                  int(q[p + "attn_norm.s"]))
+            self.cap(p + "an", an)
             qq = self.linear(an, p + "wq")
             kk = self.linear(an, p + "wk")
             vv = self.linear(an, p + "wv")
+            self.cap(p + "q", qq), self.cap(p + "k", kk), self.cap(p + "v", vv)
             qh, kh, vh = (split_heads(t, config.N_HEADS) for t in (qq, kk, vv))
             scores = ops.matmul_i8(qh, kh.swapaxes(-1, -2))
+            self.cap(p + "scores", scores)
             probs = ops.int_softmax(scores, int(q[p + "sm.m"]), int(q[p + "sm.s"]),
                                     q["exp_lut"], 0)
+            self.cap(p + "probs", probs)
             acc = ops.matmul_i8(probs, vh)
             att = ops.sat8(ops.requant(acc, int(q[p + "att.m"]), int(q[p + "att.s"])))
             att = att.swapaxes(-3, -2).reshape(*x.shape)
+            self.cap(p + "att", att)
             o = self.linear(att, p + "wo")
+            self.cap(p + "o", o)
             ra = ops.requant(x.astype(np.int64), int(q[p + "r2_in.m"]), int(q[p + "r2_in.s"]))
             rb = ops.requant(o.astype(np.int64), int(q[p + "r2_out.m"]), int(q[p + "r2_out.s"]))
             x = ops.sat8(ra + rb)
+            self.cap(p + "r2", x)
             mn = ops.int_rmsnorm(x, q[p + "mlp_norm.w"], int(q[p + "mlp_norm.m"]),
                                  int(q[p + "mlp_norm.s"]))
+            self.cap(p + "mn", mn)
             up = self.linear(mn, p + "up")
+            self.cap(p + "up", up)
             gel = q[p + "gelu_lut"][up.astype(np.int64) + 127]
+            self.cap(p + "gel", gel)
             dn = self.linear(gel, p + "down")
+            self.cap(p + "dn", dn)
             ra = ops.requant(x.astype(np.int64), int(q[p + "r3_in.m"]), int(q[p + "r3_in.s"]))
             rb = ops.requant(dn.astype(np.int64), int(q[p + "r3_out.m"]), int(q[p + "r3_out.s"]))
             x = ops.sat8(ra + rb)
+            self.cap(p + "r3", x)
         on = ops.int_rmsnorm(x, q["out_norm.w"], int(q["out_norm.m"]), int(q["out_norm.s"]))
         logits = ops.matmul_i8(on, q["tok_emb.w"].T)
         return logits
