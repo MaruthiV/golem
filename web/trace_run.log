@@ -1,0 +1,21 @@
+Skipping compilation of /Users/maruthi/Documents/dev/summer-projects/random/golem/sim/build_block/sim.vvp
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.11.9 interpreter at /Users/maruthi/Documents/dev/summer-projects/random/golem/.venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1784698851
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /Users/maruthi/Documents/dev/summer-projects/random/golem/.venv/lib/python3.11/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running web.gen_trace.trace (1/1)
+  5150.00ns WARNING  py.warnings                        /Users/maruthi/Documents/dev/summer-projects/random/golem/web/gen_trace.py:30: DeprecationWarning: Use `signal.value_change` instead.
+                                                          await Edge(dut.state)
+1723330.00ns WARNING  py.warnings                        /Users/maruthi/Documents/dev/summer-projects/random/golem/web/gen_trace.py:63: DeprecationWarning: `task.kill()` is deprecated in favor of `task.cancel()`
+                                                           m.kill()
+1723330.00ns INFO     cocotb.block                       trace: 43 phases, 168736 cycles/layer, 1349888 cycles/token
+1723330.00ns INFO     cocotb.regression                  web.gen_trace.trace passed
+1723330.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                         ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                         **************************************************************************************
+                                                         ** web.gen_trace.trace            PASS     1723330.00           8.89     193791.84  **
+                                                         **************************************************************************************
+                                                         ** TESTS=1 PASS=1 FAIL=0 SKIP=0            1723330.00           8.89     193758.11  **
+                                                         **************************************************************************************

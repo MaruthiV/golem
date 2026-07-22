@@ -1,0 +1,539 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv rtl/gelu_lut.sv; synth -top requant -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/divu.sv
+Parsing SystemVerilog input from `rtl/divu.sv' to AST representation.
+Generating RTLIL representation for module `\divu'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/matmul_row.sv
+Parsing SystemVerilog input from `rtl/matmul_row.sv' to AST representation.
+Generating RTLIL representation for module `\matmul_row'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/rmsnorm.sv
+Parsing SystemVerilog input from `rtl/rmsnorm.sv' to AST representation.
+Generating RTLIL representation for module `\rmsnorm'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: rtl/softmax_row.sv
+Parsing SystemVerilog input from `rtl/softmax_row.sv' to AST representation.
+Generating RTLIL representation for module `\softmax_row'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: rtl/gelu_lut.sv
+Parsing SystemVerilog input from `rtl/gelu_lut.sv' to AST representation.
+Generating RTLIL representation for module `\gelu_lut'.
+Successfully finished Verilog frontend.
+
+7. Executing SYNTH pass.
+
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+
+7.1.1. Analyzing design hierarchy..
+Top module:  \requant
+
+7.1.2. Analyzing design hierarchy..
+Top module:  \requant
+Removing unused module `\gelu_lut'.
+Removing unused module `\softmax_row'.
+Removing unused module `\rmsnorm'.
+Removing unused module `\matmul_row'.
+Removing unused module `\divu'.
+Removed 5 unused modules.
+
+7.2. Executing PROC pass (convert processes to netlists).
+
+7.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/requant.sv:14$1 in module requant.
+Removed a total of 0 dead cases.
+
+7.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 3 assignments to connections.
+
+7.2.4. Executing PROC_INIT pass (extract init attributes).
+
+7.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~2 debug messages>
+
+7.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\requant.$proc$rtl/requant.sv:14$1'.
+     1/2: $2\q[7:0]
+     2/2: $1\q[7:0]
+
+7.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\requant.\q' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\prod' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\rounded' from process `\requant.$proc$rtl/requant.sv:14$1'.
+
+7.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+
+7.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\requant.$proc$rtl/requant.sv:14$1'.
+Removing empty process `requant.$proc$rtl/requant.sv:14$1'.
+Cleaned up 2 empty switches.
+
+7.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module requant...
+Found and reported 0 problems.
+
+7.4. Executing FLATTEN pass (flatten design).
+
+7.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+Removed 0 unused cells and 11 unused wires.
+<suppressed ~1 debug messages>
+
+7.7. Executing CHECK pass (checking for obvious problems).
+Checking module requant...
+Found and reported 0 problems.
+
+7.8. Executing OPT pass (performing simple optimizations).
+
+7.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 10 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$181.
+Removed 1 multiplexer ports.
+<suppressed ~4 debug messages>
+
+7.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 9 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+7.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+7.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 9 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.9. Executing FSM pass (extract and optimize FSM).
+
+7.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+7.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+7.10. Executing OPT pass (performing simple optimizations).
+
+7.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 9 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+7.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 9 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.10.9. Finished fast OPT passes. (There is nothing left to do.)
+
+7.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 32 bits (of 64) from port B of cell requant.$mul$rtl/requant.sv:15$2 ($mul).
+Removed top 5 bits (of 6) from port B of cell requant.$sub$rtl/requant.sv:16$3 ($sub).
+Removed top 62 bits (of 64) from port A of cell requant.$sshl$rtl/requant.sv:16$4 ($sshl).
+Removed top 56 bits (of 64) from port B of cell requant.$gt$rtl/requant.sv:17$7 ($gt).
+Removed top 56 bits (of 64) from port B of cell requant.$lt$rtl/requant.sv:18$8 ($lt).
+
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module requant:
+  creating $macc model for $add$rtl/requant.sv:16$5 ($add).
+  creating $macc model for $sub$rtl/requant.sv:16$3 ($sub).
+  creating $macc model for $mul$rtl/requant.sv:15$2 ($mul).
+  merging $macc model for $mul$rtl/requant.sv:15$2 into $add$rtl/requant.sv:16$5.
+  creating $alu model for $macc $sub$rtl/requant.sv:16$3.
+  creating $macc cell for $add$rtl/requant.sv:16$5: $auto$alumacc.cc:382:replace_macc$186
+  creating $alu model for $lt$rtl/requant.sv:18$8 ($lt): new $alu
+  creating $alu model for $gt$rtl/requant.sv:17$7 ($gt): new $alu
+  creating $alu cell for $gt$rtl/requant.sv:17$7: $auto$alumacc.cc:512:replace_alu$189
+  creating $alu cell for $lt$rtl/requant.sv:18$8: $auto$alumacc.cc:512:replace_alu$202
+  creating $alu cell for $sub$rtl/requant.sv:16$3: $auto$alumacc.cc:512:replace_alu$209
+  created 3 $alu and 1 $macc cells.
+
+7.15. Executing SHARE pass (SAT-based resource sharing).
+
+7.16. Executing OPT pass (performing simple optimizations).
+
+7.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+<suppressed ~1 debug messages>
+
+7.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 16 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+7.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 16 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+Removed 2 unused cells and 4 unused wires.
+<suppressed ~4 debug messages>
+
+7.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+7.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 14 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.17. Executing MEMORY pass.
+
+7.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+7.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+7.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+7.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+7.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+7.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+7.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+7.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.19. Executing OPT pass (performing simple optimizations).
+
+7.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 14 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.19.5. Finished fast OPT passes.
+
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+7.21. Executing OPT pass (performing simple optimizations).
+
+7.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 14 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \requant..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+7.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \requant.
+Performed a total of 0 changes.
+
+7.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 14 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Removed a total of 0 cells.
+
+7.21.6. Executing OPT_SHARE pass.
+
+7.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+
+7.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+
+7.21.10. Finished fast OPT passes. (There is nothing left to do.)
+
+7.22. Executing TECHMAP pass (map to technology primitives).
+
+7.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.22.2. Continuing TECHMAP pass.
+Using template $paramod$a04dd9d4d8b430140c4ff94b50470fb380fda2a0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$constmap:586cb701bdbf9cf16b6a426b456e6b3682c970cf$paramod$88eea8db8954ba064a2e8671fc71d372945341cd\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshr.
+Using template $paramod$6c1427baecfd2a40ecb05e66200acc045618b4ad\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \acc * { 1'0 \mult } (32x32 bits, signed)
+  add $sshl$rtl/requant.sv:16$4_Y (64 bits, signed)
+Using template $paramod$constmap:f501ccb95eba315fdd813d103ab02e647504d34c$paramod$651f30a72f0b71150a8784328f5efe0b91d60ca8\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshl.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000110 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~3339 debug messages>
+
+7.23. Executing OPT pass (performing simple optimizations).
+
+7.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module requant.
+<suppressed ~4464 debug messages>
+
+7.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\requant'.
+Computing hashes of 10698 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 10137 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 9767 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 9469 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 9320 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 9138 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 9012 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8949 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8889 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8829 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8799 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8765 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8763 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+Computing hashes of 8762 cells of `\requant'.
+Finding duplicate cells in `\requant'.
+<suppressed ~5808 debug messages>
+Removed a total of 1936 cells.
+
+7.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \requant..
+Removed 428 unused cells and 871 unused wires.
+<suppressed ~429 debug messages>
+
+7.23.5. Finished fast OPT passes.
+
+7.24. Executing ABC pass (technology mapping using ABC).
+
+7.24.1. Extracting gate netlist of module `\requant' to `<abc-temp-dir>/input.blif'..

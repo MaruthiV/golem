@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1784698393" />
+    <testcase name="generate" classname="conductor" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/sim/conductor.py" lineno="129" time="4502.0521359443665" sim_time_ns="884769950.0" ratio_time="196525.92268667885" />
+  </testsuite>
+</testsuites>

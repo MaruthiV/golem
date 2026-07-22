@@ -1,0 +1,789 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv rtl/gelu_lut.sv; synth -top divu -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/divu.sv
+Parsing SystemVerilog input from `rtl/divu.sv' to AST representation.
+Generating RTLIL representation for module `\divu'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/matmul_row.sv
+Parsing SystemVerilog input from `rtl/matmul_row.sv' to AST representation.
+Generating RTLIL representation for module `\matmul_row'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/rmsnorm.sv
+Parsing SystemVerilog input from `rtl/rmsnorm.sv' to AST representation.
+Generating RTLIL representation for module `\rmsnorm'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: rtl/softmax_row.sv
+Parsing SystemVerilog input from `rtl/softmax_row.sv' to AST representation.
+Generating RTLIL representation for module `\softmax_row'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: rtl/gelu_lut.sv
+Parsing SystemVerilog input from `rtl/gelu_lut.sv' to AST representation.
+Generating RTLIL representation for module `\gelu_lut'.
+Successfully finished Verilog frontend.
+
+7. Executing SYNTH pass.
+
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+
+7.1.1. Analyzing design hierarchy..
+Top module:  \divu
+
+7.1.2. Analyzing design hierarchy..
+Top module:  \divu
+Removing unused module `\gelu_lut'.
+Removing unused module `\softmax_row'.
+Removing unused module `\rmsnorm'.
+Removing unused module `\matmul_row'.
+Removing unused module `\requant'.
+Removed 5 unused modules.
+
+7.2. Executing PROC pass (convert processes to netlists).
+
+7.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/divu.sv:21$10 in module divu.
+Removed a total of 0 dead cases.
+
+7.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+7.2.4. Executing PROC_INIT pass (extract init attributes).
+
+7.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~4 debug messages>
+
+7.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\divu.$proc$rtl/divu.sv:21$10'.
+     1/6: $0\done[0:0]
+     2/6: $0\count[6:0]
+     3/6: $0\rem[24:0]
+     4/6: $0\num[30:0]
+     5/6: $0\q_r[30:0]
+     6/6: $0\busy[0:0]
+
+7.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+7.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\divu.\busy' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$229' with positive edge clock.
+Creating register for signal `\divu.\done' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$230' with positive edge clock.
+Creating register for signal `\divu.\q_r' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$231' with positive edge clock.
+Creating register for signal `\divu.\num' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$232' with positive edge clock.
+Creating register for signal `\divu.\rem' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$233' with positive edge clock.
+Creating register for signal `\divu.\count' using process `\divu.$proc$rtl/divu.sv:21$10'.
+  created $dff cell `$procdff$234' with positive edge clock.
+
+7.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 4 empty switches in `\divu.$proc$rtl/divu.sv:21$10'.
+Removing empty process `divu.$proc$rtl/divu.sv:21$10'.
+Cleaned up 4 empty switches.
+
+7.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+<suppressed ~1 debug messages>
+
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module divu...
+Found and reported 0 problems.
+
+7.4. Executing FLATTEN pass (flatten design).
+
+7.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 28 unused wires.
+<suppressed ~1 debug messages>
+
+7.7. Executing CHECK pass (checking for obvious problems).
+Checking module divu...
+Found and reported 0 problems.
+
+7.8. Executing OPT pass (performing simple optimizations).
+
+7.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 33 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $procmux$221: \busy -> 1'0
+      Replacing known input bits on port A of cell $procmux$219: \busy -> 1'1
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~27 debug messages>
+
+7.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 33 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.8.9. Finished fast OPT passes. (There is nothing left to do.)
+
+7.9. Executing FSM pass (extract and optimize FSM).
+
+7.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+7.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+7.10. Executing OPT pass (performing simple optimizations).
+
+7.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 33 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~27 debug messages>
+
+7.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 33 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$234 ($dff) from module divu (D = $procmux$190_Y, Q = \count).
+Adding SRST signal on $auto$ff.cc:337:slice$235 ($dffe) from module divu (D = $procmux$187_Y, Q = \count, rval = 7'0011111).
+Adding SRST signal on $procdff$229 ($dff) from module divu (D = $procmux$224_Y, Q = \busy, rval = 1'0).
+Adding SRST signal on $procdff$230 ($dff) from module divu (D = $procmux$177_Y, Q = \done, rval = 1'0).
+Adding EN signal on $procdff$231 ($dff) from module divu (D = $procmux$214_Y, Q = \q_r).
+Adding SRST signal on $auto$ff.cc:337:slice$249 ($dffe) from module divu (D = $procmux$211_Y, Q = \q_r, rval = 31'0000000000000000000000000000000).
+Adding EN signal on $procdff$232 ($dff) from module divu (D = $procmux$206_Y, Q = \num).
+Adding EN signal on $procdff$233 ($dff) from module divu (D = $procmux$198_Y, Q = \rem).
+Adding SRST signal on $auto$ff.cc:337:slice$264 ($dffe) from module divu (D = $procmux$195_Y, Q = \rem, rval = 25'0000000000000000000000000).
+
+7.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 11 unused cells and 11 unused wires.
+<suppressed ~12 debug messages>
+
+7.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+<suppressed ~4 debug messages>
+
+7.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 36 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 30 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 27 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+<suppressed ~27 debug messages>
+Removed a total of 9 cells.
+
+7.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 9 unused wires.
+<suppressed ~1 debug messages>
+
+7.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 27 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+7.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 25) from FF cell divu.$auto$ff.cc:337:slice$271 ($sdffce).
+Removed top 1 bits (of 25) from port B of cell divu.$ge$rtl/divu.sv:19$9 ($ge).
+Removed top 1 bits (of 25) from port B of cell divu.$sub$rtl/divu.sv:32$13 ($sub).
+Removed top 6 bits (of 7) from port B of cell divu.$sub$rtl/divu.sv:35$16 ($sub).
+Removed top 6 bits (of 7) from port B of cell divu.$eq$rtl/divu.sv:36$17 ($eq).
+Removed top 1 bits (of 25) from mux cell divu.$procmux$195 ($mux).
+Removed top 1 bits (of 25) from mux cell divu.$ternary$rtl/divu.sv:32$14 ($mux).
+Removed top 1 bits (of 25) from port Y of cell divu.$sub$rtl/divu.sv:32$13 ($sub).
+Removed top 1 bits (of 25) from port A of cell divu.$sub$rtl/divu.sv:32$13 ($sub).
+Removed top 1 bits (of 25) from wire divu.$procmux$195_Y.
+Removed top 1 bits (of 25) from wire divu.$ternary$rtl/divu.sv:32$14_Y.
+Removed top 1 bits (of 25) from wire divu.$sub$rtl/divu.sv:32$13_Y.
+Removed top 1 bits (of 25) from wire divu.rem.
+
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 4 unused wires.
+<suppressed ~1 debug messages>
+
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module divu:
+  creating $macc model for $sub$rtl/divu.sv:35$16 ($sub).
+  creating $macc model for $sub$rtl/divu.sv:32$13 ($sub).
+  creating $alu model for $macc $sub$rtl/divu.sv:32$13.
+  creating $alu model for $macc $sub$rtl/divu.sv:35$16.
+  creating $alu model for $ge$rtl/divu.sv:19$9 ($ge): new $alu
+  creating $alu model for $eq$rtl/divu.sv:36$17 ($eq): merged with $sub$rtl/divu.sv:35$16.
+  creating $alu cell for $ge$rtl/divu.sv:19$9: $auto$alumacc.cc:512:replace_alu$277
+  creating $alu cell for $sub$rtl/divu.sv:35$16, $eq$rtl/divu.sv:36$17: $auto$alumacc.cc:512:replace_alu$290
+  creating $alu cell for $sub$rtl/divu.sv:32$13: $auto$alumacc.cc:512:replace_alu$295
+  created 3 $alu and 0 $macc cells.
+
+7.15. Executing SHARE pass (SAT-based resource sharing).
+
+7.16. Executing OPT pass (performing simple optimizations).
+
+7.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 32 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 32 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 2 unused wires.
+<suppressed ~1 debug messages>
+
+7.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 32 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.17. Executing MEMORY pass.
+
+7.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+7.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+7.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+7.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+7.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+7.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+7.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+7.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.19. Executing OPT pass (performing simple optimizations).
+
+7.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+<suppressed ~8 debug messages>
+
+7.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 27 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 5 unused wires.
+<suppressed ~1 debug messages>
+
+7.19.5. Finished fast OPT passes.
+
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+7.21. Executing OPT pass (performing simple optimizations).
+
+7.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 27 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+7.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 27 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.21.6. Executing OPT_SHARE pass.
+
+7.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$257 ($dffe) from module divu (D = \dividend [0], Q = \num [0], rval = 1'0).
+
+7.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \divu..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~4 debug messages>
+
+7.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \divu.
+Performed a total of 0 changes.
+
+7.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 28 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.21.14. Executing OPT_SHARE pass.
+
+7.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+
+7.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.21.18. Finished fast OPT passes. (There is nothing left to do.)
+
+7.22. Executing TECHMAP pass (map to technology primitives).
+
+7.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $dffe.
+Using extmapper simplemap for cells of type $sdffce.
+Using template $paramod$e82d3fc1811c5751348a3964470632b35a435fc7\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$10ed987432f06055e5279101f9ec60a49861b43c\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using template $paramod$18758953033a248684fca091132383c69e9b5bef\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $sdff.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011001 for cells of type $lcu.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011000 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~834 debug messages>
+
+7.23. Executing OPT pass (performing simple optimizations).
+
+7.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+<suppressed ~258 debug messages>
+
+7.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 624 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 585 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 532 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 506 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 488 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 480 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 472 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 468 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 461 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 458 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 450 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 445 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 433 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 426 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 416 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 412 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 407 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 406 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Computing hashes of 405 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+<suppressed ~657 debug messages>
+Removed a total of 219 cells.
+
+7.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 4 unused cells and 237 unused wires.
+<suppressed ~5 debug messages>
+
+7.23.5. Finished fast OPT passes.
+
+7.24. Executing ABC pass (technology mapping using ABC).
+
+7.24.1. Extracting gate netlist of module `\divu' to `<abc-temp-dir>/input.blif'..
+
+7.24.1.1. Executed ABC.
+Extracted 306 gates and 425 wires to a netlist network with 119 inputs and 67 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+7.24.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:        7
+ABC RESULTS:            ANDNOT cells:        4
+ABC RESULTS:               MUX cells:       54
+ABC RESULTS:              NAND cells:       52
+ABC RESULTS:               NOR cells:        4
+ABC RESULTS:               NOT cells:        2
+ABC RESULTS:                OR cells:        7
+ABC RESULTS:             ORNOT cells:       35
+ABC RESULTS:              XNOR cells:       30
+ABC RESULTS:               XOR cells:       13
+ABC RESULTS:        internal signals:      239
+ABC RESULTS:           input signals:      119
+ABC RESULTS:          output signals:       67
+Removing temp directory.
+Removing global temp directory.
+
+7.25. Executing OPT pass (performing simple optimizations).
+
+7.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module divu.
+
+7.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\divu'.
+Computing hashes of 303 cells of `\divu'.
+Finding duplicate cells in `\divu'.
+Removed a total of 0 cells.
+
+7.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \divu..
+Removed 0 unused cells and 225 unused wires.
+<suppressed ~1 debug messages>
+
+7.25.5. Finished fast OPT passes.
+
+7.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `divu'. Setting top module to divu.
+
+7.26.1. Analyzing design hierarchy..
+Top module:  \divu
+
+7.26.2. Analyzing design hierarchy..
+Top module:  \divu
+Removed 0 unused modules.
+
+7.27. Printing statistics.
+
+=== divu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      215 wires
+      417 wire bits
+       14 public wires
+      210 public wire bits
+        8 ports
+       91 port bits
+      303 cells
+        4   $_ANDNOT_
+        7   $_AND_
+       30   $_DFFE_PP_
+       54   $_MUX_
+       52   $_NAND_
+        4   $_NOR_
+        2   $_NOT_
+       35   $_ORNOT_
+        7   $_OR_
+        1   $_SDFFCE_PN0P_
+       57   $_SDFFCE_PP0P_
+        5   $_SDFFCE_PP1P_
+        2   $_SDFF_PP0_
+       30   $_XNOR_
+       13   $_XOR_
+
+7.28. Executing CHECK pass (checking for obvious problems).
+Checking module divu...
+Found and reported 0 problems.
+
+8. Printing statistics.
+
+=== divu ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      215 wires
+      417 wire bits
+       14 public wires
+      210 public wire bits
+        8 ports
+       91 port bits
+      303 cells
+        4   $_ANDNOT_
+        7   $_AND_
+       30   $_DFFE_PP_
+       54   $_MUX_
+       52   $_NAND_
+        4   $_NOR_
+        2   $_NOT_
+       35   $_ORNOT_
+        7   $_OR_
+        1   $_SDFFCE_PN0P_
+       57   $_SDFFCE_PP0P_
+        5   $_SDFFCE_PP1P_
+        2   $_SDFF_PP0_
+       30   $_XNOR_
+       13   $_XOR_
+
+End of script. Logfile hash: 81e3d76363, time: 0.14s, user: 0.07s, system: 0.01s, MEM: 20.31 MB peak
+Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+Time spent: 52% 1x abc (0 sec), 12% 1x techmap (0 sec), ...

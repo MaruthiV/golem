@@ -1,0 +1,923 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv rtl/gelu_lut.sv; synth -top gelu_lut -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/divu.sv
+Parsing SystemVerilog input from `rtl/divu.sv' to AST representation.
+Generating RTLIL representation for module `\divu'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/matmul_row.sv
+Parsing SystemVerilog input from `rtl/matmul_row.sv' to AST representation.
+Generating RTLIL representation for module `\matmul_row'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/rmsnorm.sv
+Parsing SystemVerilog input from `rtl/rmsnorm.sv' to AST representation.
+Generating RTLIL representation for module `\rmsnorm'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: rtl/softmax_row.sv
+Parsing SystemVerilog input from `rtl/softmax_row.sv' to AST representation.
+Generating RTLIL representation for module `\softmax_row'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: rtl/gelu_lut.sv
+Parsing SystemVerilog input from `rtl/gelu_lut.sv' to AST representation.
+Generating RTLIL representation for module `\gelu_lut'.
+Successfully finished Verilog frontend.
+
+7. Executing SYNTH pass.
+
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+
+7.1.1. Analyzing design hierarchy..
+Top module:  \gelu_lut
+
+7.1.2. Analyzing design hierarchy..
+Top module:  \gelu_lut
+Removing unused module `\softmax_row'.
+Removing unused module `\rmsnorm'.
+Removing unused module `\matmul_row'.
+Removing unused module `\divu'.
+Removing unused module `\requant'.
+Removed 5 unused modules.
+
+7.2. Executing PROC pass (convert processes to netlists).
+
+7.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$rtl/gelu_lut.sv:13$168 in module gelu_lut.
+Removed a total of 0 dead cases.
+
+7.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 3 assignments to connections.
+
+7.2.4. Executing PROC_INIT pass (extract init attributes).
+
+7.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+7.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+     1/3: $1$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$174
+     2/3: $1$memwr$\lut$rtl/gelu_lut.sv:14$167_DATA[7:0]$173
+     3/3: $1$memwr$\lut$rtl/gelu_lut.sv:14$167_ADDR[7:0]$172
+
+7.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+7.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\gelu_lut.$memwr$\lut$rtl/gelu_lut.sv:14$167_ADDR' using process `\gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+  created $dff cell `$procdff$186' with positive edge clock.
+Creating register for signal `\gelu_lut.$memwr$\lut$rtl/gelu_lut.sv:14$167_DATA' using process `\gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+  created $dff cell `$procdff$187' with positive edge clock.
+Creating register for signal `\gelu_lut.$memwr$\lut$rtl/gelu_lut.sv:14$167_EN' using process `\gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+  created $dff cell `$procdff$188' with positive edge clock.
+
+7.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+Removing empty process `gelu_lut.$proc$rtl/gelu_lut.sv:13$168'.
+Cleaned up 1 empty switch.
+
+7.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module gelu_lut...
+Found and reported 0 problems.
+
+7.4. Executing FLATTEN pass (flatten design).
+
+7.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 3 unused cells and 14 unused wires.
+<suppressed ~4 debug messages>
+
+7.7. Executing CHECK pass (checking for obvious problems).
+Checking module gelu_lut...
+Found and reported 0 problems.
+
+7.8. Executing OPT pass (performing simple optimizations).
+
+7.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+7.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+    Consolidated identical input bits for $mux cell $procmux$178:
+      Old ports: A=8'00000000, B=8'11111111, Y=$0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171
+      New ports: A=1'0, B=1'1, Y=$0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0]
+      New connections: $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [7:1] = { $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] $0$memwr$\lut$rtl/gelu_lut.sv:14$167_EN[7:0]$171 [0] }
+  Optimizing cells in module \gelu_lut.
+Performed a total of 1 changes.
+
+7.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+7.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.9. Executing FSM pass (extract and optimize FSM).
+
+7.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+7.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+7.10. Executing OPT pass (performing simple optimizations).
+
+7.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+7.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.10.9. Finished fast OPT passes. (There is nothing left to do.)
+
+7.11. Executing WREDUCE pass (reducing word size of cells).
+
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module gelu_lut:
+  creating $macc model for $add$rtl/gelu_lut.sv:17$175 ($add).
+  creating $alu model for $macc $add$rtl/gelu_lut.sv:17$175.
+  creating $alu cell for $add$rtl/gelu_lut.sv:17$175: $auto$alumacc.cc:512:replace_alu$190
+  created 1 $alu and 0 $macc cells.
+
+7.15. Executing SHARE pass (SAT-based resource sharing).
+
+7.16. Executing OPT pass (performing simple optimizations).
+
+7.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+7.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 6 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.16.9. Finished fast OPT passes. (There is nothing left to do.)
+
+7.17. Executing MEMORY pass.
+
+7.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+7.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+7.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+  Analyzing gelu_lut.lut write port 0.
+
+7.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+7.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+Checking read port `\lut'[0] in module `\gelu_lut': no output FF found.
+Checking read port address `\lut'[0] in module `\gelu_lut': no address FF found.
+
+7.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+7.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+7.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.19. Executing OPT pass (performing simple optimizations).
+
+7.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+<suppressed ~3 debug messages>
+
+7.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 2 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 0 unused cells and 3 unused wires.
+<suppressed ~1 debug messages>
+
+7.19.5. Finished fast OPT passes.
+
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+Mapping memory \lut in module \gelu_lut:
+  created 256 $dff cells and 0 static cells of width 8.
+  read interface: 0 $dff and 255 $mux cells.
+  write interface: 256 write mux blocks.
+
+7.21. Executing OPT pass (performing simple optimizations).
+
+7.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+<suppressed ~16 debug messages>
+
+7.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 1336 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~768 debug messages>
+
+7.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 1336 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.21.6. Executing OPT_SHARE pass.
+
+7.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 0 unused cells and 520 unused wires.
+<suppressed ~1 debug messages>
+
+7.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~768 debug messages>
+
+7.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 1336 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.21.14. Executing OPT_SHARE pass.
+
+7.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $memory\lut[0]$195 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[0]).
+Adding EN signal on $memory\lut[1]$197 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[1]).
+Adding EN signal on $memory\lut[2]$199 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[2]).
+Adding EN signal on $memory\lut[3]$201 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[3]).
+Adding EN signal on $memory\lut[4]$203 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[4]).
+Adding EN signal on $memory\lut[5]$205 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[5]).
+Adding EN signal on $memory\lut[6]$207 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[6]).
+Adding EN signal on $memory\lut[7]$209 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[7]).
+Adding EN signal on $memory\lut[8]$211 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[8]).
+Adding EN signal on $memory\lut[9]$213 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[9]).
+Adding EN signal on $memory\lut[10]$215 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[10]).
+Adding EN signal on $memory\lut[11]$217 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[11]).
+Adding EN signal on $memory\lut[12]$219 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[12]).
+Adding EN signal on $memory\lut[13]$221 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[13]).
+Adding EN signal on $memory\lut[14]$223 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[14]).
+Adding EN signal on $memory\lut[15]$225 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[15]).
+Adding EN signal on $memory\lut[16]$227 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[16]).
+Adding EN signal on $memory\lut[17]$229 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[17]).
+Adding EN signal on $memory\lut[18]$231 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[18]).
+Adding EN signal on $memory\lut[19]$233 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[19]).
+Adding EN signal on $memory\lut[20]$235 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[20]).
+Adding EN signal on $memory\lut[21]$237 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[21]).
+Adding EN signal on $memory\lut[22]$239 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[22]).
+Adding EN signal on $memory\lut[23]$241 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[23]).
+Adding EN signal on $memory\lut[24]$243 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[24]).
+Adding EN signal on $memory\lut[25]$245 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[25]).
+Adding EN signal on $memory\lut[26]$247 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[26]).
+Adding EN signal on $memory\lut[27]$249 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[27]).
+Adding EN signal on $memory\lut[28]$251 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[28]).
+Adding EN signal on $memory\lut[29]$253 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[29]).
+Adding EN signal on $memory\lut[30]$255 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[30]).
+Adding EN signal on $memory\lut[31]$257 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[31]).
+Adding EN signal on $memory\lut[32]$259 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[32]).
+Adding EN signal on $memory\lut[33]$261 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[33]).
+Adding EN signal on $memory\lut[34]$263 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[34]).
+Adding EN signal on $memory\lut[35]$265 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[35]).
+Adding EN signal on $memory\lut[36]$267 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[36]).
+Adding EN signal on $memory\lut[37]$269 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[37]).
+Adding EN signal on $memory\lut[38]$271 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[38]).
+Adding EN signal on $memory\lut[39]$273 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[39]).
+Adding EN signal on $memory\lut[40]$275 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[40]).
+Adding EN signal on $memory\lut[41]$277 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[41]).
+Adding EN signal on $memory\lut[42]$279 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[42]).
+Adding EN signal on $memory\lut[43]$281 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[43]).
+Adding EN signal on $memory\lut[44]$283 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[44]).
+Adding EN signal on $memory\lut[45]$285 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[45]).
+Adding EN signal on $memory\lut[46]$287 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[46]).
+Adding EN signal on $memory\lut[47]$289 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[47]).
+Adding EN signal on $memory\lut[48]$291 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[48]).
+Adding EN signal on $memory\lut[49]$293 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[49]).
+Adding EN signal on $memory\lut[50]$295 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[50]).
+Adding EN signal on $memory\lut[51]$297 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[51]).
+Adding EN signal on $memory\lut[52]$299 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[52]).
+Adding EN signal on $memory\lut[53]$301 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[53]).
+Adding EN signal on $memory\lut[54]$303 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[54]).
+Adding EN signal on $memory\lut[55]$305 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[55]).
+Adding EN signal on $memory\lut[56]$307 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[56]).
+Adding EN signal on $memory\lut[57]$309 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[57]).
+Adding EN signal on $memory\lut[58]$311 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[58]).
+Adding EN signal on $memory\lut[59]$313 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[59]).
+Adding EN signal on $memory\lut[60]$315 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[60]).
+Adding EN signal on $memory\lut[61]$317 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[61]).
+Adding EN signal on $memory\lut[62]$319 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[62]).
+Adding EN signal on $memory\lut[63]$321 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[63]).
+Adding EN signal on $memory\lut[64]$323 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[64]).
+Adding EN signal on $memory\lut[65]$325 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[65]).
+Adding EN signal on $memory\lut[66]$327 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[66]).
+Adding EN signal on $memory\lut[67]$329 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[67]).
+Adding EN signal on $memory\lut[68]$331 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[68]).
+Adding EN signal on $memory\lut[69]$333 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[69]).
+Adding EN signal on $memory\lut[70]$335 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[70]).
+Adding EN signal on $memory\lut[71]$337 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[71]).
+Adding EN signal on $memory\lut[72]$339 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[72]).
+Adding EN signal on $memory\lut[73]$341 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[73]).
+Adding EN signal on $memory\lut[74]$343 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[74]).
+Adding EN signal on $memory\lut[75]$345 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[75]).
+Adding EN signal on $memory\lut[76]$347 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[76]).
+Adding EN signal on $memory\lut[77]$349 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[77]).
+Adding EN signal on $memory\lut[78]$351 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[78]).
+Adding EN signal on $memory\lut[79]$353 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[79]).
+Adding EN signal on $memory\lut[80]$355 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[80]).
+Adding EN signal on $memory\lut[81]$357 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[81]).
+Adding EN signal on $memory\lut[82]$359 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[82]).
+Adding EN signal on $memory\lut[83]$361 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[83]).
+Adding EN signal on $memory\lut[84]$363 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[84]).
+Adding EN signal on $memory\lut[85]$365 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[85]).
+Adding EN signal on $memory\lut[86]$367 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[86]).
+Adding EN signal on $memory\lut[87]$369 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[87]).
+Adding EN signal on $memory\lut[88]$371 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[88]).
+Adding EN signal on $memory\lut[89]$373 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[89]).
+Adding EN signal on $memory\lut[90]$375 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[90]).
+Adding EN signal on $memory\lut[91]$377 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[91]).
+Adding EN signal on $memory\lut[92]$379 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[92]).
+Adding EN signal on $memory\lut[93]$381 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[93]).
+Adding EN signal on $memory\lut[94]$383 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[94]).
+Adding EN signal on $memory\lut[95]$385 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[95]).
+Adding EN signal on $memory\lut[96]$387 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[96]).
+Adding EN signal on $memory\lut[97]$389 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[97]).
+Adding EN signal on $memory\lut[98]$391 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[98]).
+Adding EN signal on $memory\lut[99]$393 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[99]).
+Adding EN signal on $memory\lut[100]$395 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[100]).
+Adding EN signal on $memory\lut[101]$397 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[101]).
+Adding EN signal on $memory\lut[102]$399 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[102]).
+Adding EN signal on $memory\lut[103]$401 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[103]).
+Adding EN signal on $memory\lut[104]$403 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[104]).
+Adding EN signal on $memory\lut[105]$405 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[105]).
+Adding EN signal on $memory\lut[106]$407 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[106]).
+Adding EN signal on $memory\lut[107]$409 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[107]).
+Adding EN signal on $memory\lut[108]$411 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[108]).
+Adding EN signal on $memory\lut[109]$413 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[109]).
+Adding EN signal on $memory\lut[110]$415 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[110]).
+Adding EN signal on $memory\lut[111]$417 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[111]).
+Adding EN signal on $memory\lut[112]$419 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[112]).
+Adding EN signal on $memory\lut[113]$421 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[113]).
+Adding EN signal on $memory\lut[114]$423 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[114]).
+Adding EN signal on $memory\lut[115]$425 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[115]).
+Adding EN signal on $memory\lut[116]$427 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[116]).
+Adding EN signal on $memory\lut[117]$429 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[117]).
+Adding EN signal on $memory\lut[118]$431 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[118]).
+Adding EN signal on $memory\lut[119]$433 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[119]).
+Adding EN signal on $memory\lut[120]$435 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[120]).
+Adding EN signal on $memory\lut[121]$437 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[121]).
+Adding EN signal on $memory\lut[122]$439 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[122]).
+Adding EN signal on $memory\lut[123]$441 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[123]).
+Adding EN signal on $memory\lut[124]$443 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[124]).
+Adding EN signal on $memory\lut[125]$445 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[125]).
+Adding EN signal on $memory\lut[126]$447 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[126]).
+Adding EN signal on $memory\lut[127]$449 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[127]).
+Adding EN signal on $memory\lut[128]$451 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[128]).
+Adding EN signal on $memory\lut[129]$453 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[129]).
+Adding EN signal on $memory\lut[130]$455 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[130]).
+Adding EN signal on $memory\lut[131]$457 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[131]).
+Adding EN signal on $memory\lut[132]$459 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[132]).
+Adding EN signal on $memory\lut[133]$461 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[133]).
+Adding EN signal on $memory\lut[134]$463 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[134]).
+Adding EN signal on $memory\lut[135]$465 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[135]).
+Adding EN signal on $memory\lut[136]$467 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[136]).
+Adding EN signal on $memory\lut[137]$469 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[137]).
+Adding EN signal on $memory\lut[138]$471 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[138]).
+Adding EN signal on $memory\lut[139]$473 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[139]).
+Adding EN signal on $memory\lut[140]$475 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[140]).
+Adding EN signal on $memory\lut[141]$477 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[141]).
+Adding EN signal on $memory\lut[142]$479 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[142]).
+Adding EN signal on $memory\lut[143]$481 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[143]).
+Adding EN signal on $memory\lut[144]$483 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[144]).
+Adding EN signal on $memory\lut[145]$485 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[145]).
+Adding EN signal on $memory\lut[146]$487 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[146]).
+Adding EN signal on $memory\lut[147]$489 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[147]).
+Adding EN signal on $memory\lut[148]$491 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[148]).
+Adding EN signal on $memory\lut[149]$493 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[149]).
+Adding EN signal on $memory\lut[150]$495 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[150]).
+Adding EN signal on $memory\lut[151]$497 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[151]).
+Adding EN signal on $memory\lut[152]$499 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[152]).
+Adding EN signal on $memory\lut[153]$501 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[153]).
+Adding EN signal on $memory\lut[154]$503 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[154]).
+Adding EN signal on $memory\lut[155]$505 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[155]).
+Adding EN signal on $memory\lut[156]$507 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[156]).
+Adding EN signal on $memory\lut[157]$509 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[157]).
+Adding EN signal on $memory\lut[158]$511 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[158]).
+Adding EN signal on $memory\lut[159]$513 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[159]).
+Adding EN signal on $memory\lut[160]$515 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[160]).
+Adding EN signal on $memory\lut[161]$517 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[161]).
+Adding EN signal on $memory\lut[162]$519 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[162]).
+Adding EN signal on $memory\lut[163]$521 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[163]).
+Adding EN signal on $memory\lut[164]$523 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[164]).
+Adding EN signal on $memory\lut[165]$525 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[165]).
+Adding EN signal on $memory\lut[166]$527 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[166]).
+Adding EN signal on $memory\lut[167]$529 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[167]).
+Adding EN signal on $memory\lut[168]$531 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[168]).
+Adding EN signal on $memory\lut[169]$533 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[169]).
+Adding EN signal on $memory\lut[170]$535 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[170]).
+Adding EN signal on $memory\lut[171]$537 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[171]).
+Adding EN signal on $memory\lut[172]$539 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[172]).
+Adding EN signal on $memory\lut[173]$541 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[173]).
+Adding EN signal on $memory\lut[174]$543 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[174]).
+Adding EN signal on $memory\lut[175]$545 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[175]).
+Adding EN signal on $memory\lut[176]$547 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[176]).
+Adding EN signal on $memory\lut[177]$549 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[177]).
+Adding EN signal on $memory\lut[178]$551 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[178]).
+Adding EN signal on $memory\lut[179]$553 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[179]).
+Adding EN signal on $memory\lut[180]$555 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[180]).
+Adding EN signal on $memory\lut[181]$557 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[181]).
+Adding EN signal on $memory\lut[182]$559 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[182]).
+Adding EN signal on $memory\lut[183]$561 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[183]).
+Adding EN signal on $memory\lut[184]$563 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[184]).
+Adding EN signal on $memory\lut[185]$565 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[185]).
+Adding EN signal on $memory\lut[186]$567 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[186]).
+Adding EN signal on $memory\lut[187]$569 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[187]).
+Adding EN signal on $memory\lut[188]$571 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[188]).
+Adding EN signal on $memory\lut[189]$573 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[189]).
+Adding EN signal on $memory\lut[190]$575 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[190]).
+Adding EN signal on $memory\lut[191]$577 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[191]).
+Adding EN signal on $memory\lut[192]$579 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[192]).
+Adding EN signal on $memory\lut[193]$581 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[193]).
+Adding EN signal on $memory\lut[194]$583 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[194]).
+Adding EN signal on $memory\lut[195]$585 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[195]).
+Adding EN signal on $memory\lut[196]$587 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[196]).
+Adding EN signal on $memory\lut[197]$589 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[197]).
+Adding EN signal on $memory\lut[198]$591 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[198]).
+Adding EN signal on $memory\lut[199]$593 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[199]).
+Adding EN signal on $memory\lut[200]$595 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[200]).
+Adding EN signal on $memory\lut[201]$597 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[201]).
+Adding EN signal on $memory\lut[202]$599 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[202]).
+Adding EN signal on $memory\lut[203]$601 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[203]).
+Adding EN signal on $memory\lut[204]$603 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[204]).
+Adding EN signal on $memory\lut[205]$605 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[205]).
+Adding EN signal on $memory\lut[206]$607 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[206]).
+Adding EN signal on $memory\lut[207]$609 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[207]).
+Adding EN signal on $memory\lut[208]$611 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[208]).
+Adding EN signal on $memory\lut[209]$613 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[209]).
+Adding EN signal on $memory\lut[210]$615 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[210]).
+Adding EN signal on $memory\lut[211]$617 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[211]).
+Adding EN signal on $memory\lut[212]$619 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[212]).
+Adding EN signal on $memory\lut[213]$621 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[213]).
+Adding EN signal on $memory\lut[214]$623 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[214]).
+Adding EN signal on $memory\lut[215]$625 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[215]).
+Adding EN signal on $memory\lut[216]$627 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[216]).
+Adding EN signal on $memory\lut[217]$629 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[217]).
+Adding EN signal on $memory\lut[218]$631 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[218]).
+Adding EN signal on $memory\lut[219]$633 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[219]).
+Adding EN signal on $memory\lut[220]$635 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[220]).
+Adding EN signal on $memory\lut[221]$637 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[221]).
+Adding EN signal on $memory\lut[222]$639 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[222]).
+Adding EN signal on $memory\lut[223]$641 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[223]).
+Adding EN signal on $memory\lut[224]$643 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[224]).
+Adding EN signal on $memory\lut[225]$645 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[225]).
+Adding EN signal on $memory\lut[226]$647 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[226]).
+Adding EN signal on $memory\lut[227]$649 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[227]).
+Adding EN signal on $memory\lut[228]$651 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[228]).
+Adding EN signal on $memory\lut[229]$653 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[229]).
+Adding EN signal on $memory\lut[230]$655 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[230]).
+Adding EN signal on $memory\lut[231]$657 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[231]).
+Adding EN signal on $memory\lut[232]$659 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[232]).
+Adding EN signal on $memory\lut[233]$661 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[233]).
+Adding EN signal on $memory\lut[234]$663 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[234]).
+Adding EN signal on $memory\lut[235]$665 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[235]).
+Adding EN signal on $memory\lut[236]$667 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[236]).
+Adding EN signal on $memory\lut[237]$669 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[237]).
+Adding EN signal on $memory\lut[238]$671 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[238]).
+Adding EN signal on $memory\lut[239]$673 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[239]).
+Adding EN signal on $memory\lut[240]$675 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[240]).
+Adding EN signal on $memory\lut[241]$677 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[241]).
+Adding EN signal on $memory\lut[242]$679 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[242]).
+Adding EN signal on $memory\lut[243]$681 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[243]).
+Adding EN signal on $memory\lut[244]$683 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[244]).
+Adding EN signal on $memory\lut[245]$685 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[245]).
+Adding EN signal on $memory\lut[246]$687 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[246]).
+Adding EN signal on $memory\lut[247]$689 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[247]).
+Adding EN signal on $memory\lut[248]$691 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[248]).
+Adding EN signal on $memory\lut[249]$693 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[249]).
+Adding EN signal on $memory\lut[250]$695 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[250]).
+Adding EN signal on $memory\lut[251]$697 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[251]).
+Adding EN signal on $memory\lut[252]$699 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[252]).
+Adding EN signal on $memory\lut[253]$701 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[253]).
+Adding EN signal on $memory\lut[254]$703 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[254]).
+Adding EN signal on $memory\lut[255]$705 ($dff) from module gelu_lut (D = \lut_data, Q = \lut[255]).
+
+7.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 256 unused cells and 256 unused wires.
+<suppressed ~257 debug messages>
+
+7.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.21.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \gelu_lut..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~256 debug messages>
+
+7.21.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \gelu_lut.
+Performed a total of 0 changes.
+
+7.21.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 1080 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.21.22. Executing OPT_SHARE pass.
+
+7.21.23. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+
+7.21.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.21.26. Finished fast OPT passes. (There is nothing left to do.)
+
+7.22. Executing TECHMAP pass (map to technology primitives).
+
+7.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $dffe.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod$08c2d337fba0d8fba53e35b89be96dd105931d9e\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001000 for cells of type $lcu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $or.
+No more expansions possible.
+<suppressed ~1342 debug messages>
+
+7.23. Executing OPT pass (performing simple optimizations).
+
+7.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+<suppressed ~1077 debug messages>
+
+7.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 4703 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Computing hashes of 4696 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+<suppressed ~21 debug messages>
+Removed a total of 7 cells.
+
+7.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 9 unused cells and 54 unused wires.
+<suppressed ~10 debug messages>
+
+7.23.5. Finished fast OPT passes.
+
+7.24. Executing ABC pass (technology mapping using ABC).
+
+7.24.1. Extracting gate netlist of module `\gelu_lut' to `<abc-temp-dir>/input.blif'..
+
+7.24.1.1. Executed ABC.
+Extracted 2639 gates and 4704 wires to a netlist network with 2065 inputs and 264 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+7.24.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:      723
+ABC RESULTS:            ANDNOT cells:      734
+ABC RESULTS:               MUX cells:      442
+ABC RESULTS:              NAND cells:     2323
+ABC RESULTS:               NOR cells:      176
+ABC RESULTS:                OR cells:      494
+ABC RESULTS:             ORNOT cells:      150
+ABC RESULTS:              XNOR cells:        4
+ABC RESULTS:               XOR cells:        2
+ABC RESULTS:        internal signals:     2375
+ABC RESULTS:           input signals:     2065
+ABC RESULTS:          output signals:      264
+Removing temp directory.
+Removing global temp directory.
+
+7.25. Executing OPT pass (performing simple optimizations).
+
+7.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module gelu_lut.
+
+7.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\gelu_lut'.
+Computing hashes of 7096 cells of `\gelu_lut'.
+Finding duplicate cells in `\gelu_lut'.
+Removed a total of 0 cells.
+
+7.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \gelu_lut..
+Removed 0 unused cells and 2910 unused wires.
+<suppressed ~2 debug messages>
+
+7.25.5. Finished fast OPT passes.
+
+7.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `gelu_lut'. Setting top module to gelu_lut.
+
+7.26.1. Analyzing design hierarchy..
+Top module:  \gelu_lut
+
+7.26.2. Analyzing design hierarchy..
+Top module:  \gelu_lut
+Removed 0 unused modules.
+
+7.27. Printing statistics.
+
+=== gelu_lut ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5302 wires
+     7122 wire bits
+      262 public wires
+     2082 public wire bits
+        6 ports
+       34 port bits
+     7096 cells
+      734   $_ANDNOT_
+      723   $_AND_
+     2048   $_DFFE_PP_
+      442   $_MUX_
+     2323   $_NAND_
+      176   $_NOR_
+      150   $_ORNOT_
+      494   $_OR_
+        4   $_XNOR_
+        2   $_XOR_
+
+7.28. Executing CHECK pass (checking for obvious problems).
+Checking module gelu_lut...
+Found and reported 0 problems.
+
+8. Printing statistics.
+
+=== gelu_lut ===
+
+        +----------Local Count, excluding submodules.
+        | 
+     5302 wires
+     7122 wire bits
+      262 public wires
+     2082 public wire bits
+        6 ports
+       34 port bits
+     7096 cells
+      734   $_ANDNOT_
+      723   $_AND_
+     2048   $_DFFE_PP_
+      442   $_MUX_
+     2323   $_NAND_
+      176   $_NOR_
+      150   $_ORNOT_
+      494   $_OR_
+        4   $_XNOR_
+        2   $_XOR_
+
+End of script. Logfile hash: d61e27702d, time: 0.84s, user: 0.23s, system: 0.03s, MEM: 49.84 MB peak
+Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+Time spent: 72% 1x abc (0 sec), 5% 17x opt_clean (0 sec), ...

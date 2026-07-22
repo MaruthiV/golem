@@ -1,0 +1,6 @@
+<testsuites name="results">
+  <testsuite name="all" package="all">
+    <property name="random_seed" value="1784698851" />
+    <testcase name="trace" classname="web.gen_trace" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/web/gen_trace.py" lineno="76" time="8.892686128616333" sim_time_ns="1723330.0" ratio_time="193791.8391670643" />
+  </testsuite>
+</testsuites>

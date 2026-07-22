@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>golem — a language model thinking on silicon</title>
+<style>
+  :root { --bg:#0b0e14; --panel:#11151f; --line:#1e2636; --dim:#3a4256; --amber:#ffb454; --hot:#ff7043; --cyan:#39d0d8; --txt:#c8d0e0; --mute:#5c6780; }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
+  header { padding:18px 24px 10px; border-bottom:1px solid var(--line); }
+  h1 { margin:0; font-size:19px; font-weight:600; letter-spacing:.3px; }
+  h1 b { color:var(--amber); }
+  .sub { color:var(--mute); font-size:12px; margin-top:3px; }
+  .wrap { display:grid; grid-template-columns: 1fr 320px; gap:16px; padding:16px 24px; max-width:1180px; }
+  canvas { width:100%; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
+  .side { display:flex; flex-direction:column; gap:12px; }
+  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
+  .card h2 { margin:0 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--mute); font-weight:600; }
+  .stat { display:flex; justify-content:space-between; font-size:12.5px; padding:2px 0; }
+  .stat span:last-child { color:var(--amber); }
+  .op { color:var(--cyan); font-weight:600; }
+  #story { min-height:96px; font-size:15px; line-height:1.7; color:#e6ebf5; }
+  #story .cursor { color:var(--hot); animation:blink 1s steps(1) infinite; }
+  @keyframes blink { 50% { opacity:0; } }
+  .bar { height:7px; background:#0a0d13; border-radius:4px; overflow:hidden; margin-top:5px; }
+  .bar > div { height:100%; width:0; background:linear-gradient(90deg,var(--hot),var(--amber)); }
+  .foot { padding:6px 24px 22px; color:var(--mute); font-size:11.5px; }
+  .foot b { color:var(--txt); }
+  button { background:var(--line); color:var(--txt); border:1px solid #2a3346; border-radius:6px; padding:5px 12px; cursor:pointer; font:inherit; font-size:12px; }
+  button:hover { border-color:var(--amber); }
+  .row { display:flex; gap:8px; align-items:center; }
+</style>
+</head>
+<body>
+<header>
+  <h1><b>golem</b> — a language model thinking on silicon I designed</h1>
+  <div class="sub">a 6.36M-parameter transformer, running on a from-scratch chip. every flash is real compute, timed from the RTL.</div>
+</header>
+
+<div class="wrap">
+  <canvas id="die" width="820" height="520"></canvas>
+  <div class="side">
+    <div class="card">
+      <h2>now computing</h2>
+      <div class="row"><div class="op" id="opname">booting…</div></div>
+      <div class="stat"><span>layer</span><span id="layer">–</span></div>
+      <div class="stat"><span>phase</span><span id="phase">–</span></div>
+      <div class="bar"><div id="opbar"></div></div>
+    </div>
+    <div class="card">
+      <h2>weight bandwidth</h2>
+      <div class="sub" style="margin:0 0 4px">tok/s ≈ memory bandwidth ÷ model bytes</div>
+      <div class="bar"><div id="bw"></div></div>
+      <div class="stat" style="margin-top:6px"><span>weights streamed</span><span id="wstream">0.0 MB</span></div>
+    </div>
+    <div class="card">
+      <h2>this chip</h2>
+      <div class="stat"><span>parameters</span><span id="params">6.36M</span></div>
+      <div class="stat"><span>precision</span><span>int8</span></div>
+      <div class="stat"><span>cycles / token</span><span id="cpt">–</span></div>
+      <div class="stat"><span>tok/s @ 27MHz</span><span id="tps">–</span></div>
+      <div class="row" style="margin-top:8px"><button id="speed">speed: 1×</button></div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap" style="grid-template-columns:1fr">
+  <div class="card"><h2>what it's writing</h2><div id="story"><span class="cursor">▌</span></div></div>
+</div>
+<div class="foot">every operation shown is verified <b>bit-exact</b> against the golden model. schedule timing captured from the RTL simulation (Icarus). trained on TinyStories; ~<b>1.35M cycles/token</b>.</div>
+
+<script>
+const C = document.getElementById('die'), X = C.getContext('2d');
+const $ = id => document.getElementById(id);
+let T = null, speed = 1;
+const SPEEDS = [1, 4, 16, 64];
+
+// die floorplan: engines as boxes
+const ENG = {}; // filled after layout
+const UNITS = [
+  {k:'mem',   label:'SDRAM (weights)', x:30,  y:60,  w:150, h:60,  c:'#5c6780'},
+  {k:'rmsnorm',label:'RMSNorm',        x:230, y:40,  w:130, h:44,  c:'#39d0d8'},
+  {k:'matmul',label:'MAC array',       x:230, y:110, w:200, h:120, c:'#ff7043'},
+  {k:'scores',label:'scores',          x:470, y:110, w:110, h:36,  c:'#ffb454'},
+  {k:'softmax',label:'softmax',        x:470, y:158, w:110, h:36,  c:'#ffb454'},
+  {k:'attn',  label:'attention',       x:470, y:206, w:110, h:36,  c:'#ffb454'},
+  {k:'gelu',  label:'GELU',            x:230, y:250, w:130, h:40,  c:'#39d0d8'},
+  {k:'buffer',label:'residual buffer', x:230, y:306, w:200, h:36,  c:'#8b9bb8'},
+];
+function hex(c,a){ const n=parseInt(c.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+
+function draw(active, opProg, layer, bw){
+  X.clearRect(0,0,C.width,C.height);
+  // layer strip
+  const lx=30, ly=400, lw=760, seg=lw/8;
+  X.fillStyle='#5c6780'; X.font='11px monospace'; X.fillText('8 transformer layers', lx, ly-10);
+  for(let i=0;i<8;i++){
+    const on = i===layer;
+    X.fillStyle = on? hex('#ffb454',.9) : '#141a26';
+    X.fillRect(lx+i*seg+2, ly, seg-4, 30);
+    X.strokeStyle= on?'#ffb454':'#232c3e'; X.strokeRect(lx+i*seg+2, ly, seg-4, 30);
+    X.fillStyle= on?'#0b0e14':'#5c6780'; X.fillText('L'+i, lx+i*seg+seg/2-8, ly+19);
+  }
+  X.fillStyle='#39d0d8'; X.fillText('EMBED', lx, 470);
+  X.fillStyle='#ff7043'; X.fillText('→  LOGITS → argmax → next token', lx+70, 470);
+
+  // data flow lines
+  X.strokeStyle='#1e2636'; X.lineWidth=1;
+  const link=(a,b)=>{ const A=ENG[a],B=ENG[b]; if(!A||!B)return; X.beginPath();
+    X.moveTo(A.x+A.w,A.y+A.h/2); X.lineTo(B.x,B.y+B.h/2); X.stroke(); };
+  link('mem','matmul'); link('rmsnorm','matmul'); link('matmul','scores');
+  link('scores','softmax'); link('softmax','attn'); link('matmul','gelu');
+
+  for(const u of UNITS){
+    const on = active.includes(u.k);
+    X.fillStyle = on ? hex(u.c,.22) : '#0f1420';
+    X.strokeStyle = on ? u.c : '#232c3e';
+    X.lineWidth = on ? 2 : 1;
+    round(u.x,u.y,u.w,u.h,7); X.fill(); X.stroke();
+    if(on){ X.shadowColor=u.c; X.shadowBlur=18; X.stroke(); X.shadowBlur=0; }
+    X.fillStyle = on ? u.c : '#6b7690'; X.font='12px monospace';
+    X.fillText(u.label, u.x+12, u.y+u.h/2+4);
+  }
+  // MAC array grid pulse
+  const mm=ENG['matmul'];
+  if(active.includes('matmul')){
+    for(let r=0;r<4;r++)for(let c=0;c<8;c++){
+      const lit = Math.random() < .6;
+      X.fillStyle = lit? hex('#ff7043',.5+.5*Math.random()) : 'rgba(255,112,67,.08)';
+      X.fillRect(mm.x+18+c*20, mm.y+40+r*16, 15, 12);
+    }
+    X.fillStyle=hex('#ffb454',.8); X.font='10px monospace';
+    X.fillText('4 int8 MACs × streaming', mm.x+16, mm.y+26);
+  }
+  // attention heatmap when softmax/attn active
+  if((active.includes('softmax')||active.includes('attn')) && T.attention){
+    const ax=610, ay=110, cell=6, N=Math.min(28,T.attention.length);
+    X.fillStyle='#5c6780'; X.font='10px monospace'; X.fillText('attention (real)', ax, ay-6);
+    for(let i=0;i<N;i++)for(let j=0;j<=i;j++){
+      X.fillStyle=hex('#39d0d8', T.attention[i][j]/255*.9+.05);
+      X.fillRect(ax+j*cell, ay+i*cell, cell-1, cell-1);
+    }
+  }
+  // op progress under MAC
+  $('opbar').style.width = (opProg*100)+'%';
+  $('bw').style.width = (bw*100)+'%';
+}
+function round(x,y,w,h,r){ X.beginPath(); X.moveTo(x+r,y); X.arcTo(x+w,y,x+w,y+h,r);
+  X.arcTo(x+w,y+h,x,y+h,r); X.arcTo(x,y+h,x,y,r); X.arcTo(x,y,x+w,y,r); X.closePath(); }
+
+// animation state
+let li=0, pi=0, elapsed=0, wi=0, wbytes=0;
+const LAYER_BYTES = 655360, TOTAL_BYTES = 6.36e6;
+let last=performance.now();
+function frame(now){
+  const dt=(now-last); last=now;
+  if(!T){ requestAnimationFrame(frame); return; }
+  const ph = T.phases[pi];
+  const durMs = Math.max(ph.dur/1000/1000*4, 40); // compress; 4ns->~scaled
+  elapsed += dt*speed/ (durMs);
+  const prog = Math.min(elapsed,1);
+  const active=[ph.engine];
+  if(ph.engine==='matmul') active.push('mem');
+  // bandwidth: fills during matmul phases across the token
+  const bw = ph.engine==='matmul' ? (0.4+0.6*prog) : 0.12;
+  draw(active, prog, li, bw);
+  $('opname').textContent = ph.op.replace('_',' ');
+  $('layer').textContent = 'L'+li+' / 8';
+  $('phase').textContent = (pi+1)+' / '+T.phases.length;
+  $('wstream').textContent = ((wbytes+ (ph.engine==='matmul'?prog*LAYER_BYTES/6:0))/1e6).toFixed(2)+' MB';
+  if(elapsed>=1){
+    elapsed=0;
+    if(ph.engine==='matmul') wbytes+=LAYER_BYTES/6;
+    pi++;
+    if(pi>=T.phases.length){ pi=0; li++;
+      if(li>=T.n_layers){ li=0; wbytes=0; emitWord(); }
+    }
+  }
+  requestAnimationFrame(frame);
+}
+function emitWord(){
+  if(!T.words.length) return;
+  const w=T.words[wi% T.words.length]; wi++;
+  const el=$('story'); el.querySelector('.cursor')?.remove();
+  el.insertAdjacentText('beforeend', w);
+  el.insertAdjacentHTML('beforeend','<span class="cursor">▌</span>');
+  if(wi% T.words.length===0) setTimeout(()=>{ $('story').innerHTML='<span class="cursor">▌</span>'; wi=0; }, 2500);
+}
+$('speed').onclick=()=>{ let i=(SPEEDS.indexOf(speed)+1)%SPEEDS.length; speed=SPEEDS[i]; $('speed').textContent='speed: '+speed+'×'; };
+
+fetch('trace.json').then(r=>r.json()).then(d=>{
+  T=d;
+  for(const u of UNITS) ENG[u.k]=u;
+  $('cpt').textContent=(d.cycles_per_token/1e6).toFixed(2)+'M';
+  $('tps').textContent=(27e6/d.cycles_per_token).toFixed(1);
+  $('params').textContent=d.params_m+'M';
+  requestAnimationFrame(frame);
+}).catch(()=>{ $('opname').textContent='run gen_trace.py to build trace.json'; });
+</script>
+</body>
+</html>

@@ -1,0 +1,2464 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv rtl/gelu_lut.sv; synth -top softmax_row -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/divu.sv
+Parsing SystemVerilog input from `rtl/divu.sv' to AST representation.
+Generating RTLIL representation for module `\divu'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/matmul_row.sv
+Parsing SystemVerilog input from `rtl/matmul_row.sv' to AST representation.
+Generating RTLIL representation for module `\matmul_row'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/rmsnorm.sv
+Parsing SystemVerilog input from `rtl/rmsnorm.sv' to AST representation.
+Generating RTLIL representation for module `\rmsnorm'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: rtl/softmax_row.sv
+Parsing SystemVerilog input from `rtl/softmax_row.sv' to AST representation.
+Generating RTLIL representation for module `\softmax_row'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: rtl/gelu_lut.sv
+Parsing SystemVerilog input from `rtl/gelu_lut.sv' to AST representation.
+Generating RTLIL representation for module `\gelu_lut'.
+Successfully finished Verilog frontend.
+
+7. Executing SYNTH pass.
+
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+
+7.1.1. Analyzing design hierarchy..
+Top module:  \softmax_row
+Used module:     \divu
+Parameter \DW = 32
+Parameter \VW = 24
+
+7.1.2. Executing AST frontend in derive mode using pre-parsed AST for module `\divu'.
+Parameter \DW = 32
+Parameter \VW = 24
+Generating RTLIL representation for module `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu'.
+
+7.1.3. Analyzing design hierarchy..
+Top module:  \softmax_row
+Used module:     $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu
+
+7.1.4. Analyzing design hierarchy..
+Top module:  \softmax_row
+Used module:     $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu
+Removing unused module `\gelu_lut'.
+Removing unused module `\rmsnorm'.
+Removing unused module `\matmul_row'.
+Removing unused module `\divu'.
+Removing unused module `\requant'.
+Removed 5 unused modules.
+
+7.2. Executing PROC pass (convert processes to netlists).
+
+7.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/divu.sv:21$178 in module $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.
+Marked 5 switch rules as full_case in process $proc$rtl/softmax_row.sv:53$130 in module softmax_row.
+Removed a total of 0 dead cases.
+
+7.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 11 assignments to connections.
+
+7.2.4. Executing PROC_INIT pass (extract init attributes).
+
+7.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~14 debug messages>
+
+7.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+     1/6: $0\done[0:0]
+     2/6: $0\count[6:0]
+     3/6: $0\rem[24:0]
+     4/6: $0\num[31:0]
+     5/6: $0\q_r[31:0]
+     6/6: $0\busy[0:0]
+Creating decoders for process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+     1/21: $2$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$151
+     2/21: $2$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$150
+     3/21: $2$memwr$\ebuf$rtl/softmax_row.sv:78$117_ADDR[7:0]$149
+     4/21: $1$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$148
+     5/21: $1$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$147
+     6/21: $1$memwr$\ebuf$rtl/softmax_row.sv:78$117_ADDR[7:0]$146
+     7/21: $1$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$145
+     8/21: $1$memwr$\lut$rtl/softmax_row.sv:57$116_DATA[16:0]$144
+     9/21: $1$memwr$\lut$rtl/softmax_row.sv:57$116_ADDR[8:0]$143
+    10/21: $1$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$142
+    11/21: $1$memwr$\sbuf$rtl/softmax_row.sv:56$115_DATA[31:0]$141
+    12/21: $1$memwr$\sbuf$rtl/softmax_row.sv:56$115_ADDR[7:0]$140
+    13/21: $0\div_start[0:0]
+    14/21: $0\out_valid[0:0]
+    15/21: $0\denom[23:0]
+    16/21: $0\row_max[31:0]
+    17/21: $0\len[8:0]
+    18/21: $0\idx[8:0]
+    19/21: $0\state[2:0]
+    20/21: $0\out_data[16:0]
+    21/21: $0\out_idx[7:0]
+Creating decoders for process `\softmax_row.$proc$rtl/softmax_row.sv:37$120'.
+
+7.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\softmax_row.\scaled' from process `\softmax_row.$proc$rtl/softmax_row.sv:37$120'.
+No latch inferred for signal `\softmax_row.\lut_idx' from process `\softmax_row.$proc$rtl/softmax_row.sv:37$120'.
+
+7.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\busy' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$395' with positive edge clock.
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\done' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$396' with positive edge clock.
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\q_r' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$397' with positive edge clock.
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\num' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$398' with positive edge clock.
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\rem' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$399' with positive edge clock.
+Creating register for signal `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.\count' using process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$400' with positive edge clock.
+Creating register for signal `\softmax_row.\out_valid' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$401' with positive edge clock.
+Creating register for signal `\softmax_row.\out_idx' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$402' with positive edge clock.
+Creating register for signal `\softmax_row.\out_data' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$403' with positive edge clock.
+Creating register for signal `\softmax_row.\state' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$404' with positive edge clock.
+Creating register for signal `\softmax_row.\idx' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$405' with positive edge clock.
+Creating register for signal `\softmax_row.\div_start' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$406' with positive edge clock.
+Creating register for signal `\softmax_row.\len' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$407' with positive edge clock.
+Creating register for signal `\softmax_row.\row_max' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$408' with positive edge clock.
+Creating register for signal `\softmax_row.\denom' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$409' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\sbuf$rtl/softmax_row.sv:56$115_ADDR' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$410' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\sbuf$rtl/softmax_row.sv:56$115_DATA' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$411' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$412' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\lut$rtl/softmax_row.sv:57$116_ADDR' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$413' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\lut$rtl/softmax_row.sv:57$116_DATA' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$414' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\lut$rtl/softmax_row.sv:57$116_EN' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$415' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\ebuf$rtl/softmax_row.sv:78$117_ADDR' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$416' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$417' with positive edge clock.
+Creating register for signal `\softmax_row.$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN' using process `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+  created $dff cell `$procdff$418' with positive edge clock.
+
+7.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 4 empty switches in `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+Removing empty process `$paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.$proc$rtl/divu.sv:21$178'.
+Found and cleaned up 10 empty switches in `\softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+Removing empty process `softmax_row.$proc$rtl/softmax_row.sv:53$130'.
+Removing empty process `softmax_row.$proc$rtl/softmax_row.sv:37$120'.
+Cleaned up 14 empty switches.
+
+7.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.
+<suppressed ~1 debug messages>
+Optimizing module softmax_row.
+<suppressed ~5 debug messages>
+
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu...
+Checking module softmax_row...
+Found and reported 0 problems.
+
+7.4. Executing FLATTEN pass (flatten design).
+Deleting now unused module $paramod$15267e0e9bfd41e4334f9bc26e5abcc500e1e17a\divu.
+<suppressed ~1 debug messages>
+
+7.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 9 unused cells and 111 unused wires.
+<suppressed ~10 debug messages>
+
+7.7. Executing CHECK pass (checking for obvious problems).
+Checking module softmax_row...
+Found and reported 0 problems.
+
+7.8. Executing OPT pass (performing simple optimizations).
+
+7.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 142 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 119 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 117 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~75 debug messages>
+Removed a total of 25 cells.
+
+7.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\p_div.$procmux$230: \p_div.busy -> 1'0
+      Replacing known input bits on port A of cell $flatten\p_div.$procmux$228: \p_div.busy -> 1'1
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$260.
+    dead port 1/2 on $mux $procmux$252.
+    dead port 1/2 on $mux $procmux$244.
+Removed 3 multiplexer ports.
+<suppressed ~96 debug messages>
+
+7.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+    Consolidated identical input bits for $mux cell $procmux$281:
+      Old ports: A=0, B=32'11111111111111111111111111111111, Y=$0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133
+      New ports: A=1'0, B=1'1, Y=$0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0]
+      New connections: $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [31:1] = { $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] $0$memwr$\sbuf$rtl/softmax_row.sv:56$115_EN[31:0]$133 [0] }
+    Consolidated identical input bits for $mux cell $procmux$272:
+      Old ports: A=17'00000000000000000, B=17'11111111111111111, Y=$0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136
+      New ports: A=1'0, B=1'1, Y=$0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0]
+      New connections: $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [16:1] = { $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] $0$memwr$\lut$rtl/softmax_row.sv:57$116_EN[16:0]$136 [0] }
+    Consolidated identical input bits for $mux cell $procmux$241:
+      Old ports: A=17'00000000000000000, B=17'11111111111111111, Y=$procmux$241_Y
+      New ports: A=1'0, B=1'1, Y=$procmux$241_Y [0]
+      New connections: $procmux$241_Y [16:1] = { $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] $procmux$241_Y [0] }
+  Optimizing cells in module \softmax_row.
+    Consolidated identical input bits for $mux cell $procmux$263:
+      Old ports: A=$2$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$151, B=17'00000000000000000, Y=$0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139
+      New ports: A=$procmux$241_Y [0], B=1'0, Y=$0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0]
+      New connections: $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [16:1] = { $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_EN[16:0]$139 [0] }
+  Optimizing cells in module \softmax_row.
+Performed a total of 4 changes.
+
+7.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 114 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 113 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+7.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 0 unused cells and 29 unused wires.
+<suppressed ~1 debug messages>
+
+7.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~93 debug messages>
+
+7.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+    New ctrl vector for $pmux cell $procmux$344: { $procmux$300_CMP $auto$opt_reduce.cc:137:opt_pmux$424 $procmux$325_CMP }
+  Optimizing cells in module \softmax_row.
+Performed a total of 1 changes.
+
+7.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 114 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.8.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.8.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~92 debug messages>
+
+7.8.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.8.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 114 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.8.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.8.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.8.23. Finished fast OPT passes. (There is nothing left to do.)
+
+7.9. Executing FSM pass (extract and optimize FSM).
+
+7.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+Not marking softmax_row.state as FSM state register:
+    Users of register don't seem to benefit from recoding.
+
+7.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+7.10. Executing OPT pass (performing simple optimizations).
+
+7.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 114 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~92 debug messages>
+
+7.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 114 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $flatten\p_div.$procdff$398 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$215_Y, Q = \p_div.num).
+Adding SRST signal on $auto$ff.cc:337:slice$425 ($dffe) from module softmax_row (D = $flatten\p_div.$procmux$212_Y [14:1], Q = \p_div.num [14:1], rval = 14'00000000000000).
+Adding SRST signal on $auto$ff.cc:337:slice$425 ($dffe) from module softmax_row (D = 1'x, Q = \p_div.num [0], rval = 1'0).
+Adding EN signal on $flatten\p_div.$procdff$397 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$223_Y, Q = \p_div.q_r).
+Adding SRST signal on $auto$ff.cc:337:slice$437 ($dffe) from module softmax_row (D = $flatten\p_div.$procmux$220_Y, Q = \p_div.q_r, rval = 0).
+Adding SRST signal on $flatten\p_div.$procdff$396 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$186_Y, Q = \p_div.done, rval = 1'0).
+Adding SRST signal on $flatten\p_div.$procdff$395 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$233_Y, Q = \p_div.busy, rval = 1'0).
+Adding EN signal on $flatten\p_div.$procdff$399 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$207_Y, Q = \p_div.rem).
+Adding SRST signal on $auto$ff.cc:337:slice$451 ($dffe) from module softmax_row (D = $flatten\p_div.$procmux$204_Y, Q = \p_div.rem, rval = 25'0000000000000000000000000).
+Adding SRST signal on $procdff$401 ($dff) from module softmax_row (D = $procmux$297_Y, Q = \out_valid, rval = 1'0).
+Adding EN signal on $procdff$402 ($dff) from module softmax_row (D = \idx [7:0], Q = \out_idx).
+Adding EN signal on $procdff$403 ($dff) from module softmax_row (D = \p_div.q_r [16:0], Q = \out_data).
+Adding SRST signal on $procdff$404 ($dff) from module softmax_row (D = $procmux$364_Y, Q = \state, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$474 ($sdff) from module softmax_row (D = $procmux$364_Y, Q = \state).
+Adding EN signal on $procdff$405 ($dff) from module softmax_row (D = $procmux$344_Y, Q = \idx).
+Adding SRST signal on $procdff$406 ($dff) from module softmax_row (D = $procmux$291_Y, Q = \div_start, rval = 1'0).
+Adding EN signal on $procdff$407 ($dff) from module softmax_row (D = \cfg_len, Q = \len).
+Adding EN signal on $procdff$408 ($dff) from module softmax_row (D = $procmux$321_Y, Q = \row_max).
+Adding EN signal on $procdff$409 ($dff) from module softmax_row (D = $procmux$307_Y, Q = \denom).
+Adding EN signal on $flatten\p_div.$procdff$400 ($dff) from module softmax_row (D = $flatten\p_div.$procmux$199_Y, Q = \p_div.count).
+Adding SRST signal on $auto$ff.cc:337:slice$523 ($dffe) from module softmax_row (D = $flatten\p_div.$procmux$196_Y, Q = \p_div.count, rval = 7'0100000).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$433 ($sdffce) from module softmax_row.
+
+7.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 28 unused cells and 28 unused wires.
+<suppressed ~29 debug messages>
+
+7.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~7 debug messages>
+
+7.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~63 debug messages>
+
+7.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 129 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 113 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 109 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~60 debug messages>
+Removed a total of 20 cells.
+
+7.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 0 unused cells and 20 unused wires.
+<suppressed ~1 debug messages>
+
+7.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~63 debug messages>
+
+7.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 109 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+7.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 2) from port B of cell softmax_row.$auto$opt_dff.cc:320:make_patterns_logic$492 ($ne).
+Removed top 1 bits (of 25) from FF cell softmax_row.$auto$ff.cc:337:slice$458 ($sdffce).
+Removed top 1 bits (of 32) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Converting cell softmax_row.$mul$rtl/softmax_row.sv:38$121 ($mul) from unsigned to signed.
+Removed top 31 bits (of 64) from port A of cell softmax_row.$mul$rtl/softmax_row.sv:38$121 ($mul).
+Removed top 32 bits (of 64) from port B of cell softmax_row.$mul$rtl/softmax_row.sv:38$121 ($mul).
+Removed top 5 bits (of 6) from port B of cell softmax_row.$sub$rtl/softmax_row.sv:38$122 ($sub).
+Removed top 63 bits (of 64) from port A of cell softmax_row.$shl$rtl/softmax_row.sv:38$123 ($shl).
+Removed top 55 bits (of 64) from port B of cell softmax_row.$gt$rtl/softmax_row.sv:39$126 ($gt).
+Removed top 7 bits (of 24) from port B of cell softmax_row.$add$rtl/softmax_row.sv:79$160 ($add).
+Removed top 8 bits (of 9) from port B of cell softmax_row.$add$rtl/softmax_row.sv:94$164 ($add).
+Removed top 8 bits (of 9) from port B of cell softmax_row.$sub$rtl/softmax_row.sv:95$165 ($sub).
+Removed top 1 bits (of 3) from mux cell softmax_row.$procmux$360 ($mux).
+Removed top 1 bits (of 3) from port B of cell softmax_row.$procmux$366_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell softmax_row.$procmux$369_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell softmax_row.$procmux$372_CMP0 ($eq).
+Removed top 1 bits (of 32) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 25) from mux cell softmax_row.$flatten\p_div.$procmux$204 ($mux).
+Removed top 6 bits (of 7) from port B of cell softmax_row.$flatten\p_div.$eq$rtl/divu.sv:36$185 ($eq).
+Removed top 6 bits (of 7) from port B of cell softmax_row.$flatten\p_div.$sub$rtl/divu.sv:35$184 ($sub).
+Removed top 1 bits (of 25) from mux cell softmax_row.$flatten\p_div.$ternary$rtl/divu.sv:32$182 ($mux).
+Removed top 1 bits (of 25) from port B of cell softmax_row.$flatten\p_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 25) from port Y of cell softmax_row.$flatten\p_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 25) from port A of cell softmax_row.$flatten\p_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 25) from port B of cell softmax_row.$flatten\p_div.$ge$rtl/divu.sv:19$177 ($ge).
+Removed top 1 bits (of 31) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 31) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 30) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 30) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 29) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 29) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 28) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 28) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 27) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 27) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 26) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 26) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 25) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 25) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 24) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 24) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 23) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 23) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 22) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 22) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 21) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 21) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 20) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 20) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 19) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 19) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 18) from FF cell softmax_row.$auto$ff.cc:337:slice$444 ($sdffce).
+Removed top 1 bits (of 18) from mux cell softmax_row.$flatten\p_div.$procmux$220 ($mux).
+Removed top 1 bits (of 3) from wire softmax_row.$procmux$360_Y.
+Removed top 1 bits (of 25) from wire softmax_row.$flatten\p_div.$procmux$204_Y.
+Removed top 15 bits (of 32) from wire softmax_row.$flatten\p_div.$procmux$220_Y.
+Removed top 1 bits (of 25) from wire softmax_row.$flatten\p_div.$ternary$rtl/divu.sv:32$182_Y.
+Removed top 1 bits (of 25) from wire softmax_row.$flatten\p_div.$sub$rtl/divu.sv:32$181_Y.
+Removed top 15 bits (of 32) from wire softmax_row.div_q.
+
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 0 unused cells and 6 unused wires.
+<suppressed ~1 debug messages>
+
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module softmax_row:
+  creating $macc model for $flatten\p_div.$sub$rtl/divu.sv:35$184 ($sub).
+  creating $macc model for $sub$rtl/softmax_row.sv:95$165 ($sub).
+  creating $macc model for $add$rtl/softmax_row.sv:94$164 ($add).
+  creating $macc model for $add$rtl/softmax_row.sv:79$160 ($add).
+  creating $macc model for $add$rtl/softmax_row.sv:38$124 ($add).
+  creating $macc model for $sub$rtl/softmax_row.sv:38$122 ($sub).
+  creating $macc model for $mul$rtl/softmax_row.sv:38$121 ($mul).
+  creating $macc model for $sub$rtl/softmax_row.sv:34$119 ($sub).
+  creating $macc model for $flatten\p_div.$sub$rtl/divu.sv:32$181 ($sub).
+  merging $macc model for $mul$rtl/softmax_row.sv:38$121 into $add$rtl/softmax_row.sv:38$124.
+  creating $alu model for $macc $sub$rtl/softmax_row.sv:34$119.
+  creating $alu model for $macc $flatten\p_div.$sub$rtl/divu.sv:32$181.
+  creating $alu model for $macc $sub$rtl/softmax_row.sv:38$122.
+  creating $alu model for $macc $add$rtl/softmax_row.sv:79$160.
+  creating $alu model for $macc $add$rtl/softmax_row.sv:94$164.
+  creating $alu model for $macc $sub$rtl/softmax_row.sv:95$165.
+  creating $alu model for $macc $flatten\p_div.$sub$rtl/divu.sv:35$184.
+  creating $macc cell for $add$rtl/softmax_row.sv:38$124: $auto$alumacc.cc:382:replace_macc$537
+  creating $alu model for $gt$rtl/softmax_row.sv:69$153 ($gt): merged with $sub$rtl/softmax_row.sv:34$119.
+  creating $alu model for $flatten\p_div.$ge$rtl/divu.sv:19$177 ($ge): new $alu
+  creating $alu model for $gt$rtl/softmax_row.sv:39$126 ($gt): new $alu
+  creating $alu model for $flatten\p_div.$eq$rtl/divu.sv:36$185 ($eq): merged with $flatten\p_div.$sub$rtl/divu.sv:35$184.
+  creating $alu cell for $gt$rtl/softmax_row.sv:39$126: $auto$alumacc.cc:512:replace_alu$540
+  creating $alu cell for $flatten\p_div.$ge$rtl/divu.sv:19$177: $auto$alumacc.cc:512:replace_alu$551
+  creating $alu cell for $flatten\p_div.$sub$rtl/divu.sv:35$184, $flatten\p_div.$eq$rtl/divu.sv:36$185: $auto$alumacc.cc:512:replace_alu$564
+  creating $alu cell for $sub$rtl/softmax_row.sv:95$165: $auto$alumacc.cc:512:replace_alu$569
+  creating $alu cell for $add$rtl/softmax_row.sv:94$164: $auto$alumacc.cc:512:replace_alu$572
+  creating $alu cell for $add$rtl/softmax_row.sv:79$160: $auto$alumacc.cc:512:replace_alu$575
+  creating $alu cell for $sub$rtl/softmax_row.sv:38$122: $auto$alumacc.cc:512:replace_alu$578
+  creating $alu cell for $flatten\p_div.$sub$rtl/divu.sv:32$181: $auto$alumacc.cc:512:replace_alu$581
+  creating $alu cell for $sub$rtl/softmax_row.sv:34$119, $gt$rtl/softmax_row.sv:69$153: $auto$alumacc.cc:512:replace_alu$584
+  created 9 $alu and 1 $macc cells.
+
+7.15. Executing SHARE pass (SAT-based resource sharing).
+Found 3 cells in module softmax_row that may be considered for resource sharing.
+  Analyzing resource sharing options for $mul$rtl/softmax_row.sv:38$121 ($mul):
+    Found cell that is never activated: $mul$rtl/softmax_row.sv:38$121
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $memrd$\ebuf$rtl/softmax_row.sv:46$128 ($memrd):
+    Found 1 activation_patterns using ctrl signal $flatten\p_div.$logic_and$rtl/divu.sv:25$180_Y.
+    No candidates found.
+  Analyzing resource sharing options for $memrd$\lut$rtl/softmax_row.sv:79$159 ($memrd):
+    Found 2 activation_patterns using ctrl signal { $procmux$242_CMP \rst }.
+    No candidates found.
+Removing 1 cells in module softmax_row:
+  Removing cell $mul$rtl/softmax_row.sv:38$121 ($mul).
+
+7.16. Executing OPT pass (performing simple optimizations).
+
+7.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~1 debug messages>
+
+7.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 118 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~63 debug messages>
+
+7.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 118 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 1 unused cells and 6 unused wires.
+<suppressed ~2 debug messages>
+
+7.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~63 debug messages>
+
+7.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 117 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.17. Executing MEMORY pass.
+
+7.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+7.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+7.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+  Analyzing softmax_row.lut write port 0.
+  Analyzing softmax_row.ebuf write port 0.
+  Analyzing softmax_row.sbuf write port 0.
+
+7.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+7.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+Checking read port `\lut'[0] in module `\softmax_row': no output FF found.
+Checking read port `\ebuf'[0] in module `\softmax_row': FF found, but with a mux select that doesn't seem to correspond to transparency logic.
+Checking read port `\sbuf'[0] in module `\softmax_row': no output FF found.
+Checking read port address `\lut'[0] in module `\softmax_row': no address FF found.
+Checking read port address `\ebuf'[0] in module `\softmax_row': merged address FF to cell.
+Checking read port address `\sbuf'[0] in module `\softmax_row': merged address FF to cell.
+
+7.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+7.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+7.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19. Executing OPT pass (performing simple optimizations).
+
+7.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~46 debug messages>
+
+7.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 89 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 88 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+7.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$514 ($dffe) from module softmax_row (D = $add$rtl/softmax_row.sv:79$160_Y, Q = \denom, rval = 24'000000000000000000000000).
+Adding SRST signal on $auto$ff.cc:337:slice$503 ($dffe) from module softmax_row (D = $procmux$319_Y, Q = \row_max, rval = 32'10000000000000000000000000000000).
+
+7.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 2 unused cells and 30 unused wires.
+<suppressed ~3 debug messages>
+
+7.19.5. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.6. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.7. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.8. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$432 ($sdffce) from module softmax_row.
+
+7.19.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.10. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.11. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.13. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$603 ($sdffce) from module softmax_row.
+
+7.19.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.15. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.16. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.17. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.18. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$604 ($sdffce) from module softmax_row.
+
+7.19.19. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.20. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.21. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.22. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.23. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$605 ($sdffce) from module softmax_row.
+
+7.19.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.25. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.26. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.27. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.28. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$606 ($sdffce) from module softmax_row.
+
+7.19.29. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.30. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.31. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.32. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.33. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$607 ($sdffce) from module softmax_row.
+
+7.19.34. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.35. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.36. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.37. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.38. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$608 ($sdffce) from module softmax_row.
+
+7.19.39. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.40. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.41. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.42. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.43. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$609 ($sdffce) from module softmax_row.
+
+7.19.44. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.45. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.46. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.47. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.48. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$610 ($sdffce) from module softmax_row.
+
+7.19.49. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.50. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.51. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.52. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.53. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$611 ($sdffce) from module softmax_row.
+
+7.19.54. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.55. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.56. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.57. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.58. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$612 ($sdffce) from module softmax_row.
+
+7.19.59. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.60. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.61. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.62. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.63. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$613 ($sdffce) from module softmax_row.
+
+7.19.64. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.65. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.66. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.67. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.68. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$614 ($sdffce) from module softmax_row.
+
+7.19.69. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.70. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.71. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.72. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.73. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$615 ($sdffce) from module softmax_row.
+
+7.19.74. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.75. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.76. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.77. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 85 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.78. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$436 ($dffe) from module softmax_row (D = \p_div.dividend [15], Q = \p_div.num [15], rval = 1'0).
+
+7.19.79. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.80. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.81. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.19.82. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 86 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.19.83. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.19.84. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.19.85. Finished fast OPT passes.
+
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+Mapping memory \lut in module \softmax_row:
+  created 512 $dff cells and 0 static cells of width 17.
+  read interface: 0 $dff and 511 $mux cells.
+  write interface: 512 write mux blocks.
+Mapping memory \sbuf in module \softmax_row:
+  created 256 $dff cells and 0 static cells of width 32.
+Extracted addr FF from read port 0 of softmax_row.sbuf: $\sbuf$rdreg[0]
+  read interface: 1 $dff and 255 $mux cells.
+  write interface: 256 write mux blocks.
+Mapping memory \ebuf in module \softmax_row:
+  created 256 $dff cells and 0 static cells of width 17.
+Extracted addr FF from read port 0 of softmax_row.ebuf: $\ebuf$rdreg[0]
+  read interface: 1 $dff and 255 $mux cells.
+  write interface: 256 write mux blocks.
+
+7.21. Executing OPT pass (performing simple optimizations).
+
+7.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~50 debug messages>
+
+7.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 5395 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 5394 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+7.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3088 debug messages>
+
+7.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+    Consolidated identical input bits for $mux cell $procmux$360:
+      Old ports: A=2'11, B=2'00, Y=$auto$wreduce.cc:514:run$531 [1:0]
+      New ports: A=1'1, B=1'0, Y=$auto$wreduce.cc:514:run$531 [0]
+      New connections: $auto$wreduce.cc:514:run$531 [1] = $auto$wreduce.cc:514:run$531 [0]
+    Consolidated identical input bits for $mux cell $flatten\p_div.$procmux$215:
+      Old ports: A={ \p_div.num [30:15] 16'0000000000000000 }, B={ \p_div.dividend [31:15] 15'000000000000000 }, Y=$flatten\p_div.$procmux$215_Y
+      New ports: A={ \p_div.num [30:15] 1'0 }, B=\p_div.dividend [31:15], Y=$flatten\p_div.$procmux$215_Y [31:15]
+      New connections: $flatten\p_div.$procmux$215_Y [14:0] = 15'000000000000000
+  Optimizing cells in module \softmax_row.
+Performed a total of 2 changes.
+
+7.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 5394 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.21.6. Executing OPT_SHARE pass.
+
+7.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 0 unused cells and 2074 unused wires.
+<suppressed ~1 debug messages>
+
+7.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~1 debug messages>
+
+7.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3087 debug messages>
+
+7.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 5394 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.21.14. Executing OPT_SHARE pass.
+
+7.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $memory\lut[0]$618 ($dff) from module softmax_row (D = \lut_data, Q = \lut[0]).
+Adding EN signal on $memory\lut[1]$620 ($dff) from module softmax_row (D = \lut_data, Q = \lut[1]).
+Adding EN signal on $memory\lut[2]$622 ($dff) from module softmax_row (D = \lut_data, Q = \lut[2]).
+Adding EN signal on $memory\lut[3]$624 ($dff) from module softmax_row (D = \lut_data, Q = \lut[3]).
+Adding EN signal on $memory\lut[4]$626 ($dff) from module softmax_row (D = \lut_data, Q = \lut[4]).
+Adding EN signal on $memory\lut[5]$628 ($dff) from module softmax_row (D = \lut_data, Q = \lut[5]).
+Adding EN signal on $memory\lut[6]$630 ($dff) from module softmax_row (D = \lut_data, Q = \lut[6]).
+Adding EN signal on $memory\lut[7]$632 ($dff) from module softmax_row (D = \lut_data, Q = \lut[7]).
+Adding EN signal on $memory\lut[8]$634 ($dff) from module softmax_row (D = \lut_data, Q = \lut[8]).
+Adding EN signal on $memory\lut[9]$636 ($dff) from module softmax_row (D = \lut_data, Q = \lut[9]).
+Adding EN signal on $memory\lut[10]$638 ($dff) from module softmax_row (D = \lut_data, Q = \lut[10]).
+Adding EN signal on $memory\lut[11]$640 ($dff) from module softmax_row (D = \lut_data, Q = \lut[11]).
+Adding EN signal on $memory\lut[12]$642 ($dff) from module softmax_row (D = \lut_data, Q = \lut[12]).
+Adding EN signal on $memory\lut[13]$644 ($dff) from module softmax_row (D = \lut_data, Q = \lut[13]).
+Adding EN signal on $memory\lut[14]$646 ($dff) from module softmax_row (D = \lut_data, Q = \lut[14]).
+Adding EN signal on $memory\lut[15]$648 ($dff) from module softmax_row (D = \lut_data, Q = \lut[15]).
+Adding EN signal on $memory\lut[16]$650 ($dff) from module softmax_row (D = \lut_data, Q = \lut[16]).
+Adding EN signal on $memory\lut[17]$652 ($dff) from module softmax_row (D = \lut_data, Q = \lut[17]).
+Adding EN signal on $memory\lut[18]$654 ($dff) from module softmax_row (D = \lut_data, Q = \lut[18]).
+Adding EN signal on $memory\lut[19]$656 ($dff) from module softmax_row (D = \lut_data, Q = \lut[19]).
+Adding EN signal on $memory\lut[20]$658 ($dff) from module softmax_row (D = \lut_data, Q = \lut[20]).
+Adding EN signal on $memory\lut[21]$660 ($dff) from module softmax_row (D = \lut_data, Q = \lut[21]).
+Adding EN signal on $memory\lut[22]$662 ($dff) from module softmax_row (D = \lut_data, Q = \lut[22]).
+Adding EN signal on $memory\lut[23]$664 ($dff) from module softmax_row (D = \lut_data, Q = \lut[23]).
+Adding EN signal on $memory\lut[24]$666 ($dff) from module softmax_row (D = \lut_data, Q = \lut[24]).
+Adding EN signal on $memory\lut[25]$668 ($dff) from module softmax_row (D = \lut_data, Q = \lut[25]).
+Adding EN signal on $memory\lut[26]$670 ($dff) from module softmax_row (D = \lut_data, Q = \lut[26]).
+Adding EN signal on $memory\lut[27]$672 ($dff) from module softmax_row (D = \lut_data, Q = \lut[27]).
+Adding EN signal on $memory\lut[28]$674 ($dff) from module softmax_row (D = \lut_data, Q = \lut[28]).
+Adding EN signal on $memory\lut[29]$676 ($dff) from module softmax_row (D = \lut_data, Q = \lut[29]).
+Adding EN signal on $memory\lut[30]$678 ($dff) from module softmax_row (D = \lut_data, Q = \lut[30]).
+Adding EN signal on $memory\lut[31]$680 ($dff) from module softmax_row (D = \lut_data, Q = \lut[31]).
+Adding EN signal on $memory\lut[32]$682 ($dff) from module softmax_row (D = \lut_data, Q = \lut[32]).
+Adding EN signal on $memory\lut[33]$684 ($dff) from module softmax_row (D = \lut_data, Q = \lut[33]).
+Adding EN signal on $memory\lut[34]$686 ($dff) from module softmax_row (D = \lut_data, Q = \lut[34]).
+Adding EN signal on $memory\lut[35]$688 ($dff) from module softmax_row (D = \lut_data, Q = \lut[35]).
+Adding EN signal on $memory\lut[36]$690 ($dff) from module softmax_row (D = \lut_data, Q = \lut[36]).
+Adding EN signal on $memory\lut[37]$692 ($dff) from module softmax_row (D = \lut_data, Q = \lut[37]).
+Adding EN signal on $memory\lut[38]$694 ($dff) from module softmax_row (D = \lut_data, Q = \lut[38]).
+Adding EN signal on $memory\lut[39]$696 ($dff) from module softmax_row (D = \lut_data, Q = \lut[39]).
+Adding EN signal on $memory\lut[40]$698 ($dff) from module softmax_row (D = \lut_data, Q = \lut[40]).
+Adding EN signal on $memory\lut[41]$700 ($dff) from module softmax_row (D = \lut_data, Q = \lut[41]).
+Adding EN signal on $memory\lut[42]$702 ($dff) from module softmax_row (D = \lut_data, Q = \lut[42]).
+Adding EN signal on $memory\lut[43]$704 ($dff) from module softmax_row (D = \lut_data, Q = \lut[43]).
+Adding EN signal on $memory\lut[44]$706 ($dff) from module softmax_row (D = \lut_data, Q = \lut[44]).
+Adding EN signal on $memory\lut[45]$708 ($dff) from module softmax_row (D = \lut_data, Q = \lut[45]).
+Adding EN signal on $memory\lut[46]$710 ($dff) from module softmax_row (D = \lut_data, Q = \lut[46]).
+Adding EN signal on $memory\lut[47]$712 ($dff) from module softmax_row (D = \lut_data, Q = \lut[47]).
+Adding EN signal on $memory\lut[48]$714 ($dff) from module softmax_row (D = \lut_data, Q = \lut[48]).
+Adding EN signal on $memory\lut[49]$716 ($dff) from module softmax_row (D = \lut_data, Q = \lut[49]).
+Adding EN signal on $memory\lut[50]$718 ($dff) from module softmax_row (D = \lut_data, Q = \lut[50]).
+Adding EN signal on $memory\lut[51]$720 ($dff) from module softmax_row (D = \lut_data, Q = \lut[51]).
+Adding EN signal on $memory\lut[52]$722 ($dff) from module softmax_row (D = \lut_data, Q = \lut[52]).
+Adding EN signal on $memory\lut[53]$724 ($dff) from module softmax_row (D = \lut_data, Q = \lut[53]).
+Adding EN signal on $memory\lut[54]$726 ($dff) from module softmax_row (D = \lut_data, Q = \lut[54]).
+Adding EN signal on $memory\lut[55]$728 ($dff) from module softmax_row (D = \lut_data, Q = \lut[55]).
+Adding EN signal on $memory\lut[56]$730 ($dff) from module softmax_row (D = \lut_data, Q = \lut[56]).
+Adding EN signal on $memory\lut[57]$732 ($dff) from module softmax_row (D = \lut_data, Q = \lut[57]).
+Adding EN signal on $memory\lut[58]$734 ($dff) from module softmax_row (D = \lut_data, Q = \lut[58]).
+Adding EN signal on $memory\lut[59]$736 ($dff) from module softmax_row (D = \lut_data, Q = \lut[59]).
+Adding EN signal on $memory\lut[60]$738 ($dff) from module softmax_row (D = \lut_data, Q = \lut[60]).
+Adding EN signal on $memory\lut[61]$740 ($dff) from module softmax_row (D = \lut_data, Q = \lut[61]).
+Adding EN signal on $memory\lut[62]$742 ($dff) from module softmax_row (D = \lut_data, Q = \lut[62]).
+Adding EN signal on $memory\lut[63]$744 ($dff) from module softmax_row (D = \lut_data, Q = \lut[63]).
+Adding EN signal on $memory\lut[64]$746 ($dff) from module softmax_row (D = \lut_data, Q = \lut[64]).
+Adding EN signal on $memory\lut[65]$748 ($dff) from module softmax_row (D = \lut_data, Q = \lut[65]).
+Adding EN signal on $memory\lut[66]$750 ($dff) from module softmax_row (D = \lut_data, Q = \lut[66]).
+Adding EN signal on $memory\lut[67]$752 ($dff) from module softmax_row (D = \lut_data, Q = \lut[67]).
+Adding EN signal on $memory\lut[68]$754 ($dff) from module softmax_row (D = \lut_data, Q = \lut[68]).
+Adding EN signal on $memory\lut[69]$756 ($dff) from module softmax_row (D = \lut_data, Q = \lut[69]).
+Adding EN signal on $memory\lut[70]$758 ($dff) from module softmax_row (D = \lut_data, Q = \lut[70]).
+Adding EN signal on $memory\lut[71]$760 ($dff) from module softmax_row (D = \lut_data, Q = \lut[71]).
+Adding EN signal on $memory\lut[72]$762 ($dff) from module softmax_row (D = \lut_data, Q = \lut[72]).
+Adding EN signal on $memory\lut[73]$764 ($dff) from module softmax_row (D = \lut_data, Q = \lut[73]).
+Adding EN signal on $memory\lut[74]$766 ($dff) from module softmax_row (D = \lut_data, Q = \lut[74]).
+Adding EN signal on $memory\lut[75]$768 ($dff) from module softmax_row (D = \lut_data, Q = \lut[75]).
+Adding EN signal on $memory\lut[76]$770 ($dff) from module softmax_row (D = \lut_data, Q = \lut[76]).
+Adding EN signal on $memory\lut[77]$772 ($dff) from module softmax_row (D = \lut_data, Q = \lut[77]).
+Adding EN signal on $memory\lut[78]$774 ($dff) from module softmax_row (D = \lut_data, Q = \lut[78]).
+Adding EN signal on $memory\lut[79]$776 ($dff) from module softmax_row (D = \lut_data, Q = \lut[79]).
+Adding EN signal on $memory\lut[80]$778 ($dff) from module softmax_row (D = \lut_data, Q = \lut[80]).
+Adding EN signal on $memory\lut[81]$780 ($dff) from module softmax_row (D = \lut_data, Q = \lut[81]).
+Adding EN signal on $memory\lut[82]$782 ($dff) from module softmax_row (D = \lut_data, Q = \lut[82]).
+Adding EN signal on $memory\lut[83]$784 ($dff) from module softmax_row (D = \lut_data, Q = \lut[83]).
+Adding EN signal on $memory\lut[84]$786 ($dff) from module softmax_row (D = \lut_data, Q = \lut[84]).
+Adding EN signal on $memory\lut[85]$788 ($dff) from module softmax_row (D = \lut_data, Q = \lut[85]).
+Adding EN signal on $memory\lut[86]$790 ($dff) from module softmax_row (D = \lut_data, Q = \lut[86]).
+Adding EN signal on $memory\lut[87]$792 ($dff) from module softmax_row (D = \lut_data, Q = \lut[87]).
+Adding EN signal on $memory\lut[88]$794 ($dff) from module softmax_row (D = \lut_data, Q = \lut[88]).
+Adding EN signal on $memory\lut[89]$796 ($dff) from module softmax_row (D = \lut_data, Q = \lut[89]).
+Adding EN signal on $memory\lut[90]$798 ($dff) from module softmax_row (D = \lut_data, Q = \lut[90]).
+Adding EN signal on $memory\lut[91]$800 ($dff) from module softmax_row (D = \lut_data, Q = \lut[91]).
+Adding EN signal on $memory\lut[92]$802 ($dff) from module softmax_row (D = \lut_data, Q = \lut[92]).
+Adding EN signal on $memory\lut[93]$804 ($dff) from module softmax_row (D = \lut_data, Q = \lut[93]).
+Adding EN signal on $memory\lut[94]$806 ($dff) from module softmax_row (D = \lut_data, Q = \lut[94]).
+Adding EN signal on $memory\lut[95]$808 ($dff) from module softmax_row (D = \lut_data, Q = \lut[95]).
+Adding EN signal on $memory\lut[96]$810 ($dff) from module softmax_row (D = \lut_data, Q = \lut[96]).
+Adding EN signal on $memory\lut[97]$812 ($dff) from module softmax_row (D = \lut_data, Q = \lut[97]).
+Adding EN signal on $memory\lut[98]$814 ($dff) from module softmax_row (D = \lut_data, Q = \lut[98]).
+Adding EN signal on $memory\lut[99]$816 ($dff) from module softmax_row (D = \lut_data, Q = \lut[99]).
+Adding EN signal on $memory\lut[100]$818 ($dff) from module softmax_row (D = \lut_data, Q = \lut[100]).
+Adding EN signal on $memory\lut[101]$820 ($dff) from module softmax_row (D = \lut_data, Q = \lut[101]).
+Adding EN signal on $memory\lut[102]$822 ($dff) from module softmax_row (D = \lut_data, Q = \lut[102]).
+Adding EN signal on $memory\lut[103]$824 ($dff) from module softmax_row (D = \lut_data, Q = \lut[103]).
+Adding EN signal on $memory\lut[104]$826 ($dff) from module softmax_row (D = \lut_data, Q = \lut[104]).
+Adding EN signal on $memory\lut[105]$828 ($dff) from module softmax_row (D = \lut_data, Q = \lut[105]).
+Adding EN signal on $memory\lut[106]$830 ($dff) from module softmax_row (D = \lut_data, Q = \lut[106]).
+Adding EN signal on $memory\lut[107]$832 ($dff) from module softmax_row (D = \lut_data, Q = \lut[107]).
+Adding EN signal on $memory\lut[108]$834 ($dff) from module softmax_row (D = \lut_data, Q = \lut[108]).
+Adding EN signal on $memory\lut[109]$836 ($dff) from module softmax_row (D = \lut_data, Q = \lut[109]).
+Adding EN signal on $memory\lut[110]$838 ($dff) from module softmax_row (D = \lut_data, Q = \lut[110]).
+Adding EN signal on $memory\lut[111]$840 ($dff) from module softmax_row (D = \lut_data, Q = \lut[111]).
+Adding EN signal on $memory\lut[112]$842 ($dff) from module softmax_row (D = \lut_data, Q = \lut[112]).
+Adding EN signal on $memory\lut[113]$844 ($dff) from module softmax_row (D = \lut_data, Q = \lut[113]).
+Adding EN signal on $memory\lut[114]$846 ($dff) from module softmax_row (D = \lut_data, Q = \lut[114]).
+Adding EN signal on $memory\lut[115]$848 ($dff) from module softmax_row (D = \lut_data, Q = \lut[115]).
+Adding EN signal on $memory\lut[116]$850 ($dff) from module softmax_row (D = \lut_data, Q = \lut[116]).
+Adding EN signal on $memory\lut[117]$852 ($dff) from module softmax_row (D = \lut_data, Q = \lut[117]).
+Adding EN signal on $memory\lut[118]$854 ($dff) from module softmax_row (D = \lut_data, Q = \lut[118]).
+Adding EN signal on $memory\lut[119]$856 ($dff) from module softmax_row (D = \lut_data, Q = \lut[119]).
+Adding EN signal on $memory\lut[120]$858 ($dff) from module softmax_row (D = \lut_data, Q = \lut[120]).
+Adding EN signal on $memory\lut[121]$860 ($dff) from module softmax_row (D = \lut_data, Q = \lut[121]).
+Adding EN signal on $memory\lut[122]$862 ($dff) from module softmax_row (D = \lut_data, Q = \lut[122]).
+Adding EN signal on $memory\lut[123]$864 ($dff) from module softmax_row (D = \lut_data, Q = \lut[123]).
+Adding EN signal on $memory\lut[124]$866 ($dff) from module softmax_row (D = \lut_data, Q = \lut[124]).
+Adding EN signal on $memory\lut[125]$868 ($dff) from module softmax_row (D = \lut_data, Q = \lut[125]).
+Adding EN signal on $memory\lut[126]$870 ($dff) from module softmax_row (D = \lut_data, Q = \lut[126]).
+Adding EN signal on $memory\lut[127]$872 ($dff) from module softmax_row (D = \lut_data, Q = \lut[127]).
+Adding EN signal on $memory\lut[128]$874 ($dff) from module softmax_row (D = \lut_data, Q = \lut[128]).
+Adding EN signal on $memory\lut[129]$876 ($dff) from module softmax_row (D = \lut_data, Q = \lut[129]).
+Adding EN signal on $memory\lut[130]$878 ($dff) from module softmax_row (D = \lut_data, Q = \lut[130]).
+Adding EN signal on $memory\lut[131]$880 ($dff) from module softmax_row (D = \lut_data, Q = \lut[131]).
+Adding EN signal on $memory\lut[132]$882 ($dff) from module softmax_row (D = \lut_data, Q = \lut[132]).
+Adding EN signal on $memory\lut[133]$884 ($dff) from module softmax_row (D = \lut_data, Q = \lut[133]).
+Adding EN signal on $memory\lut[134]$886 ($dff) from module softmax_row (D = \lut_data, Q = \lut[134]).
+Adding EN signal on $memory\lut[135]$888 ($dff) from module softmax_row (D = \lut_data, Q = \lut[135]).
+Adding EN signal on $memory\lut[136]$890 ($dff) from module softmax_row (D = \lut_data, Q = \lut[136]).
+Adding EN signal on $memory\lut[137]$892 ($dff) from module softmax_row (D = \lut_data, Q = \lut[137]).
+Adding EN signal on $memory\lut[138]$894 ($dff) from module softmax_row (D = \lut_data, Q = \lut[138]).
+Adding EN signal on $memory\lut[139]$896 ($dff) from module softmax_row (D = \lut_data, Q = \lut[139]).
+Adding EN signal on $memory\lut[140]$898 ($dff) from module softmax_row (D = \lut_data, Q = \lut[140]).
+Adding EN signal on $memory\lut[141]$900 ($dff) from module softmax_row (D = \lut_data, Q = \lut[141]).
+Adding EN signal on $memory\lut[142]$902 ($dff) from module softmax_row (D = \lut_data, Q = \lut[142]).
+Adding EN signal on $memory\lut[143]$904 ($dff) from module softmax_row (D = \lut_data, Q = \lut[143]).
+Adding EN signal on $memory\lut[144]$906 ($dff) from module softmax_row (D = \lut_data, Q = \lut[144]).
+Adding EN signal on $memory\lut[145]$908 ($dff) from module softmax_row (D = \lut_data, Q = \lut[145]).
+Adding EN signal on $memory\lut[146]$910 ($dff) from module softmax_row (D = \lut_data, Q = \lut[146]).
+Adding EN signal on $memory\lut[147]$912 ($dff) from module softmax_row (D = \lut_data, Q = \lut[147]).
+Adding EN signal on $memory\lut[148]$914 ($dff) from module softmax_row (D = \lut_data, Q = \lut[148]).
+Adding EN signal on $memory\lut[149]$916 ($dff) from module softmax_row (D = \lut_data, Q = \lut[149]).
+Adding EN signal on $memory\lut[150]$918 ($dff) from module softmax_row (D = \lut_data, Q = \lut[150]).
+Adding EN signal on $memory\lut[151]$920 ($dff) from module softmax_row (D = \lut_data, Q = \lut[151]).
+Adding EN signal on $memory\lut[152]$922 ($dff) from module softmax_row (D = \lut_data, Q = \lut[152]).
+Adding EN signal on $memory\lut[153]$924 ($dff) from module softmax_row (D = \lut_data, Q = \lut[153]).
+Adding EN signal on $memory\lut[154]$926 ($dff) from module softmax_row (D = \lut_data, Q = \lut[154]).
+Adding EN signal on $memory\lut[155]$928 ($dff) from module softmax_row (D = \lut_data, Q = \lut[155]).
+Adding EN signal on $memory\lut[156]$930 ($dff) from module softmax_row (D = \lut_data, Q = \lut[156]).
+Adding EN signal on $memory\lut[157]$932 ($dff) from module softmax_row (D = \lut_data, Q = \lut[157]).
+Adding EN signal on $memory\lut[158]$934 ($dff) from module softmax_row (D = \lut_data, Q = \lut[158]).
+Adding EN signal on $memory\lut[159]$936 ($dff) from module softmax_row (D = \lut_data, Q = \lut[159]).
+Adding EN signal on $memory\lut[160]$938 ($dff) from module softmax_row (D = \lut_data, Q = \lut[160]).
+Adding EN signal on $memory\lut[161]$940 ($dff) from module softmax_row (D = \lut_data, Q = \lut[161]).
+Adding EN signal on $memory\lut[162]$942 ($dff) from module softmax_row (D = \lut_data, Q = \lut[162]).
+Adding EN signal on $memory\lut[163]$944 ($dff) from module softmax_row (D = \lut_data, Q = \lut[163]).
+Adding EN signal on $memory\lut[164]$946 ($dff) from module softmax_row (D = \lut_data, Q = \lut[164]).
+Adding EN signal on $memory\lut[165]$948 ($dff) from module softmax_row (D = \lut_data, Q = \lut[165]).
+Adding EN signal on $memory\lut[166]$950 ($dff) from module softmax_row (D = \lut_data, Q = \lut[166]).
+Adding EN signal on $memory\lut[167]$952 ($dff) from module softmax_row (D = \lut_data, Q = \lut[167]).
+Adding EN signal on $memory\lut[168]$954 ($dff) from module softmax_row (D = \lut_data, Q = \lut[168]).
+Adding EN signal on $memory\lut[169]$956 ($dff) from module softmax_row (D = \lut_data, Q = \lut[169]).
+Adding EN signal on $memory\lut[170]$958 ($dff) from module softmax_row (D = \lut_data, Q = \lut[170]).
+Adding EN signal on $memory\lut[171]$960 ($dff) from module softmax_row (D = \lut_data, Q = \lut[171]).
+Adding EN signal on $memory\lut[172]$962 ($dff) from module softmax_row (D = \lut_data, Q = \lut[172]).
+Adding EN signal on $memory\lut[173]$964 ($dff) from module softmax_row (D = \lut_data, Q = \lut[173]).
+Adding EN signal on $memory\lut[174]$966 ($dff) from module softmax_row (D = \lut_data, Q = \lut[174]).
+Adding EN signal on $memory\lut[175]$968 ($dff) from module softmax_row (D = \lut_data, Q = \lut[175]).
+Adding EN signal on $memory\lut[176]$970 ($dff) from module softmax_row (D = \lut_data, Q = \lut[176]).
+Adding EN signal on $memory\lut[177]$972 ($dff) from module softmax_row (D = \lut_data, Q = \lut[177]).
+Adding EN signal on $memory\lut[178]$974 ($dff) from module softmax_row (D = \lut_data, Q = \lut[178]).
+Adding EN signal on $memory\lut[179]$976 ($dff) from module softmax_row (D = \lut_data, Q = \lut[179]).
+Adding EN signal on $memory\lut[180]$978 ($dff) from module softmax_row (D = \lut_data, Q = \lut[180]).
+Adding EN signal on $memory\lut[181]$980 ($dff) from module softmax_row (D = \lut_data, Q = \lut[181]).
+Adding EN signal on $memory\lut[182]$982 ($dff) from module softmax_row (D = \lut_data, Q = \lut[182]).
+Adding EN signal on $memory\lut[183]$984 ($dff) from module softmax_row (D = \lut_data, Q = \lut[183]).
+Adding EN signal on $memory\lut[184]$986 ($dff) from module softmax_row (D = \lut_data, Q = \lut[184]).
+Adding EN signal on $memory\lut[185]$988 ($dff) from module softmax_row (D = \lut_data, Q = \lut[185]).
+Adding EN signal on $memory\lut[186]$990 ($dff) from module softmax_row (D = \lut_data, Q = \lut[186]).
+Adding EN signal on $memory\lut[187]$992 ($dff) from module softmax_row (D = \lut_data, Q = \lut[187]).
+Adding EN signal on $memory\lut[188]$994 ($dff) from module softmax_row (D = \lut_data, Q = \lut[188]).
+Adding EN signal on $memory\lut[189]$996 ($dff) from module softmax_row (D = \lut_data, Q = \lut[189]).
+Adding EN signal on $memory\lut[190]$998 ($dff) from module softmax_row (D = \lut_data, Q = \lut[190]).
+Adding EN signal on $memory\lut[191]$1000 ($dff) from module softmax_row (D = \lut_data, Q = \lut[191]).
+Adding EN signal on $memory\lut[192]$1002 ($dff) from module softmax_row (D = \lut_data, Q = \lut[192]).
+Adding EN signal on $memory\lut[193]$1004 ($dff) from module softmax_row (D = \lut_data, Q = \lut[193]).
+Adding EN signal on $memory\lut[194]$1006 ($dff) from module softmax_row (D = \lut_data, Q = \lut[194]).
+Adding EN signal on $memory\lut[195]$1008 ($dff) from module softmax_row (D = \lut_data, Q = \lut[195]).
+Adding EN signal on $memory\lut[196]$1010 ($dff) from module softmax_row (D = \lut_data, Q = \lut[196]).
+Adding EN signal on $memory\lut[197]$1012 ($dff) from module softmax_row (D = \lut_data, Q = \lut[197]).
+Adding EN signal on $memory\lut[198]$1014 ($dff) from module softmax_row (D = \lut_data, Q = \lut[198]).
+Adding EN signal on $memory\lut[199]$1016 ($dff) from module softmax_row (D = \lut_data, Q = \lut[199]).
+Adding EN signal on $memory\lut[200]$1018 ($dff) from module softmax_row (D = \lut_data, Q = \lut[200]).
+Adding EN signal on $memory\lut[201]$1020 ($dff) from module softmax_row (D = \lut_data, Q = \lut[201]).
+Adding EN signal on $memory\lut[202]$1022 ($dff) from module softmax_row (D = \lut_data, Q = \lut[202]).
+Adding EN signal on $memory\lut[203]$1024 ($dff) from module softmax_row (D = \lut_data, Q = \lut[203]).
+Adding EN signal on $memory\lut[204]$1026 ($dff) from module softmax_row (D = \lut_data, Q = \lut[204]).
+Adding EN signal on $memory\lut[205]$1028 ($dff) from module softmax_row (D = \lut_data, Q = \lut[205]).
+Adding EN signal on $memory\lut[206]$1030 ($dff) from module softmax_row (D = \lut_data, Q = \lut[206]).
+Adding EN signal on $memory\lut[207]$1032 ($dff) from module softmax_row (D = \lut_data, Q = \lut[207]).
+Adding EN signal on $memory\lut[208]$1034 ($dff) from module softmax_row (D = \lut_data, Q = \lut[208]).
+Adding EN signal on $memory\lut[209]$1036 ($dff) from module softmax_row (D = \lut_data, Q = \lut[209]).
+Adding EN signal on $memory\lut[210]$1038 ($dff) from module softmax_row (D = \lut_data, Q = \lut[210]).
+Adding EN signal on $memory\lut[211]$1040 ($dff) from module softmax_row (D = \lut_data, Q = \lut[211]).
+Adding EN signal on $memory\lut[212]$1042 ($dff) from module softmax_row (D = \lut_data, Q = \lut[212]).
+Adding EN signal on $memory\lut[213]$1044 ($dff) from module softmax_row (D = \lut_data, Q = \lut[213]).
+Adding EN signal on $memory\lut[214]$1046 ($dff) from module softmax_row (D = \lut_data, Q = \lut[214]).
+Adding EN signal on $memory\lut[215]$1048 ($dff) from module softmax_row (D = \lut_data, Q = \lut[215]).
+Adding EN signal on $memory\lut[216]$1050 ($dff) from module softmax_row (D = \lut_data, Q = \lut[216]).
+Adding EN signal on $memory\lut[217]$1052 ($dff) from module softmax_row (D = \lut_data, Q = \lut[217]).
+Adding EN signal on $memory\lut[218]$1054 ($dff) from module softmax_row (D = \lut_data, Q = \lut[218]).
+Adding EN signal on $memory\lut[219]$1056 ($dff) from module softmax_row (D = \lut_data, Q = \lut[219]).
+Adding EN signal on $memory\lut[220]$1058 ($dff) from module softmax_row (D = \lut_data, Q = \lut[220]).
+Adding EN signal on $memory\lut[221]$1060 ($dff) from module softmax_row (D = \lut_data, Q = \lut[221]).
+Adding EN signal on $memory\lut[222]$1062 ($dff) from module softmax_row (D = \lut_data, Q = \lut[222]).
+Adding EN signal on $memory\lut[223]$1064 ($dff) from module softmax_row (D = \lut_data, Q = \lut[223]).
+Adding EN signal on $memory\lut[224]$1066 ($dff) from module softmax_row (D = \lut_data, Q = \lut[224]).
+Adding EN signal on $memory\lut[225]$1068 ($dff) from module softmax_row (D = \lut_data, Q = \lut[225]).
+Adding EN signal on $memory\lut[226]$1070 ($dff) from module softmax_row (D = \lut_data, Q = \lut[226]).
+Adding EN signal on $memory\lut[227]$1072 ($dff) from module softmax_row (D = \lut_data, Q = \lut[227]).
+Adding EN signal on $memory\lut[228]$1074 ($dff) from module softmax_row (D = \lut_data, Q = \lut[228]).
+Adding EN signal on $memory\lut[229]$1076 ($dff) from module softmax_row (D = \lut_data, Q = \lut[229]).
+Adding EN signal on $memory\lut[230]$1078 ($dff) from module softmax_row (D = \lut_data, Q = \lut[230]).
+Adding EN signal on $memory\lut[231]$1080 ($dff) from module softmax_row (D = \lut_data, Q = \lut[231]).
+Adding EN signal on $memory\lut[232]$1082 ($dff) from module softmax_row (D = \lut_data, Q = \lut[232]).
+Adding EN signal on $memory\lut[233]$1084 ($dff) from module softmax_row (D = \lut_data, Q = \lut[233]).
+Adding EN signal on $memory\lut[234]$1086 ($dff) from module softmax_row (D = \lut_data, Q = \lut[234]).
+Adding EN signal on $memory\lut[235]$1088 ($dff) from module softmax_row (D = \lut_data, Q = \lut[235]).
+Adding EN signal on $memory\lut[236]$1090 ($dff) from module softmax_row (D = \lut_data, Q = \lut[236]).
+Adding EN signal on $memory\lut[237]$1092 ($dff) from module softmax_row (D = \lut_data, Q = \lut[237]).
+Adding EN signal on $memory\lut[238]$1094 ($dff) from module softmax_row (D = \lut_data, Q = \lut[238]).
+Adding EN signal on $memory\lut[239]$1096 ($dff) from module softmax_row (D = \lut_data, Q = \lut[239]).
+Adding EN signal on $memory\lut[240]$1098 ($dff) from module softmax_row (D = \lut_data, Q = \lut[240]).
+Adding EN signal on $memory\lut[241]$1100 ($dff) from module softmax_row (D = \lut_data, Q = \lut[241]).
+Adding EN signal on $memory\lut[242]$1102 ($dff) from module softmax_row (D = \lut_data, Q = \lut[242]).
+Adding EN signal on $memory\lut[243]$1104 ($dff) from module softmax_row (D = \lut_data, Q = \lut[243]).
+Adding EN signal on $memory\lut[244]$1106 ($dff) from module softmax_row (D = \lut_data, Q = \lut[244]).
+Adding EN signal on $memory\lut[245]$1108 ($dff) from module softmax_row (D = \lut_data, Q = \lut[245]).
+Adding EN signal on $memory\lut[246]$1110 ($dff) from module softmax_row (D = \lut_data, Q = \lut[246]).
+Adding EN signal on $memory\lut[247]$1112 ($dff) from module softmax_row (D = \lut_data, Q = \lut[247]).
+Adding EN signal on $memory\lut[248]$1114 ($dff) from module softmax_row (D = \lut_data, Q = \lut[248]).
+Adding EN signal on $memory\lut[249]$1116 ($dff) from module softmax_row (D = \lut_data, Q = \lut[249]).
+Adding EN signal on $memory\lut[250]$1118 ($dff) from module softmax_row (D = \lut_data, Q = \lut[250]).
+Adding EN signal on $memory\lut[251]$1120 ($dff) from module softmax_row (D = \lut_data, Q = \lut[251]).
+Adding EN signal on $memory\lut[252]$1122 ($dff) from module softmax_row (D = \lut_data, Q = \lut[252]).
+Adding EN signal on $memory\lut[253]$1124 ($dff) from module softmax_row (D = \lut_data, Q = \lut[253]).
+Adding EN signal on $memory\lut[254]$1126 ($dff) from module softmax_row (D = \lut_data, Q = \lut[254]).
+Adding EN signal on $memory\lut[255]$1128 ($dff) from module softmax_row (D = \lut_data, Q = \lut[255]).
+Adding EN signal on $memory\lut[256]$1130 ($dff) from module softmax_row (D = \lut_data, Q = \lut[256]).
+Adding EN signal on $memory\lut[257]$1132 ($dff) from module softmax_row (D = \lut_data, Q = \lut[257]).
+Adding EN signal on $memory\lut[258]$1134 ($dff) from module softmax_row (D = \lut_data, Q = \lut[258]).
+Adding EN signal on $memory\lut[259]$1136 ($dff) from module softmax_row (D = \lut_data, Q = \lut[259]).
+Adding EN signal on $memory\lut[260]$1138 ($dff) from module softmax_row (D = \lut_data, Q = \lut[260]).
+Adding EN signal on $memory\lut[261]$1140 ($dff) from module softmax_row (D = \lut_data, Q = \lut[261]).
+Adding EN signal on $memory\lut[262]$1142 ($dff) from module softmax_row (D = \lut_data, Q = \lut[262]).
+Adding EN signal on $memory\lut[263]$1144 ($dff) from module softmax_row (D = \lut_data, Q = \lut[263]).
+Adding EN signal on $memory\lut[264]$1146 ($dff) from module softmax_row (D = \lut_data, Q = \lut[264]).
+Adding EN signal on $memory\lut[265]$1148 ($dff) from module softmax_row (D = \lut_data, Q = \lut[265]).
+Adding EN signal on $memory\lut[266]$1150 ($dff) from module softmax_row (D = \lut_data, Q = \lut[266]).
+Adding EN signal on $memory\lut[267]$1152 ($dff) from module softmax_row (D = \lut_data, Q = \lut[267]).
+Adding EN signal on $memory\lut[268]$1154 ($dff) from module softmax_row (D = \lut_data, Q = \lut[268]).
+Adding EN signal on $memory\lut[269]$1156 ($dff) from module softmax_row (D = \lut_data, Q = \lut[269]).
+Adding EN signal on $memory\lut[270]$1158 ($dff) from module softmax_row (D = \lut_data, Q = \lut[270]).
+Adding EN signal on $memory\lut[271]$1160 ($dff) from module softmax_row (D = \lut_data, Q = \lut[271]).
+Adding EN signal on $memory\lut[272]$1162 ($dff) from module softmax_row (D = \lut_data, Q = \lut[272]).
+Adding EN signal on $memory\lut[273]$1164 ($dff) from module softmax_row (D = \lut_data, Q = \lut[273]).
+Adding EN signal on $memory\lut[274]$1166 ($dff) from module softmax_row (D = \lut_data, Q = \lut[274]).
+Adding EN signal on $memory\lut[275]$1168 ($dff) from module softmax_row (D = \lut_data, Q = \lut[275]).
+Adding EN signal on $memory\lut[276]$1170 ($dff) from module softmax_row (D = \lut_data, Q = \lut[276]).
+Adding EN signal on $memory\lut[277]$1172 ($dff) from module softmax_row (D = \lut_data, Q = \lut[277]).
+Adding EN signal on $memory\lut[278]$1174 ($dff) from module softmax_row (D = \lut_data, Q = \lut[278]).
+Adding EN signal on $memory\lut[279]$1176 ($dff) from module softmax_row (D = \lut_data, Q = \lut[279]).
+Adding EN signal on $memory\lut[280]$1178 ($dff) from module softmax_row (D = \lut_data, Q = \lut[280]).
+Adding EN signal on $memory\lut[281]$1180 ($dff) from module softmax_row (D = \lut_data, Q = \lut[281]).
+Adding EN signal on $memory\lut[282]$1182 ($dff) from module softmax_row (D = \lut_data, Q = \lut[282]).
+Adding EN signal on $memory\lut[283]$1184 ($dff) from module softmax_row (D = \lut_data, Q = \lut[283]).
+Adding EN signal on $memory\lut[284]$1186 ($dff) from module softmax_row (D = \lut_data, Q = \lut[284]).
+Adding EN signal on $memory\lut[285]$1188 ($dff) from module softmax_row (D = \lut_data, Q = \lut[285]).
+Adding EN signal on $memory\lut[286]$1190 ($dff) from module softmax_row (D = \lut_data, Q = \lut[286]).
+Adding EN signal on $memory\lut[287]$1192 ($dff) from module softmax_row (D = \lut_data, Q = \lut[287]).
+Adding EN signal on $memory\lut[288]$1194 ($dff) from module softmax_row (D = \lut_data, Q = \lut[288]).
+Adding EN signal on $memory\lut[289]$1196 ($dff) from module softmax_row (D = \lut_data, Q = \lut[289]).
+Adding EN signal on $memory\lut[290]$1198 ($dff) from module softmax_row (D = \lut_data, Q = \lut[290]).
+Adding EN signal on $memory\lut[291]$1200 ($dff) from module softmax_row (D = \lut_data, Q = \lut[291]).
+Adding EN signal on $memory\lut[292]$1202 ($dff) from module softmax_row (D = \lut_data, Q = \lut[292]).
+Adding EN signal on $memory\lut[293]$1204 ($dff) from module softmax_row (D = \lut_data, Q = \lut[293]).
+Adding EN signal on $memory\lut[294]$1206 ($dff) from module softmax_row (D = \lut_data, Q = \lut[294]).
+Adding EN signal on $memory\lut[295]$1208 ($dff) from module softmax_row (D = \lut_data, Q = \lut[295]).
+Adding EN signal on $memory\lut[296]$1210 ($dff) from module softmax_row (D = \lut_data, Q = \lut[296]).
+Adding EN signal on $memory\lut[297]$1212 ($dff) from module softmax_row (D = \lut_data, Q = \lut[297]).
+Adding EN signal on $memory\lut[298]$1214 ($dff) from module softmax_row (D = \lut_data, Q = \lut[298]).
+Adding EN signal on $memory\lut[299]$1216 ($dff) from module softmax_row (D = \lut_data, Q = \lut[299]).
+Adding EN signal on $memory\lut[300]$1218 ($dff) from module softmax_row (D = \lut_data, Q = \lut[300]).
+Adding EN signal on $memory\lut[301]$1220 ($dff) from module softmax_row (D = \lut_data, Q = \lut[301]).
+Adding EN signal on $memory\lut[302]$1222 ($dff) from module softmax_row (D = \lut_data, Q = \lut[302]).
+Adding EN signal on $memory\lut[303]$1224 ($dff) from module softmax_row (D = \lut_data, Q = \lut[303]).
+Adding EN signal on $memory\lut[304]$1226 ($dff) from module softmax_row (D = \lut_data, Q = \lut[304]).
+Adding EN signal on $memory\lut[305]$1228 ($dff) from module softmax_row (D = \lut_data, Q = \lut[305]).
+Adding EN signal on $memory\lut[306]$1230 ($dff) from module softmax_row (D = \lut_data, Q = \lut[306]).
+Adding EN signal on $memory\lut[307]$1232 ($dff) from module softmax_row (D = \lut_data, Q = \lut[307]).
+Adding EN signal on $memory\lut[308]$1234 ($dff) from module softmax_row (D = \lut_data, Q = \lut[308]).
+Adding EN signal on $memory\lut[309]$1236 ($dff) from module softmax_row (D = \lut_data, Q = \lut[309]).
+Adding EN signal on $memory\lut[310]$1238 ($dff) from module softmax_row (D = \lut_data, Q = \lut[310]).
+Adding EN signal on $memory\lut[311]$1240 ($dff) from module softmax_row (D = \lut_data, Q = \lut[311]).
+Adding EN signal on $memory\lut[312]$1242 ($dff) from module softmax_row (D = \lut_data, Q = \lut[312]).
+Adding EN signal on $memory\lut[313]$1244 ($dff) from module softmax_row (D = \lut_data, Q = \lut[313]).
+Adding EN signal on $memory\lut[314]$1246 ($dff) from module softmax_row (D = \lut_data, Q = \lut[314]).
+Adding EN signal on $memory\lut[315]$1248 ($dff) from module softmax_row (D = \lut_data, Q = \lut[315]).
+Adding EN signal on $memory\lut[316]$1250 ($dff) from module softmax_row (D = \lut_data, Q = \lut[316]).
+Adding EN signal on $memory\lut[317]$1252 ($dff) from module softmax_row (D = \lut_data, Q = \lut[317]).
+Adding EN signal on $memory\lut[318]$1254 ($dff) from module softmax_row (D = \lut_data, Q = \lut[318]).
+Adding EN signal on $memory\lut[319]$1256 ($dff) from module softmax_row (D = \lut_data, Q = \lut[319]).
+Adding EN signal on $memory\lut[320]$1258 ($dff) from module softmax_row (D = \lut_data, Q = \lut[320]).
+Adding EN signal on $memory\lut[321]$1260 ($dff) from module softmax_row (D = \lut_data, Q = \lut[321]).
+Adding EN signal on $memory\lut[322]$1262 ($dff) from module softmax_row (D = \lut_data, Q = \lut[322]).
+Adding EN signal on $memory\lut[323]$1264 ($dff) from module softmax_row (D = \lut_data, Q = \lut[323]).
+Adding EN signal on $memory\lut[324]$1266 ($dff) from module softmax_row (D = \lut_data, Q = \lut[324]).
+Adding EN signal on $memory\lut[325]$1268 ($dff) from module softmax_row (D = \lut_data, Q = \lut[325]).
+Adding EN signal on $memory\lut[326]$1270 ($dff) from module softmax_row (D = \lut_data, Q = \lut[326]).
+Adding EN signal on $memory\lut[327]$1272 ($dff) from module softmax_row (D = \lut_data, Q = \lut[327]).
+Adding EN signal on $memory\lut[328]$1274 ($dff) from module softmax_row (D = \lut_data, Q = \lut[328]).
+Adding EN signal on $memory\lut[329]$1276 ($dff) from module softmax_row (D = \lut_data, Q = \lut[329]).
+Adding EN signal on $memory\lut[330]$1278 ($dff) from module softmax_row (D = \lut_data, Q = \lut[330]).
+Adding EN signal on $memory\lut[331]$1280 ($dff) from module softmax_row (D = \lut_data, Q = \lut[331]).
+Adding EN signal on $memory\lut[332]$1282 ($dff) from module softmax_row (D = \lut_data, Q = \lut[332]).
+Adding EN signal on $memory\lut[333]$1284 ($dff) from module softmax_row (D = \lut_data, Q = \lut[333]).
+Adding EN signal on $memory\lut[334]$1286 ($dff) from module softmax_row (D = \lut_data, Q = \lut[334]).
+Adding EN signal on $memory\lut[335]$1288 ($dff) from module softmax_row (D = \lut_data, Q = \lut[335]).
+Adding EN signal on $memory\lut[336]$1290 ($dff) from module softmax_row (D = \lut_data, Q = \lut[336]).
+Adding EN signal on $memory\lut[337]$1292 ($dff) from module softmax_row (D = \lut_data, Q = \lut[337]).
+Adding EN signal on $memory\lut[338]$1294 ($dff) from module softmax_row (D = \lut_data, Q = \lut[338]).
+Adding EN signal on $memory\lut[339]$1296 ($dff) from module softmax_row (D = \lut_data, Q = \lut[339]).
+Adding EN signal on $memory\lut[340]$1298 ($dff) from module softmax_row (D = \lut_data, Q = \lut[340]).
+Adding EN signal on $memory\lut[341]$1300 ($dff) from module softmax_row (D = \lut_data, Q = \lut[341]).
+Adding EN signal on $memory\lut[342]$1302 ($dff) from module softmax_row (D = \lut_data, Q = \lut[342]).
+Adding EN signal on $memory\lut[343]$1304 ($dff) from module softmax_row (D = \lut_data, Q = \lut[343]).
+Adding EN signal on $memory\lut[344]$1306 ($dff) from module softmax_row (D = \lut_data, Q = \lut[344]).
+Adding EN signal on $memory\lut[345]$1308 ($dff) from module softmax_row (D = \lut_data, Q = \lut[345]).
+Adding EN signal on $memory\lut[346]$1310 ($dff) from module softmax_row (D = \lut_data, Q = \lut[346]).
+Adding EN signal on $memory\lut[347]$1312 ($dff) from module softmax_row (D = \lut_data, Q = \lut[347]).
+Adding EN signal on $memory\lut[348]$1314 ($dff) from module softmax_row (D = \lut_data, Q = \lut[348]).
+Adding EN signal on $memory\lut[349]$1316 ($dff) from module softmax_row (D = \lut_data, Q = \lut[349]).
+Adding EN signal on $memory\lut[350]$1318 ($dff) from module softmax_row (D = \lut_data, Q = \lut[350]).
+Adding EN signal on $memory\lut[351]$1320 ($dff) from module softmax_row (D = \lut_data, Q = \lut[351]).
+Adding EN signal on $memory\lut[352]$1322 ($dff) from module softmax_row (D = \lut_data, Q = \lut[352]).
+Adding EN signal on $memory\lut[353]$1324 ($dff) from module softmax_row (D = \lut_data, Q = \lut[353]).
+Adding EN signal on $memory\lut[354]$1326 ($dff) from module softmax_row (D = \lut_data, Q = \lut[354]).
+Adding EN signal on $memory\lut[355]$1328 ($dff) from module softmax_row (D = \lut_data, Q = \lut[355]).
+Adding EN signal on $memory\lut[356]$1330 ($dff) from module softmax_row (D = \lut_data, Q = \lut[356]).
+Adding EN signal on $memory\lut[357]$1332 ($dff) from module softmax_row (D = \lut_data, Q = \lut[357]).
+Adding EN signal on $memory\lut[358]$1334 ($dff) from module softmax_row (D = \lut_data, Q = \lut[358]).
+Adding EN signal on $memory\lut[359]$1336 ($dff) from module softmax_row (D = \lut_data, Q = \lut[359]).
+Adding EN signal on $memory\lut[360]$1338 ($dff) from module softmax_row (D = \lut_data, Q = \lut[360]).
+Adding EN signal on $memory\lut[361]$1340 ($dff) from module softmax_row (D = \lut_data, Q = \lut[361]).
+Adding EN signal on $memory\lut[362]$1342 ($dff) from module softmax_row (D = \lut_data, Q = \lut[362]).
+Adding EN signal on $memory\lut[363]$1344 ($dff) from module softmax_row (D = \lut_data, Q = \lut[363]).
+Adding EN signal on $memory\lut[364]$1346 ($dff) from module softmax_row (D = \lut_data, Q = \lut[364]).
+Adding EN signal on $memory\lut[365]$1348 ($dff) from module softmax_row (D = \lut_data, Q = \lut[365]).
+Adding EN signal on $memory\lut[366]$1350 ($dff) from module softmax_row (D = \lut_data, Q = \lut[366]).
+Adding EN signal on $memory\lut[367]$1352 ($dff) from module softmax_row (D = \lut_data, Q = \lut[367]).
+Adding EN signal on $memory\lut[368]$1354 ($dff) from module softmax_row (D = \lut_data, Q = \lut[368]).
+Adding EN signal on $memory\lut[369]$1356 ($dff) from module softmax_row (D = \lut_data, Q = \lut[369]).
+Adding EN signal on $memory\lut[370]$1358 ($dff) from module softmax_row (D = \lut_data, Q = \lut[370]).
+Adding EN signal on $memory\lut[371]$1360 ($dff) from module softmax_row (D = \lut_data, Q = \lut[371]).
+Adding EN signal on $memory\lut[372]$1362 ($dff) from module softmax_row (D = \lut_data, Q = \lut[372]).
+Adding EN signal on $memory\lut[373]$1364 ($dff) from module softmax_row (D = \lut_data, Q = \lut[373]).
+Adding EN signal on $memory\lut[374]$1366 ($dff) from module softmax_row (D = \lut_data, Q = \lut[374]).
+Adding EN signal on $memory\lut[375]$1368 ($dff) from module softmax_row (D = \lut_data, Q = \lut[375]).
+Adding EN signal on $memory\lut[376]$1370 ($dff) from module softmax_row (D = \lut_data, Q = \lut[376]).
+Adding EN signal on $memory\lut[377]$1372 ($dff) from module softmax_row (D = \lut_data, Q = \lut[377]).
+Adding EN signal on $memory\lut[378]$1374 ($dff) from module softmax_row (D = \lut_data, Q = \lut[378]).
+Adding EN signal on $memory\lut[379]$1376 ($dff) from module softmax_row (D = \lut_data, Q = \lut[379]).
+Adding EN signal on $memory\lut[380]$1378 ($dff) from module softmax_row (D = \lut_data, Q = \lut[380]).
+Adding EN signal on $memory\lut[381]$1380 ($dff) from module softmax_row (D = \lut_data, Q = \lut[381]).
+Adding EN signal on $memory\lut[382]$1382 ($dff) from module softmax_row (D = \lut_data, Q = \lut[382]).
+Adding EN signal on $memory\lut[383]$1384 ($dff) from module softmax_row (D = \lut_data, Q = \lut[383]).
+Adding EN signal on $memory\lut[384]$1386 ($dff) from module softmax_row (D = \lut_data, Q = \lut[384]).
+Adding EN signal on $memory\lut[385]$1388 ($dff) from module softmax_row (D = \lut_data, Q = \lut[385]).
+Adding EN signal on $memory\lut[386]$1390 ($dff) from module softmax_row (D = \lut_data, Q = \lut[386]).
+Adding EN signal on $memory\lut[387]$1392 ($dff) from module softmax_row (D = \lut_data, Q = \lut[387]).
+Adding EN signal on $memory\lut[388]$1394 ($dff) from module softmax_row (D = \lut_data, Q = \lut[388]).
+Adding EN signal on $memory\lut[389]$1396 ($dff) from module softmax_row (D = \lut_data, Q = \lut[389]).
+Adding EN signal on $memory\lut[390]$1398 ($dff) from module softmax_row (D = \lut_data, Q = \lut[390]).
+Adding EN signal on $memory\lut[391]$1400 ($dff) from module softmax_row (D = \lut_data, Q = \lut[391]).
+Adding EN signal on $memory\lut[392]$1402 ($dff) from module softmax_row (D = \lut_data, Q = \lut[392]).
+Adding EN signal on $memory\lut[393]$1404 ($dff) from module softmax_row (D = \lut_data, Q = \lut[393]).
+Adding EN signal on $memory\lut[394]$1406 ($dff) from module softmax_row (D = \lut_data, Q = \lut[394]).
+Adding EN signal on $memory\lut[395]$1408 ($dff) from module softmax_row (D = \lut_data, Q = \lut[395]).
+Adding EN signal on $memory\lut[396]$1410 ($dff) from module softmax_row (D = \lut_data, Q = \lut[396]).
+Adding EN signal on $memory\lut[397]$1412 ($dff) from module softmax_row (D = \lut_data, Q = \lut[397]).
+Adding EN signal on $memory\lut[398]$1414 ($dff) from module softmax_row (D = \lut_data, Q = \lut[398]).
+Adding EN signal on $memory\lut[399]$1416 ($dff) from module softmax_row (D = \lut_data, Q = \lut[399]).
+Adding EN signal on $memory\lut[400]$1418 ($dff) from module softmax_row (D = \lut_data, Q = \lut[400]).
+Adding EN signal on $memory\lut[401]$1420 ($dff) from module softmax_row (D = \lut_data, Q = \lut[401]).
+Adding EN signal on $memory\lut[402]$1422 ($dff) from module softmax_row (D = \lut_data, Q = \lut[402]).
+Adding EN signal on $memory\lut[403]$1424 ($dff) from module softmax_row (D = \lut_data, Q = \lut[403]).
+Adding EN signal on $memory\lut[404]$1426 ($dff) from module softmax_row (D = \lut_data, Q = \lut[404]).
+Adding EN signal on $memory\lut[405]$1428 ($dff) from module softmax_row (D = \lut_data, Q = \lut[405]).
+Adding EN signal on $memory\lut[406]$1430 ($dff) from module softmax_row (D = \lut_data, Q = \lut[406]).
+Adding EN signal on $memory\lut[407]$1432 ($dff) from module softmax_row (D = \lut_data, Q = \lut[407]).
+Adding EN signal on $memory\lut[408]$1434 ($dff) from module softmax_row (D = \lut_data, Q = \lut[408]).
+Adding EN signal on $memory\lut[409]$1436 ($dff) from module softmax_row (D = \lut_data, Q = \lut[409]).
+Adding EN signal on $memory\lut[410]$1438 ($dff) from module softmax_row (D = \lut_data, Q = \lut[410]).
+Adding EN signal on $memory\lut[411]$1440 ($dff) from module softmax_row (D = \lut_data, Q = \lut[411]).
+Adding EN signal on $memory\lut[412]$1442 ($dff) from module softmax_row (D = \lut_data, Q = \lut[412]).
+Adding EN signal on $memory\lut[413]$1444 ($dff) from module softmax_row (D = \lut_data, Q = \lut[413]).
+Adding EN signal on $memory\lut[414]$1446 ($dff) from module softmax_row (D = \lut_data, Q = \lut[414]).
+Adding EN signal on $memory\lut[415]$1448 ($dff) from module softmax_row (D = \lut_data, Q = \lut[415]).
+Adding EN signal on $memory\lut[416]$1450 ($dff) from module softmax_row (D = \lut_data, Q = \lut[416]).
+Adding EN signal on $memory\lut[417]$1452 ($dff) from module softmax_row (D = \lut_data, Q = \lut[417]).
+Adding EN signal on $memory\lut[418]$1454 ($dff) from module softmax_row (D = \lut_data, Q = \lut[418]).
+Adding EN signal on $memory\lut[419]$1456 ($dff) from module softmax_row (D = \lut_data, Q = \lut[419]).
+Adding EN signal on $memory\lut[420]$1458 ($dff) from module softmax_row (D = \lut_data, Q = \lut[420]).
+Adding EN signal on $memory\lut[421]$1460 ($dff) from module softmax_row (D = \lut_data, Q = \lut[421]).
+Adding EN signal on $memory\lut[422]$1462 ($dff) from module softmax_row (D = \lut_data, Q = \lut[422]).
+Adding EN signal on $memory\lut[423]$1464 ($dff) from module softmax_row (D = \lut_data, Q = \lut[423]).
+Adding EN signal on $memory\lut[424]$1466 ($dff) from module softmax_row (D = \lut_data, Q = \lut[424]).
+Adding EN signal on $memory\lut[425]$1468 ($dff) from module softmax_row (D = \lut_data, Q = \lut[425]).
+Adding EN signal on $memory\lut[426]$1470 ($dff) from module softmax_row (D = \lut_data, Q = \lut[426]).
+Adding EN signal on $memory\lut[427]$1472 ($dff) from module softmax_row (D = \lut_data, Q = \lut[427]).
+Adding EN signal on $memory\lut[428]$1474 ($dff) from module softmax_row (D = \lut_data, Q = \lut[428]).
+Adding EN signal on $memory\lut[429]$1476 ($dff) from module softmax_row (D = \lut_data, Q = \lut[429]).
+Adding EN signal on $memory\lut[430]$1478 ($dff) from module softmax_row (D = \lut_data, Q = \lut[430]).
+Adding EN signal on $memory\lut[431]$1480 ($dff) from module softmax_row (D = \lut_data, Q = \lut[431]).
+Adding EN signal on $memory\lut[432]$1482 ($dff) from module softmax_row (D = \lut_data, Q = \lut[432]).
+Adding EN signal on $memory\lut[433]$1484 ($dff) from module softmax_row (D = \lut_data, Q = \lut[433]).
+Adding EN signal on $memory\lut[434]$1486 ($dff) from module softmax_row (D = \lut_data, Q = \lut[434]).
+Adding EN signal on $memory\lut[435]$1488 ($dff) from module softmax_row (D = \lut_data, Q = \lut[435]).
+Adding EN signal on $memory\lut[436]$1490 ($dff) from module softmax_row (D = \lut_data, Q = \lut[436]).
+Adding EN signal on $memory\lut[437]$1492 ($dff) from module softmax_row (D = \lut_data, Q = \lut[437]).
+Adding EN signal on $memory\lut[438]$1494 ($dff) from module softmax_row (D = \lut_data, Q = \lut[438]).
+Adding EN signal on $memory\lut[439]$1496 ($dff) from module softmax_row (D = \lut_data, Q = \lut[439]).
+Adding EN signal on $memory\lut[440]$1498 ($dff) from module softmax_row (D = \lut_data, Q = \lut[440]).
+Adding EN signal on $memory\lut[441]$1500 ($dff) from module softmax_row (D = \lut_data, Q = \lut[441]).
+Adding EN signal on $memory\lut[442]$1502 ($dff) from module softmax_row (D = \lut_data, Q = \lut[442]).
+Adding EN signal on $memory\lut[443]$1504 ($dff) from module softmax_row (D = \lut_data, Q = \lut[443]).
+Adding EN signal on $memory\lut[444]$1506 ($dff) from module softmax_row (D = \lut_data, Q = \lut[444]).
+Adding EN signal on $memory\lut[445]$1508 ($dff) from module softmax_row (D = \lut_data, Q = \lut[445]).
+Adding EN signal on $memory\lut[446]$1510 ($dff) from module softmax_row (D = \lut_data, Q = \lut[446]).
+Adding EN signal on $memory\lut[447]$1512 ($dff) from module softmax_row (D = \lut_data, Q = \lut[447]).
+Adding EN signal on $memory\lut[448]$1514 ($dff) from module softmax_row (D = \lut_data, Q = \lut[448]).
+Adding EN signal on $memory\lut[449]$1516 ($dff) from module softmax_row (D = \lut_data, Q = \lut[449]).
+Adding EN signal on $memory\lut[450]$1518 ($dff) from module softmax_row (D = \lut_data, Q = \lut[450]).
+Adding EN signal on $memory\lut[451]$1520 ($dff) from module softmax_row (D = \lut_data, Q = \lut[451]).
+Adding EN signal on $memory\lut[452]$1522 ($dff) from module softmax_row (D = \lut_data, Q = \lut[452]).
+Adding EN signal on $memory\lut[453]$1524 ($dff) from module softmax_row (D = \lut_data, Q = \lut[453]).
+Adding EN signal on $memory\lut[454]$1526 ($dff) from module softmax_row (D = \lut_data, Q = \lut[454]).
+Adding EN signal on $memory\lut[455]$1528 ($dff) from module softmax_row (D = \lut_data, Q = \lut[455]).
+Adding EN signal on $memory\lut[456]$1530 ($dff) from module softmax_row (D = \lut_data, Q = \lut[456]).
+Adding EN signal on $memory\lut[457]$1532 ($dff) from module softmax_row (D = \lut_data, Q = \lut[457]).
+Adding EN signal on $memory\lut[458]$1534 ($dff) from module softmax_row (D = \lut_data, Q = \lut[458]).
+Adding EN signal on $memory\lut[459]$1536 ($dff) from module softmax_row (D = \lut_data, Q = \lut[459]).
+Adding EN signal on $memory\lut[460]$1538 ($dff) from module softmax_row (D = \lut_data, Q = \lut[460]).
+Adding EN signal on $memory\lut[461]$1540 ($dff) from module softmax_row (D = \lut_data, Q = \lut[461]).
+Adding EN signal on $memory\lut[462]$1542 ($dff) from module softmax_row (D = \lut_data, Q = \lut[462]).
+Adding EN signal on $memory\lut[463]$1544 ($dff) from module softmax_row (D = \lut_data, Q = \lut[463]).
+Adding EN signal on $memory\lut[464]$1546 ($dff) from module softmax_row (D = \lut_data, Q = \lut[464]).
+Adding EN signal on $memory\lut[465]$1548 ($dff) from module softmax_row (D = \lut_data, Q = \lut[465]).
+Adding EN signal on $memory\lut[466]$1550 ($dff) from module softmax_row (D = \lut_data, Q = \lut[466]).
+Adding EN signal on $memory\lut[467]$1552 ($dff) from module softmax_row (D = \lut_data, Q = \lut[467]).
+Adding EN signal on $memory\lut[468]$1554 ($dff) from module softmax_row (D = \lut_data, Q = \lut[468]).
+Adding EN signal on $memory\lut[469]$1556 ($dff) from module softmax_row (D = \lut_data, Q = \lut[469]).
+Adding EN signal on $memory\lut[470]$1558 ($dff) from module softmax_row (D = \lut_data, Q = \lut[470]).
+Adding EN signal on $memory\lut[471]$1560 ($dff) from module softmax_row (D = \lut_data, Q = \lut[471]).
+Adding EN signal on $memory\lut[472]$1562 ($dff) from module softmax_row (D = \lut_data, Q = \lut[472]).
+Adding EN signal on $memory\lut[473]$1564 ($dff) from module softmax_row (D = \lut_data, Q = \lut[473]).
+Adding EN signal on $memory\lut[474]$1566 ($dff) from module softmax_row (D = \lut_data, Q = \lut[474]).
+Adding EN signal on $memory\lut[475]$1568 ($dff) from module softmax_row (D = \lut_data, Q = \lut[475]).
+Adding EN signal on $memory\lut[476]$1570 ($dff) from module softmax_row (D = \lut_data, Q = \lut[476]).
+Adding EN signal on $memory\lut[477]$1572 ($dff) from module softmax_row (D = \lut_data, Q = \lut[477]).
+Adding EN signal on $memory\lut[478]$1574 ($dff) from module softmax_row (D = \lut_data, Q = \lut[478]).
+Adding EN signal on $memory\lut[479]$1576 ($dff) from module softmax_row (D = \lut_data, Q = \lut[479]).
+Adding EN signal on $memory\lut[480]$1578 ($dff) from module softmax_row (D = \lut_data, Q = \lut[480]).
+Adding EN signal on $memory\lut[481]$1580 ($dff) from module softmax_row (D = \lut_data, Q = \lut[481]).
+Adding EN signal on $memory\lut[482]$1582 ($dff) from module softmax_row (D = \lut_data, Q = \lut[482]).
+Adding EN signal on $memory\lut[483]$1584 ($dff) from module softmax_row (D = \lut_data, Q = \lut[483]).
+Adding EN signal on $memory\lut[484]$1586 ($dff) from module softmax_row (D = \lut_data, Q = \lut[484]).
+Adding EN signal on $memory\lut[485]$1588 ($dff) from module softmax_row (D = \lut_data, Q = \lut[485]).
+Adding EN signal on $memory\lut[486]$1590 ($dff) from module softmax_row (D = \lut_data, Q = \lut[486]).
+Adding EN signal on $memory\lut[487]$1592 ($dff) from module softmax_row (D = \lut_data, Q = \lut[487]).
+Adding EN signal on $memory\lut[488]$1594 ($dff) from module softmax_row (D = \lut_data, Q = \lut[488]).
+Adding EN signal on $memory\lut[489]$1596 ($dff) from module softmax_row (D = \lut_data, Q = \lut[489]).
+Adding EN signal on $memory\lut[490]$1598 ($dff) from module softmax_row (D = \lut_data, Q = \lut[490]).
+Adding EN signal on $memory\lut[491]$1600 ($dff) from module softmax_row (D = \lut_data, Q = \lut[491]).
+Adding EN signal on $memory\lut[492]$1602 ($dff) from module softmax_row (D = \lut_data, Q = \lut[492]).
+Adding EN signal on $memory\lut[493]$1604 ($dff) from module softmax_row (D = \lut_data, Q = \lut[493]).
+Adding EN signal on $memory\lut[494]$1606 ($dff) from module softmax_row (D = \lut_data, Q = \lut[494]).
+Adding EN signal on $memory\lut[495]$1608 ($dff) from module softmax_row (D = \lut_data, Q = \lut[495]).
+Adding EN signal on $memory\lut[496]$1610 ($dff) from module softmax_row (D = \lut_data, Q = \lut[496]).
+Adding EN signal on $memory\lut[497]$1612 ($dff) from module softmax_row (D = \lut_data, Q = \lut[497]).
+Adding EN signal on $memory\lut[498]$1614 ($dff) from module softmax_row (D = \lut_data, Q = \lut[498]).
+Adding EN signal on $memory\lut[499]$1616 ($dff) from module softmax_row (D = \lut_data, Q = \lut[499]).
+Adding EN signal on $memory\lut[500]$1618 ($dff) from module softmax_row (D = \lut_data, Q = \lut[500]).
+Adding EN signal on $memory\lut[501]$1620 ($dff) from module softmax_row (D = \lut_data, Q = \lut[501]).
+Adding EN signal on $memory\lut[502]$1622 ($dff) from module softmax_row (D = \lut_data, Q = \lut[502]).
+Adding EN signal on $memory\lut[503]$1624 ($dff) from module softmax_row (D = \lut_data, Q = \lut[503]).
+Adding EN signal on $memory\lut[504]$1626 ($dff) from module softmax_row (D = \lut_data, Q = \lut[504]).
+Adding EN signal on $memory\lut[505]$1628 ($dff) from module softmax_row (D = \lut_data, Q = \lut[505]).
+Adding EN signal on $memory\lut[506]$1630 ($dff) from module softmax_row (D = \lut_data, Q = \lut[506]).
+Adding EN signal on $memory\lut[507]$1632 ($dff) from module softmax_row (D = \lut_data, Q = \lut[507]).
+Adding EN signal on $memory\lut[508]$1634 ($dff) from module softmax_row (D = \lut_data, Q = \lut[508]).
+Adding EN signal on $memory\lut[509]$1636 ($dff) from module softmax_row (D = \lut_data, Q = \lut[509]).
+Adding EN signal on $memory\lut[510]$1638 ($dff) from module softmax_row (D = \lut_data, Q = \lut[510]).
+Adding EN signal on $memory\lut[511]$1640 ($dff) from module softmax_row (D = \lut_data, Q = \lut[511]).
+Adding EN signal on $memory\sbuf[0]$6427 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[0]).
+Adding EN signal on $memory\sbuf[1]$6429 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[1]).
+Adding EN signal on $memory\sbuf[2]$6431 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[2]).
+Adding EN signal on $memory\sbuf[3]$6433 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[3]).
+Adding EN signal on $memory\sbuf[4]$6435 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[4]).
+Adding EN signal on $memory\sbuf[5]$6437 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[5]).
+Adding EN signal on $memory\sbuf[6]$6439 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[6]).
+Adding EN signal on $memory\sbuf[7]$6441 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[7]).
+Adding EN signal on $memory\sbuf[8]$6443 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[8]).
+Adding EN signal on $memory\sbuf[9]$6445 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[9]).
+Adding EN signal on $memory\sbuf[10]$6447 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[10]).
+Adding EN signal on $memory\sbuf[11]$6449 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[11]).
+Adding EN signal on $memory\sbuf[12]$6451 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[12]).
+Adding EN signal on $memory\sbuf[13]$6453 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[13]).
+Adding EN signal on $memory\sbuf[14]$6455 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[14]).
+Adding EN signal on $memory\sbuf[15]$6457 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[15]).
+Adding EN signal on $memory\sbuf[16]$6459 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[16]).
+Adding EN signal on $memory\sbuf[17]$6461 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[17]).
+Adding EN signal on $memory\sbuf[18]$6463 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[18]).
+Adding EN signal on $memory\sbuf[19]$6465 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[19]).
+Adding EN signal on $memory\sbuf[20]$6467 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[20]).
+Adding EN signal on $memory\sbuf[21]$6469 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[21]).
+Adding EN signal on $memory\sbuf[22]$6471 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[22]).
+Adding EN signal on $memory\sbuf[23]$6473 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[23]).
+Adding EN signal on $memory\sbuf[24]$6475 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[24]).
+Adding EN signal on $memory\sbuf[25]$6477 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[25]).
+Adding EN signal on $memory\sbuf[26]$6479 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[26]).
+Adding EN signal on $memory\sbuf[27]$6481 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[27]).
+Adding EN signal on $memory\sbuf[28]$6483 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[28]).
+Adding EN signal on $memory\sbuf[29]$6485 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[29]).
+Adding EN signal on $memory\sbuf[30]$6487 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[30]).
+Adding EN signal on $memory\sbuf[31]$6489 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[31]).
+Adding EN signal on $memory\sbuf[32]$6491 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[32]).
+Adding EN signal on $memory\sbuf[33]$6493 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[33]).
+Adding EN signal on $memory\sbuf[34]$6495 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[34]).
+Adding EN signal on $memory\sbuf[35]$6497 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[35]).
+Adding EN signal on $memory\sbuf[36]$6499 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[36]).
+Adding EN signal on $memory\sbuf[37]$6501 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[37]).
+Adding EN signal on $memory\sbuf[38]$6503 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[38]).
+Adding EN signal on $memory\sbuf[39]$6505 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[39]).
+Adding EN signal on $memory\sbuf[40]$6507 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[40]).
+Adding EN signal on $memory\sbuf[41]$6509 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[41]).
+Adding EN signal on $memory\sbuf[42]$6511 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[42]).
+Adding EN signal on $memory\sbuf[43]$6513 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[43]).
+Adding EN signal on $memory\sbuf[44]$6515 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[44]).
+Adding EN signal on $memory\sbuf[45]$6517 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[45]).
+Adding EN signal on $memory\sbuf[46]$6519 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[46]).
+Adding EN signal on $memory\sbuf[47]$6521 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[47]).
+Adding EN signal on $memory\sbuf[48]$6523 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[48]).
+Adding EN signal on $memory\sbuf[49]$6525 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[49]).
+Adding EN signal on $memory\sbuf[50]$6527 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[50]).
+Adding EN signal on $memory\sbuf[51]$6529 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[51]).
+Adding EN signal on $memory\sbuf[52]$6531 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[52]).
+Adding EN signal on $memory\sbuf[53]$6533 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[53]).
+Adding EN signal on $memory\sbuf[54]$6535 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[54]).
+Adding EN signal on $memory\sbuf[55]$6537 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[55]).
+Adding EN signal on $memory\sbuf[56]$6539 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[56]).
+Adding EN signal on $memory\sbuf[57]$6541 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[57]).
+Adding EN signal on $memory\sbuf[58]$6543 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[58]).
+Adding EN signal on $memory\sbuf[59]$6545 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[59]).
+Adding EN signal on $memory\sbuf[60]$6547 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[60]).
+Adding EN signal on $memory\sbuf[61]$6549 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[61]).
+Adding EN signal on $memory\sbuf[62]$6551 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[62]).
+Adding EN signal on $memory\sbuf[63]$6553 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[63]).
+Adding EN signal on $memory\sbuf[64]$6555 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[64]).
+Adding EN signal on $memory\sbuf[65]$6557 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[65]).
+Adding EN signal on $memory\sbuf[66]$6559 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[66]).
+Adding EN signal on $memory\sbuf[67]$6561 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[67]).
+Adding EN signal on $memory\sbuf[68]$6563 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[68]).
+Adding EN signal on $memory\sbuf[69]$6565 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[69]).
+Adding EN signal on $memory\sbuf[70]$6567 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[70]).
+Adding EN signal on $memory\sbuf[71]$6569 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[71]).
+Adding EN signal on $memory\sbuf[72]$6571 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[72]).
+Adding EN signal on $memory\sbuf[73]$6573 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[73]).
+Adding EN signal on $memory\sbuf[74]$6575 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[74]).
+Adding EN signal on $memory\sbuf[75]$6577 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[75]).
+Adding EN signal on $memory\sbuf[76]$6579 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[76]).
+Adding EN signal on $memory\sbuf[77]$6581 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[77]).
+Adding EN signal on $memory\sbuf[78]$6583 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[78]).
+Adding EN signal on $memory\sbuf[79]$6585 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[79]).
+Adding EN signal on $memory\sbuf[80]$6587 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[80]).
+Adding EN signal on $memory\sbuf[81]$6589 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[81]).
+Adding EN signal on $memory\sbuf[82]$6591 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[82]).
+Adding EN signal on $memory\sbuf[83]$6593 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[83]).
+Adding EN signal on $memory\sbuf[84]$6595 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[84]).
+Adding EN signal on $memory\sbuf[85]$6597 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[85]).
+Adding EN signal on $memory\sbuf[86]$6599 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[86]).
+Adding EN signal on $memory\sbuf[87]$6601 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[87]).
+Adding EN signal on $memory\sbuf[88]$6603 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[88]).
+Adding EN signal on $memory\sbuf[89]$6605 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[89]).
+Adding EN signal on $memory\sbuf[90]$6607 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[90]).
+Adding EN signal on $memory\sbuf[91]$6609 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[91]).
+Adding EN signal on $memory\sbuf[92]$6611 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[92]).
+Adding EN signal on $memory\sbuf[93]$6613 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[93]).
+Adding EN signal on $memory\sbuf[94]$6615 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[94]).
+Adding EN signal on $memory\sbuf[95]$6617 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[95]).
+Adding EN signal on $memory\sbuf[96]$6619 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[96]).
+Adding EN signal on $memory\sbuf[97]$6621 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[97]).
+Adding EN signal on $memory\sbuf[98]$6623 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[98]).
+Adding EN signal on $memory\sbuf[99]$6625 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[99]).
+Adding EN signal on $memory\sbuf[100]$6627 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[100]).
+Adding EN signal on $memory\sbuf[101]$6629 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[101]).
+Adding EN signal on $memory\sbuf[102]$6631 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[102]).
+Adding EN signal on $memory\sbuf[103]$6633 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[103]).
+Adding EN signal on $memory\sbuf[104]$6635 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[104]).
+Adding EN signal on $memory\sbuf[105]$6637 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[105]).
+Adding EN signal on $memory\sbuf[106]$6639 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[106]).
+Adding EN signal on $memory\sbuf[107]$6641 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[107]).
+Adding EN signal on $memory\sbuf[108]$6643 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[108]).
+Adding EN signal on $memory\sbuf[109]$6645 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[109]).
+Adding EN signal on $memory\sbuf[110]$6647 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[110]).
+Adding EN signal on $memory\sbuf[111]$6649 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[111]).
+Adding EN signal on $memory\sbuf[112]$6651 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[112]).
+Adding EN signal on $memory\sbuf[113]$6653 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[113]).
+Adding EN signal on $memory\sbuf[114]$6655 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[114]).
+Adding EN signal on $memory\sbuf[115]$6657 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[115]).
+Adding EN signal on $memory\sbuf[116]$6659 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[116]).
+Adding EN signal on $memory\sbuf[117]$6661 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[117]).
+Adding EN signal on $memory\sbuf[118]$6663 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[118]).
+Adding EN signal on $memory\sbuf[119]$6665 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[119]).
+Adding EN signal on $memory\sbuf[120]$6667 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[120]).
+Adding EN signal on $memory\sbuf[121]$6669 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[121]).
+Adding EN signal on $memory\sbuf[122]$6671 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[122]).
+Adding EN signal on $memory\sbuf[123]$6673 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[123]).
+Adding EN signal on $memory\sbuf[124]$6675 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[124]).
+Adding EN signal on $memory\sbuf[125]$6677 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[125]).
+Adding EN signal on $memory\sbuf[126]$6679 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[126]).
+Adding EN signal on $memory\sbuf[127]$6681 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[127]).
+Adding EN signal on $memory\sbuf[128]$6683 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[128]).
+Adding EN signal on $memory\sbuf[129]$6685 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[129]).
+Adding EN signal on $memory\sbuf[130]$6687 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[130]).
+Adding EN signal on $memory\sbuf[131]$6689 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[131]).
+Adding EN signal on $memory\sbuf[132]$6691 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[132]).
+Adding EN signal on $memory\sbuf[133]$6693 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[133]).
+Adding EN signal on $memory\sbuf[134]$6695 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[134]).
+Adding EN signal on $memory\sbuf[135]$6697 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[135]).
+Adding EN signal on $memory\sbuf[136]$6699 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[136]).
+Adding EN signal on $memory\sbuf[137]$6701 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[137]).
+Adding EN signal on $memory\sbuf[138]$6703 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[138]).
+Adding EN signal on $memory\sbuf[139]$6705 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[139]).
+Adding EN signal on $memory\sbuf[140]$6707 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[140]).
+Adding EN signal on $memory\sbuf[141]$6709 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[141]).
+Adding EN signal on $memory\sbuf[142]$6711 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[142]).
+Adding EN signal on $memory\sbuf[143]$6713 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[143]).
+Adding EN signal on $memory\sbuf[144]$6715 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[144]).
+Adding EN signal on $memory\sbuf[145]$6717 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[145]).
+Adding EN signal on $memory\sbuf[146]$6719 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[146]).
+Adding EN signal on $memory\sbuf[147]$6721 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[147]).
+Adding EN signal on $memory\sbuf[148]$6723 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[148]).
+Adding EN signal on $memory\sbuf[149]$6725 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[149]).
+Adding EN signal on $memory\sbuf[150]$6727 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[150]).
+Adding EN signal on $memory\sbuf[151]$6729 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[151]).
+Adding EN signal on $memory\sbuf[152]$6731 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[152]).
+Adding EN signal on $memory\sbuf[153]$6733 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[153]).
+Adding EN signal on $memory\sbuf[154]$6735 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[154]).
+Adding EN signal on $memory\sbuf[155]$6737 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[155]).
+Adding EN signal on $memory\sbuf[156]$6739 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[156]).
+Adding EN signal on $memory\sbuf[157]$6741 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[157]).
+Adding EN signal on $memory\sbuf[158]$6743 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[158]).
+Adding EN signal on $memory\sbuf[159]$6745 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[159]).
+Adding EN signal on $memory\sbuf[160]$6747 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[160]).
+Adding EN signal on $memory\sbuf[161]$6749 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[161]).
+Adding EN signal on $memory\sbuf[162]$6751 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[162]).
+Adding EN signal on $memory\sbuf[163]$6753 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[163]).
+Adding EN signal on $memory\sbuf[164]$6755 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[164]).
+Adding EN signal on $memory\sbuf[165]$6757 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[165]).
+Adding EN signal on $memory\sbuf[166]$6759 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[166]).
+Adding EN signal on $memory\sbuf[167]$6761 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[167]).
+Adding EN signal on $memory\sbuf[168]$6763 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[168]).
+Adding EN signal on $memory\sbuf[169]$6765 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[169]).
+Adding EN signal on $memory\sbuf[170]$6767 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[170]).
+Adding EN signal on $memory\sbuf[171]$6769 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[171]).
+Adding EN signal on $memory\sbuf[172]$6771 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[172]).
+Adding EN signal on $memory\sbuf[173]$6773 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[173]).
+Adding EN signal on $memory\sbuf[174]$6775 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[174]).
+Adding EN signal on $memory\sbuf[175]$6777 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[175]).
+Adding EN signal on $memory\sbuf[176]$6779 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[176]).
+Adding EN signal on $memory\sbuf[177]$6781 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[177]).
+Adding EN signal on $memory\sbuf[178]$6783 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[178]).
+Adding EN signal on $memory\sbuf[179]$6785 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[179]).
+Adding EN signal on $memory\sbuf[180]$6787 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[180]).
+Adding EN signal on $memory\sbuf[181]$6789 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[181]).
+Adding EN signal on $memory\sbuf[182]$6791 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[182]).
+Adding EN signal on $memory\sbuf[183]$6793 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[183]).
+Adding EN signal on $memory\sbuf[184]$6795 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[184]).
+Adding EN signal on $memory\sbuf[185]$6797 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[185]).
+Adding EN signal on $memory\sbuf[186]$6799 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[186]).
+Adding EN signal on $memory\sbuf[187]$6801 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[187]).
+Adding EN signal on $memory\sbuf[188]$6803 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[188]).
+Adding EN signal on $memory\sbuf[189]$6805 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[189]).
+Adding EN signal on $memory\sbuf[190]$6807 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[190]).
+Adding EN signal on $memory\sbuf[191]$6809 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[191]).
+Adding EN signal on $memory\sbuf[192]$6811 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[192]).
+Adding EN signal on $memory\sbuf[193]$6813 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[193]).
+Adding EN signal on $memory\sbuf[194]$6815 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[194]).
+Adding EN signal on $memory\sbuf[195]$6817 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[195]).
+Adding EN signal on $memory\sbuf[196]$6819 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[196]).
+Adding EN signal on $memory\sbuf[197]$6821 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[197]).
+Adding EN signal on $memory\sbuf[198]$6823 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[198]).
+Adding EN signal on $memory\sbuf[199]$6825 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[199]).
+Adding EN signal on $memory\sbuf[200]$6827 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[200]).
+Adding EN signal on $memory\sbuf[201]$6829 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[201]).
+Adding EN signal on $memory\sbuf[202]$6831 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[202]).
+Adding EN signal on $memory\sbuf[203]$6833 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[203]).
+Adding EN signal on $memory\sbuf[204]$6835 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[204]).
+Adding EN signal on $memory\sbuf[205]$6837 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[205]).
+Adding EN signal on $memory\sbuf[206]$6839 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[206]).
+Adding EN signal on $memory\sbuf[207]$6841 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[207]).
+Adding EN signal on $memory\sbuf[208]$6843 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[208]).
+Adding EN signal on $memory\sbuf[209]$6845 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[209]).
+Adding EN signal on $memory\sbuf[210]$6847 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[210]).
+Adding EN signal on $memory\sbuf[211]$6849 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[211]).
+Adding EN signal on $memory\sbuf[212]$6851 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[212]).
+Adding EN signal on $memory\sbuf[213]$6853 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[213]).
+Adding EN signal on $memory\sbuf[214]$6855 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[214]).
+Adding EN signal on $memory\sbuf[215]$6857 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[215]).
+Adding EN signal on $memory\sbuf[216]$6859 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[216]).
+Adding EN signal on $memory\sbuf[217]$6861 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[217]).
+Adding EN signal on $memory\sbuf[218]$6863 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[218]).
+Adding EN signal on $memory\sbuf[219]$6865 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[219]).
+Adding EN signal on $memory\sbuf[220]$6867 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[220]).
+Adding EN signal on $memory\sbuf[221]$6869 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[221]).
+Adding EN signal on $memory\sbuf[222]$6871 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[222]).
+Adding EN signal on $memory\sbuf[223]$6873 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[223]).
+Adding EN signal on $memory\sbuf[224]$6875 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[224]).
+Adding EN signal on $memory\sbuf[225]$6877 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[225]).
+Adding EN signal on $memory\sbuf[226]$6879 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[226]).
+Adding EN signal on $memory\sbuf[227]$6881 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[227]).
+Adding EN signal on $memory\sbuf[228]$6883 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[228]).
+Adding EN signal on $memory\sbuf[229]$6885 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[229]).
+Adding EN signal on $memory\sbuf[230]$6887 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[230]).
+Adding EN signal on $memory\sbuf[231]$6889 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[231]).
+Adding EN signal on $memory\sbuf[232]$6891 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[232]).
+Adding EN signal on $memory\sbuf[233]$6893 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[233]).
+Adding EN signal on $memory\sbuf[234]$6895 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[234]).
+Adding EN signal on $memory\sbuf[235]$6897 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[235]).
+Adding EN signal on $memory\sbuf[236]$6899 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[236]).
+Adding EN signal on $memory\sbuf[237]$6901 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[237]).
+Adding EN signal on $memory\sbuf[238]$6903 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[238]).
+Adding EN signal on $memory\sbuf[239]$6905 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[239]).
+Adding EN signal on $memory\sbuf[240]$6907 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[240]).
+Adding EN signal on $memory\sbuf[241]$6909 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[241]).
+Adding EN signal on $memory\sbuf[242]$6911 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[242]).
+Adding EN signal on $memory\sbuf[243]$6913 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[243]).
+Adding EN signal on $memory\sbuf[244]$6915 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[244]).
+Adding EN signal on $memory\sbuf[245]$6917 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[245]).
+Adding EN signal on $memory\sbuf[246]$6919 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[246]).
+Adding EN signal on $memory\sbuf[247]$6921 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[247]).
+Adding EN signal on $memory\sbuf[248]$6923 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[248]).
+Adding EN signal on $memory\sbuf[249]$6925 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[249]).
+Adding EN signal on $memory\sbuf[250]$6927 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[250]).
+Adding EN signal on $memory\sbuf[251]$6929 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[251]).
+Adding EN signal on $memory\sbuf[252]$6931 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[252]).
+Adding EN signal on $memory\sbuf[253]$6933 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[253]).
+Adding EN signal on $memory\sbuf[254]$6935 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[254]).
+Adding EN signal on $memory\sbuf[255]$6937 ($dff) from module softmax_row (D = \s_data, Q = \sbuf[255]).
+Adding EN signal on $memory\ebuf[0]$9368 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[0]).
+Adding EN signal on $memory\ebuf[1]$9370 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[1]).
+Adding EN signal on $memory\ebuf[2]$9372 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[2]).
+Adding EN signal on $memory\ebuf[3]$9374 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[3]).
+Adding EN signal on $memory\ebuf[4]$9376 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[4]).
+Adding EN signal on $memory\ebuf[5]$9378 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[5]).
+Adding EN signal on $memory\ebuf[6]$9380 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[6]).
+Adding EN signal on $memory\ebuf[7]$9382 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[7]).
+Adding EN signal on $memory\ebuf[8]$9384 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[8]).
+Adding EN signal on $memory\ebuf[9]$9386 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[9]).
+Adding EN signal on $memory\ebuf[10]$9388 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[10]).
+Adding EN signal on $memory\ebuf[11]$9390 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[11]).
+Adding EN signal on $memory\ebuf[12]$9392 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[12]).
+Adding EN signal on $memory\ebuf[13]$9394 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[13]).
+Adding EN signal on $memory\ebuf[14]$9396 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[14]).
+Adding EN signal on $memory\ebuf[15]$9398 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[15]).
+Adding EN signal on $memory\ebuf[16]$9400 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[16]).
+Adding EN signal on $memory\ebuf[17]$9402 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[17]).
+Adding EN signal on $memory\ebuf[18]$9404 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[18]).
+Adding EN signal on $memory\ebuf[19]$9406 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[19]).
+Adding EN signal on $memory\ebuf[20]$9408 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[20]).
+Adding EN signal on $memory\ebuf[21]$9410 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[21]).
+Adding EN signal on $memory\ebuf[22]$9412 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[22]).
+Adding EN signal on $memory\ebuf[23]$9414 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[23]).
+Adding EN signal on $memory\ebuf[24]$9416 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[24]).
+Adding EN signal on $memory\ebuf[25]$9418 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[25]).
+Adding EN signal on $memory\ebuf[26]$9420 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[26]).
+Adding EN signal on $memory\ebuf[27]$9422 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[27]).
+Adding EN signal on $memory\ebuf[28]$9424 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[28]).
+Adding EN signal on $memory\ebuf[29]$9426 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[29]).
+Adding EN signal on $memory\ebuf[30]$9428 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[30]).
+Adding EN signal on $memory\ebuf[31]$9430 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[31]).
+Adding EN signal on $memory\ebuf[32]$9432 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[32]).
+Adding EN signal on $memory\ebuf[33]$9434 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[33]).
+Adding EN signal on $memory\ebuf[34]$9436 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[34]).
+Adding EN signal on $memory\ebuf[35]$9438 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[35]).
+Adding EN signal on $memory\ebuf[36]$9440 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[36]).
+Adding EN signal on $memory\ebuf[37]$9442 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[37]).
+Adding EN signal on $memory\ebuf[38]$9444 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[38]).
+Adding EN signal on $memory\ebuf[39]$9446 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[39]).
+Adding EN signal on $memory\ebuf[40]$9448 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[40]).
+Adding EN signal on $memory\ebuf[41]$9450 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[41]).
+Adding EN signal on $memory\ebuf[42]$9452 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[42]).
+Adding EN signal on $memory\ebuf[43]$9454 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[43]).
+Adding EN signal on $memory\ebuf[44]$9456 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[44]).
+Adding EN signal on $memory\ebuf[45]$9458 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[45]).
+Adding EN signal on $memory\ebuf[46]$9460 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[46]).
+Adding EN signal on $memory\ebuf[47]$9462 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[47]).
+Adding EN signal on $memory\ebuf[48]$9464 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[48]).
+Adding EN signal on $memory\ebuf[49]$9466 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[49]).
+Adding EN signal on $memory\ebuf[50]$9468 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[50]).
+Adding EN signal on $memory\ebuf[51]$9470 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[51]).
+Adding EN signal on $memory\ebuf[52]$9472 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[52]).
+Adding EN signal on $memory\ebuf[53]$9474 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[53]).
+Adding EN signal on $memory\ebuf[54]$9476 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[54]).
+Adding EN signal on $memory\ebuf[55]$9478 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[55]).
+Adding EN signal on $memory\ebuf[56]$9480 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[56]).
+Adding EN signal on $memory\ebuf[57]$9482 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[57]).
+Adding EN signal on $memory\ebuf[58]$9484 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[58]).
+Adding EN signal on $memory\ebuf[59]$9486 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[59]).
+Adding EN signal on $memory\ebuf[60]$9488 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[60]).
+Adding EN signal on $memory\ebuf[61]$9490 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[61]).
+Adding EN signal on $memory\ebuf[62]$9492 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[62]).
+Adding EN signal on $memory\ebuf[63]$9494 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[63]).
+Adding EN signal on $memory\ebuf[64]$9496 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[64]).
+Adding EN signal on $memory\ebuf[65]$9498 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[65]).
+Adding EN signal on $memory\ebuf[66]$9500 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[66]).
+Adding EN signal on $memory\ebuf[67]$9502 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[67]).
+Adding EN signal on $memory\ebuf[68]$9504 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[68]).
+Adding EN signal on $memory\ebuf[69]$9506 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[69]).
+Adding EN signal on $memory\ebuf[70]$9508 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[70]).
+Adding EN signal on $memory\ebuf[71]$9510 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[71]).
+Adding EN signal on $memory\ebuf[72]$9512 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[72]).
+Adding EN signal on $memory\ebuf[73]$9514 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[73]).
+Adding EN signal on $memory\ebuf[74]$9516 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[74]).
+Adding EN signal on $memory\ebuf[75]$9518 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[75]).
+Adding EN signal on $memory\ebuf[76]$9520 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[76]).
+Adding EN signal on $memory\ebuf[77]$9522 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[77]).
+Adding EN signal on $memory\ebuf[78]$9524 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[78]).
+Adding EN signal on $memory\ebuf[79]$9526 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[79]).
+Adding EN signal on $memory\ebuf[80]$9528 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[80]).
+Adding EN signal on $memory\ebuf[81]$9530 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[81]).
+Adding EN signal on $memory\ebuf[82]$9532 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[82]).
+Adding EN signal on $memory\ebuf[83]$9534 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[83]).
+Adding EN signal on $memory\ebuf[84]$9536 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[84]).
+Adding EN signal on $memory\ebuf[85]$9538 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[85]).
+Adding EN signal on $memory\ebuf[86]$9540 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[86]).
+Adding EN signal on $memory\ebuf[87]$9542 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[87]).
+Adding EN signal on $memory\ebuf[88]$9544 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[88]).
+Adding EN signal on $memory\ebuf[89]$9546 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[89]).
+Adding EN signal on $memory\ebuf[90]$9548 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[90]).
+Adding EN signal on $memory\ebuf[91]$9550 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[91]).
+Adding EN signal on $memory\ebuf[92]$9552 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[92]).
+Adding EN signal on $memory\ebuf[93]$9554 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[93]).
+Adding EN signal on $memory\ebuf[94]$9556 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[94]).
+Adding EN signal on $memory\ebuf[95]$9558 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[95]).
+Adding EN signal on $memory\ebuf[96]$9560 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[96]).
+Adding EN signal on $memory\ebuf[97]$9562 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[97]).
+Adding EN signal on $memory\ebuf[98]$9564 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[98]).
+Adding EN signal on $memory\ebuf[99]$9566 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[99]).
+Adding EN signal on $memory\ebuf[100]$9568 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[100]).
+Adding EN signal on $memory\ebuf[101]$9570 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[101]).
+Adding EN signal on $memory\ebuf[102]$9572 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[102]).
+Adding EN signal on $memory\ebuf[103]$9574 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[103]).
+Adding EN signal on $memory\ebuf[104]$9576 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[104]).
+Adding EN signal on $memory\ebuf[105]$9578 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[105]).
+Adding EN signal on $memory\ebuf[106]$9580 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[106]).
+Adding EN signal on $memory\ebuf[107]$9582 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[107]).
+Adding EN signal on $memory\ebuf[108]$9584 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[108]).
+Adding EN signal on $memory\ebuf[109]$9586 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[109]).
+Adding EN signal on $memory\ebuf[110]$9588 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[110]).
+Adding EN signal on $memory\ebuf[111]$9590 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[111]).
+Adding EN signal on $memory\ebuf[112]$9592 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[112]).
+Adding EN signal on $memory\ebuf[113]$9594 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[113]).
+Adding EN signal on $memory\ebuf[114]$9596 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[114]).
+Adding EN signal on $memory\ebuf[115]$9598 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[115]).
+Adding EN signal on $memory\ebuf[116]$9600 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[116]).
+Adding EN signal on $memory\ebuf[117]$9602 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[117]).
+Adding EN signal on $memory\ebuf[118]$9604 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[118]).
+Adding EN signal on $memory\ebuf[119]$9606 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[119]).
+Adding EN signal on $memory\ebuf[120]$9608 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[120]).
+Adding EN signal on $memory\ebuf[121]$9610 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[121]).
+Adding EN signal on $memory\ebuf[122]$9612 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[122]).
+Adding EN signal on $memory\ebuf[123]$9614 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[123]).
+Adding EN signal on $memory\ebuf[124]$9616 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[124]).
+Adding EN signal on $memory\ebuf[125]$9618 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[125]).
+Adding EN signal on $memory\ebuf[126]$9620 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[126]).
+Adding EN signal on $memory\ebuf[127]$9622 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[127]).
+Adding EN signal on $memory\ebuf[128]$9624 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[128]).
+Adding EN signal on $memory\ebuf[129]$9626 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[129]).
+Adding EN signal on $memory\ebuf[130]$9628 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[130]).
+Adding EN signal on $memory\ebuf[131]$9630 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[131]).
+Adding EN signal on $memory\ebuf[132]$9632 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[132]).
+Adding EN signal on $memory\ebuf[133]$9634 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[133]).
+Adding EN signal on $memory\ebuf[134]$9636 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[134]).
+Adding EN signal on $memory\ebuf[135]$9638 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[135]).
+Adding EN signal on $memory\ebuf[136]$9640 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[136]).
+Adding EN signal on $memory\ebuf[137]$9642 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[137]).
+Adding EN signal on $memory\ebuf[138]$9644 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[138]).
+Adding EN signal on $memory\ebuf[139]$9646 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[139]).
+Adding EN signal on $memory\ebuf[140]$9648 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[140]).
+Adding EN signal on $memory\ebuf[141]$9650 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[141]).
+Adding EN signal on $memory\ebuf[142]$9652 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[142]).
+Adding EN signal on $memory\ebuf[143]$9654 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[143]).
+Adding EN signal on $memory\ebuf[144]$9656 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[144]).
+Adding EN signal on $memory\ebuf[145]$9658 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[145]).
+Adding EN signal on $memory\ebuf[146]$9660 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[146]).
+Adding EN signal on $memory\ebuf[147]$9662 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[147]).
+Adding EN signal on $memory\ebuf[148]$9664 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[148]).
+Adding EN signal on $memory\ebuf[149]$9666 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[149]).
+Adding EN signal on $memory\ebuf[150]$9668 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[150]).
+Adding EN signal on $memory\ebuf[151]$9670 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[151]).
+Adding EN signal on $memory\ebuf[152]$9672 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[152]).
+Adding EN signal on $memory\ebuf[153]$9674 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[153]).
+Adding EN signal on $memory\ebuf[154]$9676 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[154]).
+Adding EN signal on $memory\ebuf[155]$9678 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[155]).
+Adding EN signal on $memory\ebuf[156]$9680 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[156]).
+Adding EN signal on $memory\ebuf[157]$9682 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[157]).
+Adding EN signal on $memory\ebuf[158]$9684 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[158]).
+Adding EN signal on $memory\ebuf[159]$9686 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[159]).
+Adding EN signal on $memory\ebuf[160]$9688 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[160]).
+Adding EN signal on $memory\ebuf[161]$9690 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[161]).
+Adding EN signal on $memory\ebuf[162]$9692 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[162]).
+Adding EN signal on $memory\ebuf[163]$9694 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[163]).
+Adding EN signal on $memory\ebuf[164]$9696 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[164]).
+Adding EN signal on $memory\ebuf[165]$9698 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[165]).
+Adding EN signal on $memory\ebuf[166]$9700 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[166]).
+Adding EN signal on $memory\ebuf[167]$9702 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[167]).
+Adding EN signal on $memory\ebuf[168]$9704 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[168]).
+Adding EN signal on $memory\ebuf[169]$9706 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[169]).
+Adding EN signal on $memory\ebuf[170]$9708 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[170]).
+Adding EN signal on $memory\ebuf[171]$9710 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[171]).
+Adding EN signal on $memory\ebuf[172]$9712 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[172]).
+Adding EN signal on $memory\ebuf[173]$9714 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[173]).
+Adding EN signal on $memory\ebuf[174]$9716 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[174]).
+Adding EN signal on $memory\ebuf[175]$9718 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[175]).
+Adding EN signal on $memory\ebuf[176]$9720 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[176]).
+Adding EN signal on $memory\ebuf[177]$9722 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[177]).
+Adding EN signal on $memory\ebuf[178]$9724 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[178]).
+Adding EN signal on $memory\ebuf[179]$9726 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[179]).
+Adding EN signal on $memory\ebuf[180]$9728 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[180]).
+Adding EN signal on $memory\ebuf[181]$9730 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[181]).
+Adding EN signal on $memory\ebuf[182]$9732 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[182]).
+Adding EN signal on $memory\ebuf[183]$9734 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[183]).
+Adding EN signal on $memory\ebuf[184]$9736 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[184]).
+Adding EN signal on $memory\ebuf[185]$9738 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[185]).
+Adding EN signal on $memory\ebuf[186]$9740 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[186]).
+Adding EN signal on $memory\ebuf[187]$9742 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[187]).
+Adding EN signal on $memory\ebuf[188]$9744 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[188]).
+Adding EN signal on $memory\ebuf[189]$9746 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[189]).
+Adding EN signal on $memory\ebuf[190]$9748 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[190]).
+Adding EN signal on $memory\ebuf[191]$9750 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[191]).
+Adding EN signal on $memory\ebuf[192]$9752 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[192]).
+Adding EN signal on $memory\ebuf[193]$9754 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[193]).
+Adding EN signal on $memory\ebuf[194]$9756 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[194]).
+Adding EN signal on $memory\ebuf[195]$9758 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[195]).
+Adding EN signal on $memory\ebuf[196]$9760 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[196]).
+Adding EN signal on $memory\ebuf[197]$9762 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[197]).
+Adding EN signal on $memory\ebuf[198]$9764 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[198]).
+Adding EN signal on $memory\ebuf[199]$9766 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[199]).
+Adding EN signal on $memory\ebuf[200]$9768 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[200]).
+Adding EN signal on $memory\ebuf[201]$9770 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[201]).
+Adding EN signal on $memory\ebuf[202]$9772 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[202]).
+Adding EN signal on $memory\ebuf[203]$9774 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[203]).
+Adding EN signal on $memory\ebuf[204]$9776 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[204]).
+Adding EN signal on $memory\ebuf[205]$9778 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[205]).
+Adding EN signal on $memory\ebuf[206]$9780 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[206]).
+Adding EN signal on $memory\ebuf[207]$9782 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[207]).
+Adding EN signal on $memory\ebuf[208]$9784 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[208]).
+Adding EN signal on $memory\ebuf[209]$9786 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[209]).
+Adding EN signal on $memory\ebuf[210]$9788 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[210]).
+Adding EN signal on $memory\ebuf[211]$9790 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[211]).
+Adding EN signal on $memory\ebuf[212]$9792 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[212]).
+Adding EN signal on $memory\ebuf[213]$9794 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[213]).
+Adding EN signal on $memory\ebuf[214]$9796 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[214]).
+Adding EN signal on $memory\ebuf[215]$9798 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[215]).
+Adding EN signal on $memory\ebuf[216]$9800 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[216]).
+Adding EN signal on $memory\ebuf[217]$9802 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[217]).
+Adding EN signal on $memory\ebuf[218]$9804 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[218]).
+Adding EN signal on $memory\ebuf[219]$9806 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[219]).
+Adding EN signal on $memory\ebuf[220]$9808 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[220]).
+Adding EN signal on $memory\ebuf[221]$9810 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[221]).
+Adding EN signal on $memory\ebuf[222]$9812 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[222]).
+Adding EN signal on $memory\ebuf[223]$9814 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[223]).
+Adding EN signal on $memory\ebuf[224]$9816 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[224]).
+Adding EN signal on $memory\ebuf[225]$9818 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[225]).
+Adding EN signal on $memory\ebuf[226]$9820 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[226]).
+Adding EN signal on $memory\ebuf[227]$9822 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[227]).
+Adding EN signal on $memory\ebuf[228]$9824 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[228]).
+Adding EN signal on $memory\ebuf[229]$9826 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[229]).
+Adding EN signal on $memory\ebuf[230]$9828 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[230]).
+Adding EN signal on $memory\ebuf[231]$9830 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[231]).
+Adding EN signal on $memory\ebuf[232]$9832 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[232]).
+Adding EN signal on $memory\ebuf[233]$9834 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[233]).
+Adding EN signal on $memory\ebuf[234]$9836 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[234]).
+Adding EN signal on $memory\ebuf[235]$9838 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[235]).
+Adding EN signal on $memory\ebuf[236]$9840 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[236]).
+Adding EN signal on $memory\ebuf[237]$9842 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[237]).
+Adding EN signal on $memory\ebuf[238]$9844 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[238]).
+Adding EN signal on $memory\ebuf[239]$9846 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[239]).
+Adding EN signal on $memory\ebuf[240]$9848 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[240]).
+Adding EN signal on $memory\ebuf[241]$9850 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[241]).
+Adding EN signal on $memory\ebuf[242]$9852 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[242]).
+Adding EN signal on $memory\ebuf[243]$9854 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[243]).
+Adding EN signal on $memory\ebuf[244]$9856 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[244]).
+Adding EN signal on $memory\ebuf[245]$9858 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[245]).
+Adding EN signal on $memory\ebuf[246]$9860 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[246]).
+Adding EN signal on $memory\ebuf[247]$9862 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[247]).
+Adding EN signal on $memory\ebuf[248]$9864 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[248]).
+Adding EN signal on $memory\ebuf[249]$9866 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[249]).
+Adding EN signal on $memory\ebuf[250]$9868 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[250]).
+Adding EN signal on $memory\ebuf[251]$9870 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[251]).
+Adding EN signal on $memory\ebuf[252]$9872 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[252]).
+Adding EN signal on $memory\ebuf[253]$9874 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[253]).
+Adding EN signal on $memory\ebuf[254]$9876 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[254]).
+Adding EN signal on $memory\ebuf[255]$9878 ($dff) from module softmax_row (D = $0$memwr$\ebuf$rtl/softmax_row.sv:78$117_DATA[16:0]$138, Q = \ebuf[255]).
+
+7.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 1024 unused cells and 1024 unused wires.
+<suppressed ~1025 debug messages>
+
+7.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.21.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \softmax_row..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~1039 debug messages>
+
+7.21.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \softmax_row.
+Performed a total of 0 changes.
+
+7.21.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 4370 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Removed a total of 0 cells.
+
+7.21.22. Executing OPT_SHARE pass.
+
+7.21.23. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+
+7.21.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+
+7.21.26. Finished fast OPT passes. (There is nothing left to do.)
+
+7.22. Executing TECHMAP pass (map to technology primitives).
+
+7.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $dffe.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $sdffce.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$670c02bdf2c02360c72deaf543d10c35268f9d8f\_90_alu for cells of type $alu.
+Using template $paramod$e82d3fc1811c5751348a3964470632b35a435fc7\_90_alu for cells of type $alu.
+Using template $paramod$a04dd9d4d8b430140c4ff94b50470fb380fda2a0\_90_alu for cells of type $alu.
+Using template $paramod$ccf618b5fd4f262bca458b414af9b48a9c2c8c60\_90_alu for cells of type $alu.
+Using template $paramod$53700bbee849b2010ad0b60a61ccd204a10e24ca\_90_alu for cells of type $alu.
+Using template $paramod$6f67705c43e5e94c02b6ebb52209ce5aa5ade4c1\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$10ed987432f06055e5279101f9ec60a49861b43c\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $or.
+Using template $paramod$18758953033a248684fca091132383c69e9b5bef\_90_alu for cells of type $alu.
+Using template $paramod$constmap:586cb701bdbf9cf16b6a426b456e6b3682c970cf$paramod$a38ca63589d5073c040497f4afd2c2746e4720be\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shr.
+Using template $paramod$dd72d6c1b955d6e8943117253f03937fe35dd2e0\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \diff * { 1'0 \cfg_mult } (33x32 bits, signed)
+  add $shl$rtl/softmax_row.sv:38$123_Y (64 bits, unsigned)
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $sdff.
+Using extmapper simplemap for cells of type $sdffe.
+Using template $paramod$constmap:ebb75a09738fda28d6341f1ea37ff3caff984f9d$paramod$d41de62534412f5316e8f9119bdaee74a0b5cf76\_90_shift_ops_shr_shl_sshl_sshr for cells of type $shl.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $pmux.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $dff.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011001 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001001 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000110 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100001 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100001 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~8812 debug messages>
+
+7.23. Executing OPT pass (performing simple optimizations).
+
+7.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~4594 debug messages>
+
+7.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 56483 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 55869 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 55463 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 55158 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 55001 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54824 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54700 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54638 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54577 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54520 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54485 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54450 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54438 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54431 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54421 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54417 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54412 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54411 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 54410 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~6219 debug messages>
+Removed a total of 2073 cells.
+
+7.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 340 unused cells and 1196 unused wires.
+<suppressed ~341 debug messages>
+
+7.23.5. Finished fast OPT passes.
+
+7.24. Executing ABC pass (technology mapping using ABC).
+
+7.24.1. Extracting gate netlist of module `\softmax_row' to `<abc-temp-dir>/input.blif'..
+
+7.24.1.1. Executed ABC.
+Extracted 32642 gates and 54086 wires to a netlist network with 21442 inputs and 1182 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+7.24.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:    11189
+ABC RESULTS:            ANDNOT cells:     1969
+ABC RESULTS:               MUX cells:     7961
+ABC RESULTS:              NAND cells:    20890
+ABC RESULTS:               NOR cells:     1002
+ABC RESULTS:               NOT cells:       60
+ABC RESULTS:                OR cells:     8065
+ABC RESULTS:             ORNOT cells:     4262
+ABC RESULTS:              XNOR cells:      412
+ABC RESULTS:               XOR cells:     2263
+ABC RESULTS:        internal signals:    31462
+ABC RESULTS:           input signals:    21442
+ABC RESULTS:          output signals:     1182
+Removing temp directory.
+Removing global temp directory.
+
+7.25. Executing OPT pass (performing simple optimizations).
+
+7.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module softmax_row.
+<suppressed ~1257 debug messages>
+
+7.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\softmax_row'.
+Computing hashes of 79501 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+Computing hashes of 79500 cells of `\softmax_row'.
+Finding duplicate cells in `\softmax_row'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+7.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \softmax_row..
+Removed 0 unused cells and 25684 unused wires.
+<suppressed ~4 debug messages>
+
+7.25.5. Finished fast OPT passes.
+
+7.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `softmax_row'. Setting top module to softmax_row.
+
+7.26.1. Analyzing design hierarchy..
+Top module:  \softmax_row
+
+7.26.2. Analyzing design hierarchy..
+Top module:  \softmax_row
+Removed 0 unused modules.
+
+7.27. Printing statistics.
+
+=== softmax_row ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    59058 wires
+    79821 wire bits
+     1063 public wires
+    21704 public wire bits
+       16 ports
+      144 port bits
+    79500 cells
+     1968   $_ANDNOT_
+    11189   $_AND_
+    21307   $_DFFE_PP_
+        8   $_DFF_P_
+     7961   $_MUX_
+    20890   $_NAND_
+     1002   $_NOR_
+       60   $_NOT_
+     4262   $_ORNOT_
+     8065   $_OR_
+       56   $_SDFFCE_PN0P_
+        1   $_SDFFCE_PN1P_
+       47   $_SDFFCE_PP0P_
+        1   $_SDFFCE_PP1P_
+        3   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+      412   $_XNOR_
+     2263   $_XOR_
+        1   $scopeinfo
+
+7.28. Executing CHECK pass (checking for obvious problems).
+Checking module softmax_row...
+Found and reported 0 problems.
+
+8. Printing statistics.
+
+=== softmax_row ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    59058 wires
+    79821 wire bits
+     1063 public wires
+    21704 public wire bits
+       16 ports
+      144 port bits
+    79500 cells
+     1968   $_ANDNOT_
+    11189   $_AND_
+    21307   $_DFFE_PP_
+        8   $_DFF_P_
+     7961   $_MUX_
+    20890   $_NAND_
+     1002   $_NOR_
+       60   $_NOT_
+     4262   $_ORNOT_
+     8065   $_OR_
+       56   $_SDFFCE_PN0P_
+        1   $_SDFFCE_PN1P_
+       47   $_SDFFCE_PP0P_
+        1   $_SDFFCE_PP1P_
+        3   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+      412   $_XNOR_
+     2263   $_XOR_
+        1   $scopeinfo
+
+End of script. Logfile hash: f4d64c41d7, time: 11.90s, user: 2.85s, system: 0.19s, MEM: 418.44 MB peak
+Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+Time spent: 78% 1x abc (10 sec), 4% 43x opt_clean (0 sec), ...

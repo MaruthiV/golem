@@ -1,0 +1,1361 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv rtl/gelu_lut.sv; synth -top rmsnorm -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/divu.sv
+Parsing SystemVerilog input from `rtl/divu.sv' to AST representation.
+Generating RTLIL representation for module `\divu'.
+Successfully finished Verilog frontend.
+
+3. Executing Verilog-2005 frontend: rtl/matmul_row.sv
+Parsing SystemVerilog input from `rtl/matmul_row.sv' to AST representation.
+Generating RTLIL representation for module `\matmul_row'.
+Successfully finished Verilog frontend.
+
+4. Executing Verilog-2005 frontend: rtl/rmsnorm.sv
+Parsing SystemVerilog input from `rtl/rmsnorm.sv' to AST representation.
+Generating RTLIL representation for module `\rmsnorm'.
+Successfully finished Verilog frontend.
+
+5. Executing Verilog-2005 frontend: rtl/softmax_row.sv
+Parsing SystemVerilog input from `rtl/softmax_row.sv' to AST representation.
+Generating RTLIL representation for module `\softmax_row'.
+Successfully finished Verilog frontend.
+
+6. Executing Verilog-2005 frontend: rtl/gelu_lut.sv
+Parsing SystemVerilog input from `rtl/gelu_lut.sv' to AST representation.
+Generating RTLIL representation for module `\gelu_lut'.
+Successfully finished Verilog frontend.
+
+7. Executing SYNTH pass.
+
+7.1. Executing HIERARCHY pass (managing design hierarchy).
+
+7.1.1. Analyzing design hierarchy..
+Top module:  \rmsnorm
+Used module:     \requant
+Used module:     \divu
+Parameter \DW = 27
+Parameter \VW = 13
+
+7.1.2. Executing AST frontend in derive mode using pre-parsed AST for module `\divu'.
+Parameter \DW = 27
+Parameter \VW = 13
+Generating RTLIL representation for module `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu'.
+
+7.1.3. Analyzing design hierarchy..
+Top module:  \rmsnorm
+Used module:     \requant
+Used module:     $paramod$963325a637606c32e418fe82840d30402b740bf3\divu
+
+7.1.4. Analyzing design hierarchy..
+Top module:  \rmsnorm
+Used module:     \requant
+Used module:     $paramod$963325a637606c32e418fe82840d30402b740bf3\divu
+Removing unused module `\gelu_lut'.
+Removing unused module `\softmax_row'.
+Removing unused module `\matmul_row'.
+Removing unused module `\divu'.
+Removed 4 unused modules.
+
+7.2. Executing PROC pass (convert processes to netlists).
+
+7.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+7.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 2 switch rules as full_case in process $proc$rtl/divu.sv:21$178 in module $paramod$963325a637606c32e418fe82840d30402b740bf3\divu.
+Marked 3 switch rules as full_case in process $proc$rtl/rmsnorm.sv:63$97 in module rmsnorm.
+Marked 2 switch rules as full_case in process $proc$rtl/rmsnorm.sv:52$93 in module rmsnorm.
+Marked 2 switch rules as full_case in process $proc$rtl/requant.sv:14$1 in module requant.
+Removed a total of 0 dead cases.
+
+7.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 4 assignments to connections.
+
+7.2.4. Executing PROC_INIT pass (extract init attributes).
+
+7.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+7.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~16 debug messages>
+
+7.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+     1/6: $0\done[0:0]
+     2/6: $0\count[6:0]
+     3/6: $0\rem[13:0]
+     4/6: $0\num[26:0]
+     5/6: $0\q_r[26:0]
+     6/6: $0\busy[0:0]
+Creating decoders for process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+     1/13: $0\div_start[0:0]
+     2/13: $0\out_valid[0:0]
+     3/13: $0\inv[20:0]
+     4/13: $0\sq_count[3:0]
+     5/13: $0\root[12:0]
+     6/13: $0\rad[25:0]
+     7/13: $0\msq[13:0]
+     8/13: $0\n32[31:0]
+     9/13: $0\idx[7:0]
+    10/13: $0\state[2:0]
+    11/13: $0\out_data[7:0]
+    12/13: $0\out_idx[7:0]
+    13/13: $0\rem[17:0]
+Creating decoders for process `\rmsnorm.$proc$rtl/rmsnorm.sv:52$93'.
+     1/2: $2\acc_sat[31:0]
+     2/2: $1\acc_sat[31:0]
+Creating decoders for process `\requant.$proc$rtl/requant.sv:14$1'.
+     1/2: $2\q[7:0]
+     2/2: $1\q[7:0]
+
+7.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\rmsnorm.\acc_sat' from process `\rmsnorm.$proc$rtl/rmsnorm.sv:52$93'.
+No latch inferred for signal `\requant.\q' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\prod' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\rounded' from process `\requant.$proc$rtl/requant.sv:14$1'.
+
+7.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\busy' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$404' with positive edge clock.
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\done' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$405' with positive edge clock.
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\q_r' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$406' with positive edge clock.
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\num' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$407' with positive edge clock.
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\rem' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$408' with positive edge clock.
+Creating register for signal `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.\count' using process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+  created $dff cell `$procdff$409' with positive edge clock.
+Creating register for signal `\rmsnorm.\rem' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$410' with positive edge clock.
+Creating register for signal `\rmsnorm.\out_valid' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$411' with positive edge clock.
+Creating register for signal `\rmsnorm.\out_idx' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$412' with positive edge clock.
+Creating register for signal `\rmsnorm.\out_data' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$413' with positive edge clock.
+Creating register for signal `\rmsnorm.\state' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$414' with positive edge clock.
+Creating register for signal `\rmsnorm.\idx' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$415' with positive edge clock.
+Creating register for signal `\rmsnorm.\n32' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$416' with positive edge clock.
+Creating register for signal `\rmsnorm.\msq' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$417' with positive edge clock.
+Creating register for signal `\rmsnorm.\rad' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$418' with positive edge clock.
+Creating register for signal `\rmsnorm.\root' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$419' with positive edge clock.
+Creating register for signal `\rmsnorm.\sq_count' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$420' with positive edge clock.
+Creating register for signal `\rmsnorm.\inv' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$421' with positive edge clock.
+Creating register for signal `\rmsnorm.\div_start' using process `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+  created $dff cell `$procdff$422' with positive edge clock.
+
+7.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+7.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 4 empty switches in `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+Removing empty process `$paramod$963325a637606c32e418fe82840d30402b740bf3\divu.$proc$rtl/divu.sv:21$178'.
+Found and cleaned up 8 empty switches in `\rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+Removing empty process `rmsnorm.$proc$rtl/rmsnorm.sv:63$97'.
+Found and cleaned up 2 empty switches in `\rmsnorm.$proc$rtl/rmsnorm.sv:52$93'.
+Removing empty process `rmsnorm.$proc$rtl/rmsnorm.sv:52$93'.
+Found and cleaned up 2 empty switches in `\requant.$proc$rtl/requant.sv:14$1'.
+Removing empty process `requant.$proc$rtl/requant.sv:14$1'.
+Cleaned up 16 empty switches.
+
+7.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$963325a637606c32e418fe82840d30402b740bf3\divu.
+<suppressed ~1 debug messages>
+Optimizing module rmsnorm.
+<suppressed ~9 debug messages>
+Optimizing module requant.
+
+7.3. Executing CHECK pass (checking for obvious problems).
+Checking module $paramod$963325a637606c32e418fe82840d30402b740bf3\divu...
+Checking module rmsnorm...
+Checking module requant...
+Found and reported 0 problems.
+
+7.4. Executing FLATTEN pass (flatten design).
+Deleting now unused module $paramod$963325a637606c32e418fe82840d30402b740bf3\divu.
+Deleting now unused module requant.
+<suppressed ~2 debug messages>
+
+7.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 0 unused cells and 94 unused wires.
+<suppressed ~1 debug messages>
+
+7.7. Executing CHECK pass (checking for obvious problems).
+Checking module rmsnorm...
+Found and reported 0 problems.
+
+7.8. Executing OPT pass (performing simple optimizations).
+
+7.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 149 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 124 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+<suppressed ~75 debug messages>
+Removed a total of 25 cells.
+
+7.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\inv_div.$procmux$230: \inv_div.busy -> 1'0
+      Replacing known input bits on port A of cell $flatten\inv_div.$procmux$228: \inv_div.busy -> 1'1
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $procmux$390.
+    dead port 1/2 on $mux $flatten\rq.$procmux$399.
+Removed 2 multiplexer ports.
+<suppressed ~87 debug messages>
+
+7.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    New ctrl vector for $pmux cell $procmux$323: { $auto$opt_reduce.cc:137:opt_pmux$426 $procmux$346_CMP $procmux$350_CMP $procmux$360_CMP }
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 0 unused cells and 27 unused wires.
+<suppressed ~1 debug messages>
+
+7.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~85 debug messages>
+
+7.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.9. Executing FSM pass (extract and optimize FSM).
+
+7.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+Not marking rmsnorm.state as FSM state register:
+    Users of register don't seem to benefit from recoding.
+
+7.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+7.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+7.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+7.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+7.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+7.10. Executing OPT pass (performing simple optimizations).
+
+7.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~85 debug messages>
+
+7.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$422 ($dff) from module rmsnorm (D = $procmux$242_Y, Q = \div_start, rval = 1'0).
+Adding EN signal on $procdff$421 ($dff) from module rmsnorm (D = $procmux$259_Y, Q = \inv).
+Adding EN signal on $procdff$420 ($dff) from module rmsnorm (D = $procmux$272_Y, Q = \sq_count).
+Adding EN signal on $procdff$419 ($dff) from module rmsnorm (D = $procmux$282_Y, Q = \root).
+Adding EN signal on $flatten\inv_div.$procdff$409 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$199_Y, Q = \inv_div.count).
+Adding SRST signal on $auto$ff.cc:337:slice$457 ($dffe) from module rmsnorm (D = $flatten\inv_div.$procmux$196_Y, Q = \inv_div.count, rval = 7'0011011).
+Adding EN signal on $procdff$410 ($dff) from module rmsnorm (D = $procmux$380_Y, Q = \rem).
+Adding SRST signal on $procdff$411 ($dff) from module rmsnorm (D = $procmux$250_Y, Q = \out_valid, rval = 1'0).
+Adding EN signal on $procdff$412 ($dff) from module rmsnorm (D = \idx, Q = \out_idx).
+Adding EN signal on $procdff$413 ($dff) from module rmsnorm (D = \q_out, Q = \out_data).
+Adding SRST signal on $auto$ff.cc:337:slice$478 ($dffe) from module rmsnorm (D = \rq.rounded [0], Q = \out_data [0], rval = 1'1).
+Adding SRST signal on $auto$ff.cc:337:slice$478 ($dffe) from module rmsnorm (D = $flatten\rq.$2\q[7:0] [7:1], Q = \out_data [7:1], rval = 7'0111111).
+Adding SRST signal on $procdff$414 ($dff) from module rmsnorm (D = $procmux$342_Y, Q = \state, rval = 3'000).
+Adding EN signal on $auto$ff.cc:337:slice$487 ($sdff) from module rmsnorm (D = $procmux$342_Y, Q = \state).
+Adding EN signal on $procdff$415 ($dff) from module rmsnorm (D = $procmux$323_Y, Q = \idx).
+Adding EN signal on $procdff$416 ($dff) from module rmsnorm (D = $procmux$314_Y, Q = \n32).
+Adding EN signal on $procdff$417 ($dff) from module rmsnorm (D = $add$rtl/rmsnorm.sv:81$102_Y [21:8], Q = \msq).
+Adding EN signal on $procdff$418 ($dff) from module rmsnorm (D = $procmux$292_Y, Q = \rad).
+Adding EN signal on $flatten\inv_div.$procdff$408 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$207_Y, Q = \inv_div.rem).
+Adding SRST signal on $auto$ff.cc:337:slice$535 ($dffe) from module rmsnorm (D = $flatten\inv_div.$procmux$204_Y, Q = \inv_div.rem, rval = 14'00000000000000).
+Adding EN signal on $flatten\inv_div.$procdff$407 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$215_Y, Q = \inv_div.num).
+Adding EN signal on $flatten\inv_div.$procdff$406 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$223_Y, Q = \inv_div.q_r).
+Adding SRST signal on $auto$ff.cc:337:slice$550 ($dffe) from module rmsnorm (D = $flatten\inv_div.$procmux$220_Y, Q = \inv_div.q_r, rval = 27'000000000000000000000000000).
+Adding SRST signal on $flatten\inv_div.$procdff$405 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$186_Y, Q = \inv_div.done, rval = 1'0).
+Adding SRST signal on $flatten\inv_div.$procdff$404 ($dff) from module rmsnorm (D = $flatten\inv_div.$procmux$233_Y, Q = \inv_div.busy, rval = 1'0).
+
+7.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 29 unused cells and 30 unused wires.
+<suppressed ~32 debug messages>
+
+7.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+<suppressed ~11 debug messages>
+
+7.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+7.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 151 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 127 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 120 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+<suppressed ~93 debug messages>
+Removed a total of 31 cells.
+
+7.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 0 unused cells and 31 unused wires.
+<suppressed ~1 debug messages>
+
+7.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.10.16. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.10.17. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+7.10.18. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.10.19. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 120 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.10.20. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.10.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.10.22. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.10.23. Finished fast OPT passes. (There is nothing left to do.)
+
+7.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 27) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 1 bits (of 14) from FF cell rmsnorm.$auto$ff.cc:337:slice$542 ($sdffce).
+Removed top 2 bits (of 18) from FF cell rmsnorm.$auto$ff.cc:337:slice$465 ($dffe).
+Removed top 1 bits (of 2) from port B of cell rmsnorm.$auto$opt_dff.cc:320:make_patterns_logic$438 ($ne).
+Removed top 3 bits (of 18) from port B of cell rmsnorm.$ge$rtl/rmsnorm.sv:34$89 ($ge).
+Removed top 15 bits (of 27) from port B of cell rmsnorm.$add$rtl/rmsnorm.sv:38$90 ($add).
+Removed top 7 bits (of 29) from port B of cell rmsnorm.$mul$rtl/rmsnorm.sv:50$91 ($mul).
+Removed top 5 bits (of 37) from port B of cell rmsnorm.$gt$rtl/rmsnorm.sv:53$94 ($gt).
+Removed top 5 bits (of 37) from port B of cell rmsnorm.$lt$rtl/rmsnorm.sv:54$95 ($lt).
+Removed top 16 bits (of 32) from port Y of cell rmsnorm.$mul$rtl/rmsnorm.sv:76$98 ($mul).
+Removed top 24 bits (of 32) from port B of cell rmsnorm.$add$rtl/rmsnorm.sv:82$104 ($add).
+Removed top 10 bits (of 32) from port Y of cell rmsnorm.$add$rtl/rmsnorm.sv:82$104 ($add).
+Removed top 10 bits (of 32) from port A of cell rmsnorm.$add$rtl/rmsnorm.sv:82$104 ($add).
+Removed top 3 bits (of 18) from port B of cell rmsnorm.$sub$rtl/rmsnorm.sv:89$107 ($sub).
+Removed top 3 bits (of 4) from port B of cell rmsnorm.$sub$rtl/rmsnorm.sv:92$110 ($sub).
+Removed top 3 bits (of 4) from port B of cell rmsnorm.$eq$rtl/rmsnorm.sv:93$111 ($eq).
+Removed top 7 bits (of 8) from port B of cell rmsnorm.$add$rtl/rmsnorm.sv:114$113 ($add).
+Removed top 1 bits (of 3) from mux cell rmsnorm.$procmux$348 ($mux).
+Removed top 2 bits (of 3) from port B of cell rmsnorm.$procmux$357_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell rmsnorm.$procmux$381_CMP0 ($eq).
+Removed top 2 bits (of 18) from mux cell rmsnorm.$procmux$380 ($pmux).
+Removed top 1 bits (of 3) from port B of cell rmsnorm.$procmux$382_CMP0 ($eq).
+Removed top 1 bits (of 27) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 14) from mux cell rmsnorm.$flatten\inv_div.$procmux$204 ($mux).
+Removed top 6 bits (of 7) from port B of cell rmsnorm.$flatten\inv_div.$eq$rtl/divu.sv:36$185 ($eq).
+Removed top 6 bits (of 7) from port B of cell rmsnorm.$flatten\inv_div.$sub$rtl/divu.sv:35$184 ($sub).
+Removed top 1 bits (of 14) from mux cell rmsnorm.$flatten\inv_div.$ternary$rtl/divu.sv:32$182 ($mux).
+Removed top 1 bits (of 14) from port B of cell rmsnorm.$flatten\inv_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 14) from port Y of cell rmsnorm.$flatten\inv_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 14) from port A of cell rmsnorm.$flatten\inv_div.$sub$rtl/divu.sv:32$181 ($sub).
+Removed top 1 bits (of 14) from port B of cell rmsnorm.$flatten\inv_div.$ge$rtl/divu.sv:19$177 ($ge).
+Removed top 56 bits (of 64) from port B of cell rmsnorm.$flatten\rq.$lt$rtl/requant.sv:18$8 ($lt).
+Removed top 56 bits (of 64) from port B of cell rmsnorm.$flatten\rq.$gt$rtl/requant.sv:17$7 ($gt).
+Removed top 62 bits (of 64) from port A of cell rmsnorm.$flatten\rq.$sshl$rtl/requant.sv:16$4 ($sshl).
+Removed top 5 bits (of 6) from port B of cell rmsnorm.$flatten\rq.$sub$rtl/requant.sv:16$3 ($sub).
+Removed top 32 bits (of 64) from port B of cell rmsnorm.$flatten\rq.$mul$rtl/requant.sv:15$2 ($mul).
+Removed top 1 bits (of 26) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 2 bits (of 18) from mux cell rmsnorm.$ternary$rtl/rmsnorm.sv:89$108 ($mux).
+Removed top 1 bits (of 26) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 25) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 2 bits (of 18) from port Y of cell rmsnorm.$sub$rtl/rmsnorm.sv:89$107 ($sub).
+Removed top 2 bits (of 18) from port A of cell rmsnorm.$sub$rtl/rmsnorm.sv:89$107 ($sub).
+Removed top 1 bits (of 25) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 24) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 1 bits (of 24) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 23) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 1 bits (of 23) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 22) from FF cell rmsnorm.$auto$ff.cc:337:slice$557 ($sdffce).
+Removed top 1 bits (of 22) from mux cell rmsnorm.$flatten\inv_div.$procmux$220 ($mux).
+Removed top 1 bits (of 14) from wire rmsnorm.$flatten\inv_div.$sub$rtl/divu.sv:32$181_Y.
+Removed top 2 bits (of 18) from wire rmsnorm.$procmux$380_Y.
+Removed top 1 bits (of 14) from wire rmsnorm.$flatten\inv_div.$procmux$204_Y.
+Removed top 1 bits (of 14) from wire rmsnorm.$flatten\inv_div.$ternary$rtl/divu.sv:32$182_Y.
+Removed top 2 bits (of 18) from wire rmsnorm.$ternary$rtl/rmsnorm.sv:89$108_Y.
+Removed top 2 bits (of 18) from wire rmsnorm.$sub$rtl/rmsnorm.sv:89$107_Y.
+Removed top 6 bits (of 27) from wire rmsnorm.$flatten\inv_div.$procmux$220_Y.
+Removed top 10 bits (of 32) from wire rmsnorm.$add$rtl/rmsnorm.sv:81$102_Y.
+Removed top 1 bits (of 3) from wire rmsnorm.$procmux$348_Y.
+Removed top 6 bits (of 27) from wire rmsnorm.div_q.
+Removed top 2 bits (of 18) from wire rmsnorm.rem.
+
+7.12. Executing PEEPOPT pass (run peephole optimizers).
+
+7.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 0 unused cells and 11 unused wires.
+<suppressed ~1 debug messages>
+
+7.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module rmsnorm:
+  creating $macc model for $flatten\rq.$sub$rtl/requant.sv:16$3 ($sub).
+  creating $macc model for $flatten\rq.$add$rtl/requant.sv:16$5 ($add).
+  creating $macc model for $flatten\inv_div.$sub$rtl/divu.sv:32$181 ($sub).
+  creating $macc model for $flatten\inv_div.$sub$rtl/divu.sv:35$184 ($sub).
+  creating $macc model for $add$rtl/rmsnorm.sv:114$113 ($add).
+  creating $macc model for $sub$rtl/rmsnorm.sv:92$110 ($sub).
+  creating $macc model for $sub$rtl/rmsnorm.sv:89$107 ($sub).
+  creating $macc model for $add$rtl/rmsnorm.sv:82$104 ($add).
+  creating $macc model for $add$rtl/rmsnorm.sv:76$99 ($add).
+  creating $macc model for $mul$rtl/rmsnorm.sv:76$98 ($mul).
+  creating $macc model for $flatten\rq.$mul$rtl/requant.sv:15$2 ($mul).
+  creating $macc model for $mul$rtl/rmsnorm.sv:51$92 ($mul).
+  creating $macc model for $mul$rtl/rmsnorm.sv:50$91 ($mul).
+  creating $macc model for $add$rtl/rmsnorm.sv:38$90 ($add).
+  merging $macc model for $flatten\rq.$mul$rtl/requant.sv:15$2 into $flatten\rq.$add$rtl/requant.sv:16$5.
+  creating $alu model for $macc $add$rtl/rmsnorm.sv:38$90.
+  creating $alu model for $macc $add$rtl/rmsnorm.sv:76$99.
+  creating $alu model for $macc $add$rtl/rmsnorm.sv:82$104.
+  creating $alu model for $macc $sub$rtl/rmsnorm.sv:89$107.
+  creating $alu model for $macc $sub$rtl/rmsnorm.sv:92$110.
+  creating $alu model for $macc $add$rtl/rmsnorm.sv:114$113.
+  creating $alu model for $macc $flatten\inv_div.$sub$rtl/divu.sv:35$184.
+  creating $alu model for $macc $flatten\inv_div.$sub$rtl/divu.sv:32$181.
+  creating $alu model for $macc $flatten\rq.$sub$rtl/requant.sv:16$3.
+  creating $macc cell for $mul$rtl/rmsnorm.sv:76$98: $auto$alumacc.cc:382:replace_macc$575
+  creating $macc cell for $mul$rtl/rmsnorm.sv:51$92: $auto$alumacc.cc:382:replace_macc$576
+  creating $macc cell for $flatten\rq.$add$rtl/requant.sv:16$5: $auto$alumacc.cc:382:replace_macc$577
+  creating $macc cell for $mul$rtl/rmsnorm.sv:50$91: $auto$alumacc.cc:382:replace_macc$578
+  creating $alu model for $flatten\rq.$gt$rtl/requant.sv:17$7 ($gt): new $alu
+  creating $alu model for $flatten\rq.$lt$rtl/requant.sv:18$8 ($lt): new $alu
+  creating $alu model for $lt$rtl/rmsnorm.sv:54$95 ($lt): new $alu
+  creating $alu model for $gt$rtl/rmsnorm.sv:53$94 ($gt): new $alu
+  creating $alu model for $flatten\inv_div.$ge$rtl/divu.sv:19$177 ($ge): new $alu
+  creating $alu model for $ge$rtl/rmsnorm.sv:34$89 ($ge): new $alu
+  creating $alu model for $flatten\inv_div.$eq$rtl/divu.sv:36$185 ($eq): merged with $flatten\inv_div.$sub$rtl/divu.sv:35$184.
+  creating $alu model for $eq$rtl/rmsnorm.sv:93$111 ($eq): merged with $sub$rtl/rmsnorm.sv:92$110.
+  creating $alu cell for $ge$rtl/rmsnorm.sv:34$89: $auto$alumacc.cc:512:replace_alu$585
+  creating $alu cell for $flatten\inv_div.$ge$rtl/divu.sv:19$177: $auto$alumacc.cc:512:replace_alu$598
+  creating $alu cell for $gt$rtl/rmsnorm.sv:53$94: $auto$alumacc.cc:512:replace_alu$611
+  creating $alu cell for $lt$rtl/rmsnorm.sv:54$95: $auto$alumacc.cc:512:replace_alu$624
+  creating $alu cell for $flatten\rq.$lt$rtl/requant.sv:18$8: $auto$alumacc.cc:512:replace_alu$631
+  creating $alu cell for $flatten\rq.$gt$rtl/requant.sv:17$7: $auto$alumacc.cc:512:replace_alu$638
+  creating $alu cell for $flatten\rq.$sub$rtl/requant.sv:16$3: $auto$alumacc.cc:512:replace_alu$651
+  creating $alu cell for $flatten\inv_div.$sub$rtl/divu.sv:32$181: $auto$alumacc.cc:512:replace_alu$654
+  creating $alu cell for $flatten\inv_div.$sub$rtl/divu.sv:35$184, $flatten\inv_div.$eq$rtl/divu.sv:36$185: $auto$alumacc.cc:512:replace_alu$657
+  creating $alu cell for $add$rtl/rmsnorm.sv:114$113: $auto$alumacc.cc:512:replace_alu$662
+  creating $alu cell for $sub$rtl/rmsnorm.sv:92$110, $eq$rtl/rmsnorm.sv:93$111: $auto$alumacc.cc:512:replace_alu$665
+  creating $alu cell for $sub$rtl/rmsnorm.sv:89$107: $auto$alumacc.cc:512:replace_alu$670
+  creating $alu cell for $add$rtl/rmsnorm.sv:82$104: $auto$alumacc.cc:512:replace_alu$673
+  creating $alu cell for $add$rtl/rmsnorm.sv:76$99: $auto$alumacc.cc:512:replace_alu$676
+  creating $alu cell for $add$rtl/rmsnorm.sv:38$90: $auto$alumacc.cc:512:replace_alu$679
+  created 15 $alu and 4 $macc cells.
+
+7.15. Executing SHARE pass (SAT-based resource sharing).
+
+7.16. Executing OPT pass (performing simple optimizations).
+
+7.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+<suppressed ~2 debug messages>
+
+7.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 144 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+7.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 144 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 2 unused cells and 10 unused wires.
+<suppressed ~4 debug messages>
+
+7.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~54 debug messages>
+
+7.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 142 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+7.17. Executing MEMORY pass.
+
+7.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+7.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+7.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+7.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+7.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+7.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+7.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+7.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+7.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.19. Executing OPT pass (performing simple optimizations).
+
+7.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+<suppressed ~98 debug messages>
+
+7.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 126 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 125 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+<suppressed ~3 debug messages>
+Removed a total of 1 cells.
+
+7.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$432 ($dffe) from module rmsnorm (D = $procmux$257_Y, Q = \inv, rval = 21'000000000000000000000).
+Adding SRST signal on $auto$ff.cc:337:slice$443 ($dffe) from module rmsnorm (D = $sub$rtl/rmsnorm.sv:92$110_Y, Q = \sq_count, rval = 4'1101).
+Adding SRST signal on $auto$ff.cc:337:slice$450 ($dffe) from module rmsnorm (D = { \root [11:0] \ge }, Q = \root, rval = 13'0000000000000).
+Adding SRST signal on $auto$ff.cc:337:slice$465 ($dffe) from module rmsnorm (D = $auto$wreduce.cc:514:run$568 [15:0], Q = \rem, rval = 16'0000000000000000).
+Adding SRST signal on $auto$ff.cc:337:slice$514 ($dffe) from module rmsnorm (D = $add$rtl/rmsnorm.sv:76$99_Y, Q = \n32, rval = 0).
+Adding SRST signal on $auto$ff.cc:337:slice$528 ($dffe) from module rmsnorm (D = \rad [9:0], Q = \rad [11:2], rval = 10'0000000000).
+
+7.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 5 unused cells and 40 unused wires.
+<suppressed ~6 debug messages>
+
+7.19.5. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.6. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.19.7. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 121 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.19.8. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$543 ($dffe) from module rmsnorm (D = \root [1], Q = \inv_div.num [0], rval = 1'0).
+Adding SRST signal on $auto$ff.cc:337:slice$543 ($dffe) from module rmsnorm (D = \inv_div.num [25:11], Q = \inv_div.num [26:12], rval = 15'100000000000000).
+
+7.19.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.19.10. Rerunning OPT passes. (Removed registers in this run.)
+
+7.19.11. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.19.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.19.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.19.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.19.15. Finished fast OPT passes.
+
+7.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+7.21. Executing OPT pass (performing simple optimizations).
+
+7.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~18 debug messages>
+
+7.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    New ctrl vector for $pmux cell $procmux$342: { $procmux$260_CMP $procmux$245_CMP $procmux$273_CMP $procmux$274_CMP $procmux$315_CMP $procmux$318_CMP }
+    New ctrl vector for $pmux cell $procmux$323: $auto$opt_reduce.cc:137:opt_pmux$726
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 12'000000000000 }, B={ \rad [23:0] 2'00 }, Y=$procmux$292_Y
+      New ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 10'0000000000 }, B=\rad [23:0], Y=$procmux$292_Y [25:2]
+      New connections: $procmux$292_Y [1:0] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 3 changes.
+
+7.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 124 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.6. Executing OPT_SHARE pass.
+
+7.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$501 ($dffe) from module rmsnorm (D = $add$rtl/rmsnorm.sv:114$113_Y, Q = \idx, rval = 8'00000000).
+
+7.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 1 unused cells and 1 unused wires.
+<suppressed ~2 debug messages>
+
+7.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.10. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.11. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.12. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.21.13. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.14. Executing OPT_SHARE pass.
+
+7.21.15. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$721 ($dffe) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$721 ($dffe) from module rmsnorm.
+
+7.21.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.17. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.18. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.19. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.20. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 10'0000000000 }, B={ \rad [23:2] 2'00 }, Y=$procmux$292_Y [25:2]
+      New ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 8'00000000 }, B=\rad [23:2], Y=$procmux$292_Y [25:4]
+      New connections: $procmux$292_Y [3:2] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.21.21. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.22. Executing OPT_SHARE pass.
+
+7.21.23. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$720 ($sdffce) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$720 ($sdffce) from module rmsnorm.
+
+7.21.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.25. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.26. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.27. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.28. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 8'00000000 }, B={ \rad [23:4] 2'00 }, Y=$procmux$292_Y [25:4]
+      New ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 6'000000 }, B=\rad [23:4], Y=$procmux$292_Y [25:6]
+      New connections: $procmux$292_Y [5:4] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.21.29. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.30. Executing OPT_SHARE pass.
+
+7.21.31. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$729 ($sdffce) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$729 ($sdffce) from module rmsnorm.
+
+7.21.32. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.33. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.34. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.35. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.36. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 6'000000 }, B={ \rad [23:6] 2'00 }, Y=$procmux$292_Y [25:6]
+      New ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 4'0000 }, B=\rad [23:6], Y=$procmux$292_Y [25:8]
+      New connections: $procmux$292_Y [7:6] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.21.37. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.38. Executing OPT_SHARE pass.
+
+7.21.39. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$730 ($sdffce) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$730 ($sdffce) from module rmsnorm.
+
+7.21.40. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.41. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.42. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.43. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.44. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 4'0000 }, B={ \rad [23:8] 2'00 }, Y=$procmux$292_Y [25:8]
+      New ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 2'00 }, B=\rad [23:8], Y=$procmux$292_Y [25:10]
+      New connections: $procmux$292_Y [9:8] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.21.45. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.46. Executing OPT_SHARE pass.
+
+7.21.47. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$731 ($sdffce) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$731 ($sdffce) from module rmsnorm.
+
+7.21.48. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.49. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.50. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.51. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.52. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+    Consolidated identical input bits for $mux cell $procmux$292:
+      Old ports: A={ $add$rtl/rmsnorm.sv:81$102_Y [21:8] 2'00 }, B={ \rad [23:10] 2'00 }, Y=$procmux$292_Y [25:10]
+      New ports: A=$add$rtl/rmsnorm.sv:81$102_Y [21:8], B=\rad [23:10], Y=$procmux$292_Y [25:12]
+      New connections: $procmux$292_Y [11:10] = 2'00
+  Optimizing cells in module \rmsnorm.
+Performed a total of 1 changes.
+
+7.21.53. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.54. Executing OPT_SHARE pass.
+
+7.21.55. Executing OPT_DFF pass (perform DFF optimizations).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$732 ($sdffce) from module rmsnorm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$732 ($sdffce) from module rmsnorm.
+
+7.21.56. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.57. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.58. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.59. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.60. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.21.61. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 122 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.62. Executing OPT_SHARE pass.
+
+7.21.63. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $auto$ff.cc:337:slice$728 ($dffe) from module rmsnorm (D = $add$rtl/rmsnorm.sv:81$102_Y [9:8], Q = \rad [13:12], rval = 2'00).
+
+7.21.64. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.65. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.66. Rerunning OPT passes. (Maybe there is more to do..)
+
+7.21.67. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \rmsnorm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+7.21.68. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \rmsnorm.
+Performed a total of 0 changes.
+
+7.21.69. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 123 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.21.70. Executing OPT_SHARE pass.
+
+7.21.71. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.21.72. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+
+7.21.73. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+
+7.21.74. Finished fast OPT passes. (There is nothing left to do.)
+
+7.22. Executing TECHMAP pass (map to technology primitives).
+
+7.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+7.22.2. Continuing TECHMAP pass.
+Using extmapper simplemap for cells of type $dffe.
+Using extmapper simplemap for cells of type $sdffce.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod$fbc7873bff55778c0b3173955b7e4bce1d9d6834\_90_alu for cells of type $alu.
+Using template $paramod$3b7577489eb4433b1d5620cab7f3794743dee5ea\_90_alu for cells of type $alu.
+Using template $paramod$64e69f0751a3f26391aa3b3176d19ecc12dd2dbc\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$8742280fdebca84e1c87f2a86ed84f62d558f4cc\_90_alu for cells of type $alu.
+Using template $paramod$c3cd1564c35d873179656addd6052d7ea8b6d991\_90_alu for cells of type $alu.
+Using template $paramod$10ed987432f06055e5279101f9ec60a49861b43c\_90_alu for cells of type $alu.
+Using template $paramod$2780480d52179e2db572a6e5133edf36e733d32e\_90_alu for cells of type $alu.
+Using template $paramod$a04dd9d4d8b430140c4ff94b50470fb380fda2a0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$constmap:586cb701bdbf9cf16b6a426b456e6b3682c970cf$paramod$88eea8db8954ba064a2e8671fc71d372945341cd\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshr.
+Using template $paramod$6c1427baecfd2a40ecb05e66200acc045618b4ad\_90_alu for cells of type $alu.
+Using template $paramod$3ba009597d59d30766139c7535427e3e717ed4f5\_90_alu for cells of type $alu.
+Using template $paramod$53d371fee5b61b825a218a3e4a6f7568931b3261\_90_alu for cells of type $alu.
+Using template $paramod$28b858f52177271b68933566afd0193077ea3bb5\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add { 1'0 \inv } * \x_rd_data (22x8 bits, signed)
+  add \rq.acc * { 1'0 \cfg_mult } (32x32 bits, signed)
+  add $flatten\rq.$sshl$rtl/requant.sv:16$4_Y (64 bits, signed)
+  add \xinv * \g_rd_data (29x8 bits, signed)
+  add \x_rd_data * \x_rd_data (8x8 bits, signed)
+Using extmapper simplemap for cells of type $sdff.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $ne.
+Using extmapper simplemap for cells of type $sdffe.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $pmux.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $logic_and.
+Using template $paramod$constmap:f501ccb95eba315fdd813d103ab02e647504d34c$paramod$651f30a72f0b71150a8784328f5efe0b91d60ca8\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshl.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010000 for cells of type $fa.
+Using template $paramod$6df0329addda9228fcc2546de2aaf14ad26c98e1\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100101 for cells of type $fa.
+Using template $paramod$7fa6970f0c97644a990ba1d0dcc56c6042128be7\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011101 for cells of type $fa.
+Using template $paramod$88ebedc0964674c5b2e447c66b33a42fc7e7abe0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000110 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001101 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001101 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000111 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000100 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001111 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001111 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100100 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100100 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000001110 for cells of type $lcu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000010010 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000010010 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100101 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000011101 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~6818 debug messages>
+
+7.23. Executing OPT pass (performing simple optimizations).
+
+7.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+<suppressed ~7199 debug messages>
+
+7.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 15671 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 14910 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 14425 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 14081 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13900 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13696 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13545 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13470 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13396 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13328 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13284 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13243 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13231 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13227 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Computing hashes of 13225 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+<suppressed ~7338 debug messages>
+Removed a total of 2446 cells.
+
+7.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 860 unused cells and 2180 unused wires.
+<suppressed ~861 debug messages>
+
+7.23.5. Finished fast OPT passes.
+
+7.24. Executing ABC pass (technology mapping using ABC).
+
+7.24.1. Extracting gate netlist of module `\rmsnorm' to `<abc-temp-dir>/input.blif'..
+
+7.24.1.1. Executed ABC.
+Extracted 12160 gates and 12367 wires to a netlist network with 205 inputs and 142 outputs.
+Running ABC script: <abc-temp-dir>/abc.script
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_blif <abc-temp-dir>/input.blif 
+ABC: + read_library <abc-temp-dir>/stdcells.genlib 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &fraig -x 
+ABC: + &put 
+ABC: + scorr 
+ABC: Warning: The network is combinational (run "fraig" or "fraig_sweep").
+ABC: + dc2 
+ABC: + dretime 
+ABC: + strash 
+ABC: + &get -n 
+ABC: + &dch -f 
+ABC: + &nf 
+ABC: + &put 
+ABC: + write_blif <abc-temp-dir>/output.blif 
+
+7.24.1.2. Re-integrating ABC results.
+ABC RESULTS:               AND cells:     1975
+ABC RESULTS:            ANDNOT cells:      149
+ABC RESULTS:               MUX cells:      318
+ABC RESULTS:              NAND cells:     4935
+ABC RESULTS:               NOR cells:       67
+ABC RESULTS:               NOT cells:       74
+ABC RESULTS:                OR cells:      177
+ABC RESULTS:             ORNOT cells:      212
+ABC RESULTS:              XNOR cells:      312
+ABC RESULTS:               XOR cells:     3130
+ABC RESULTS:        internal signals:    12020
+ABC RESULTS:           input signals:      205
+ABC RESULTS:          output signals:      142
+Removing temp directory.
+Removing global temp directory.
+
+7.25. Executing OPT pass (performing simple optimizations).
+
+7.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module rmsnorm.
+<suppressed ~47 debug messages>
+
+7.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\rmsnorm'.
+Computing hashes of 11554 cells of `\rmsnorm'.
+Finding duplicate cells in `\rmsnorm'.
+Removed a total of 0 cells.
+
+7.25.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+7.25.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \rmsnorm..
+Removed 0 unused cells and 1655 unused wires.
+<suppressed ~5 debug messages>
+
+7.25.5. Finished fast OPT passes.
+
+7.26. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `rmsnorm'. Setting top module to rmsnorm.
+
+7.26.1. Analyzing design hierarchy..
+Top module:  \rmsnorm
+
+7.26.2. Analyzing design hierarchy..
+Top module:  \rmsnorm
+Removed 0 unused modules.
+
+7.27. Printing statistics.
+
+=== rmsnorm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    11344 wires
+    11971 wire bits
+       47 public wires
+      575 public wire bits
+       13 ports
+       90 port bits
+    11554 cells
+      149   $_ANDNOT_
+     1975   $_AND_
+       45   $_DFFE_PP_
+      318   $_MUX_
+     4935   $_NAND_
+       67   $_NOR_
+       74   $_NOT_
+      212   $_ORNOT_
+      177   $_OR_
+       75   $_SDFFCE_PN0P_
+        9   $_SDFFCE_PN1P_
+       61   $_SDFFCE_PP0P_
+        6   $_SDFFCE_PP1P_
+        3   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+      312   $_XNOR_
+     3130   $_XOR_
+        2   $scopeinfo
+
+7.28. Executing CHECK pass (checking for obvious problems).
+Checking module rmsnorm...
+Found and reported 0 problems.
+
+8. Printing statistics.
+
+=== rmsnorm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+    11344 wires
+    11971 wire bits
+       47 public wires
+      575 public wire bits
+       13 ports
+       90 port bits
+    11554 cells
+      149   $_ANDNOT_
+     1975   $_AND_
+       45   $_DFFE_PP_
+      318   $_MUX_
+     4935   $_NAND_
+       67   $_NOR_
+       74   $_NOT_
+      212   $_ORNOT_
+      177   $_OR_
+       75   $_SDFFCE_PN0P_
+        9   $_SDFFCE_PN1P_
+       61   $_SDFFCE_PP0P_
+        6   $_SDFFCE_PP1P_
+        3   $_SDFFE_PP0P_
+        4   $_SDFF_PP0_
+      312   $_XNOR_
+     3130   $_XOR_
+        2   $scopeinfo
+
+End of script. Logfile hash: 98914bc6e2, time: 553.41s, user: 0.69s, system: 0.04s, MEM: 103.42 MB peak
+Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+Time spent: 99% 1x abc (551 sec), 0% 59x opt_expr (0 sec), ...

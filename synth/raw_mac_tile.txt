@@ -1,0 +1,636 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.67+post (git sha1 b8e7da6f40ae8f552c116bf6c359b07c6533e159, Release, AppleClang clang++ 16.0.0.16000026)
+
+-- Running command `read_verilog -sv rtl/requant.sv rtl/mac_tile.sv; synth -top mac_tile -flatten; stat' --
+
+1. Executing Verilog-2005 frontend: rtl/requant.sv
+Parsing SystemVerilog input from `rtl/requant.sv' to AST representation.
+Generating RTLIL representation for module `\requant'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: rtl/mac_tile.sv
+Parsing SystemVerilog input from `rtl/mac_tile.sv' to AST representation.
+Generating RTLIL representation for module `\mac_tile'.
+Successfully finished Verilog frontend.
+
+3. Executing SYNTH pass.
+
+3.1. Executing HIERARCHY pass (managing design hierarchy).
+
+3.1.1. Analyzing design hierarchy..
+Top module:  \mac_tile
+Used module:     \requant
+
+3.1.2. Analyzing design hierarchy..
+Top module:  \mac_tile
+Used module:     \requant
+Removed 0 unused modules.
+
+3.2. Executing PROC pass (convert processes to netlists).
+
+3.2.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.2.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$rtl/mac_tile.sv:22$16 in module mac_tile.
+Marked 2 switch rules as full_case in process $proc$rtl/requant.sv:14$1 in module requant.
+Removed a total of 0 dead cases.
+
+3.2.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 3 assignments to connections.
+
+3.2.4. Executing PROC_INIT pass (extract init attributes).
+
+3.2.5. Executing PROC_ARST pass (detect async resets in processes).
+
+3.2.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~4 debug messages>
+
+3.2.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\mac_tile.$proc$rtl/mac_tile.sv:22$16'.
+     1/1: $0\acc[31:0]
+Creating decoders for process `\requant.$proc$rtl/requant.sv:14$1'.
+     1/2: $2\q[7:0]
+     2/2: $1\q[7:0]
+
+3.2.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\requant.\q' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\prod' from process `\requant.$proc$rtl/requant.sv:14$1'.
+No latch inferred for signal `\requant.\rounded' from process `\requant.$proc$rtl/requant.sv:14$1'.
+
+3.2.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\mac_tile.\acc' using process `\mac_tile.$proc$rtl/mac_tile.sv:22$16'.
+  created $dff cell `$procdff$33' with positive edge clock.
+
+3.2.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.2.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 2 empty switches in `\mac_tile.$proc$rtl/mac_tile.sv:22$16'.
+Removing empty process `mac_tile.$proc$rtl/mac_tile.sv:22$16'.
+Found and cleaned up 2 empty switches in `\requant.$proc$rtl/requant.sv:14$1'.
+Removing empty process `requant.$proc$rtl/requant.sv:14$1'.
+Cleaned up 4 empty switches.
+
+3.2.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+Optimizing module requant.
+
+3.3. Executing CHECK pass (checking for obvious problems).
+Checking module mac_tile...
+Checking module requant...
+Found and reported 0 problems.
+
+3.4. Executing FLATTEN pass (flatten design).
+Deleting now unused module requant.
+<suppressed ~1 debug messages>
+
+3.5. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+Removed 0 unused cells and 17 unused wires.
+<suppressed ~1 debug messages>
+
+3.7. Executing CHECK pass (checking for obvious problems).
+Checking module mac_tile...
+Found and reported 0 problems.
+
+3.8. Executing OPT pass (performing simple optimizations).
+
+3.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 23 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 1/2 on $mux $flatten\rq.$procmux$28.
+Removed 1 multiplexer ports.
+<suppressed ~7 debug messages>
+
+3.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 22 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+3.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.8.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.8.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+3.8.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.8.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 22 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.8.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.8.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.8.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.8.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.9. Executing FSM pass (extract and optimize FSM).
+
+3.9.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.9.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.9.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.9.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.9.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.9.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.9.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.9.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.10. Executing OPT pass (performing simple optimizations).
+
+3.10.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.10.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 22 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.10.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~6 debug messages>
+
+3.10.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.10.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 22 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.10.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding SRST signal on $procdff$33 ($dff) from module mac_tile (D = $procmux$19_Y, Q = \acc, rval = 0).
+Adding EN signal on $auto$ff.cc:337:slice$35 ($sdff) from module mac_tile (D = $add$rtl/mac_tile.sv:24$18_Y, Q = \acc).
+
+3.10.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+Removed 2 unused cells and 2 unused wires.
+<suppressed ~3 debug messages>
+
+3.10.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.10.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.10.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.10.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.10.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 20 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.10.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.10.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.10.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.10.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.11. Executing WREDUCE pass (reducing word size of cells).
+Removed top 1 bits (of 17) from port Y of cell mac_tile.$mul$rtl/mac_tile.sv:18$9 ($mul).
+Removed top 1 bits (of 17) from port Y of cell mac_tile.$mul$rtl/mac_tile.sv:18$10 ($mul).
+Converting cell mac_tile.$add$rtl/mac_tile.sv:18$11 ($add) from unsigned to signed.
+Removed top 1 bits (of 17) from port A of cell mac_tile.$add$rtl/mac_tile.sv:18$11 ($add).
+Removed top 1 bits (of 17) from port B of cell mac_tile.$add$rtl/mac_tile.sv:18$11 ($add).
+Removed top 1 bits (of 17) from port Y of cell mac_tile.$mul$rtl/mac_tile.sv:19$12 ($mul).
+Removed top 1 bits (of 17) from port Y of cell mac_tile.$mul$rtl/mac_tile.sv:19$13 ($mul).
+Converting cell mac_tile.$add$rtl/mac_tile.sv:19$14 ($add) from unsigned to signed.
+Removed top 1 bits (of 17) from port A of cell mac_tile.$add$rtl/mac_tile.sv:19$14 ($add).
+Removed top 1 bits (of 17) from port B of cell mac_tile.$add$rtl/mac_tile.sv:19$14 ($add).
+Removed top 14 bits (of 32) from port B of cell mac_tile.$add$rtl/mac_tile.sv:24$18 ($add).
+Removed top 56 bits (of 64) from port B of cell mac_tile.$flatten\rq.$lt$rtl/requant.sv:18$8 ($lt).
+Removed top 56 bits (of 64) from port B of cell mac_tile.$flatten\rq.$gt$rtl/requant.sv:17$7 ($gt).
+Removed top 62 bits (of 64) from port A of cell mac_tile.$flatten\rq.$sshl$rtl/requant.sv:16$4 ($sshl).
+Removed top 5 bits (of 6) from port B of cell mac_tile.$flatten\rq.$sub$rtl/requant.sv:16$3 ($sub).
+Removed top 32 bits (of 64) from port B of cell mac_tile.$flatten\rq.$mul$rtl/requant.sv:15$2 ($mul).
+
+3.12. Executing PEEPOPT pass (run peephole optimizers).
+
+3.13. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.14. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module mac_tile:
+  creating $macc model for $flatten\rq.$add$rtl/requant.sv:16$5 ($add).
+  creating $macc model for $flatten\rq.$sub$rtl/requant.sv:16$3 ($sub).
+  creating $macc model for $flatten\rq.$mul$rtl/requant.sv:15$2 ($mul).
+  creating $macc model for $add$rtl/mac_tile.sv:24$18 ($add).
+  creating $macc model for $add$rtl/mac_tile.sv:20$15 ($add).
+  creating $macc model for $add$rtl/mac_tile.sv:19$14 ($add).
+  creating $macc model for $mul$rtl/mac_tile.sv:19$13 ($mul).
+  creating $macc model for $mul$rtl/mac_tile.sv:19$12 ($mul).
+  creating $macc model for $add$rtl/mac_tile.sv:18$11 ($add).
+  creating $macc model for $mul$rtl/mac_tile.sv:18$10 ($mul).
+  creating $macc model for $mul$rtl/mac_tile.sv:18$9 ($mul).
+  merging $macc model for $mul$rtl/mac_tile.sv:18$9 into $add$rtl/mac_tile.sv:18$11.
+  merging $macc model for $mul$rtl/mac_tile.sv:18$10 into $add$rtl/mac_tile.sv:18$11.
+  merging $macc model for $mul$rtl/mac_tile.sv:19$12 into $add$rtl/mac_tile.sv:19$14.
+  merging $macc model for $mul$rtl/mac_tile.sv:19$13 into $add$rtl/mac_tile.sv:19$14.
+  merging $macc model for $add$rtl/mac_tile.sv:18$11 into $add$rtl/mac_tile.sv:20$15.
+  merging $macc model for $add$rtl/mac_tile.sv:19$14 into $add$rtl/mac_tile.sv:20$15.
+  merging $macc model for $add$rtl/mac_tile.sv:20$15 into $add$rtl/mac_tile.sv:24$18.
+  merging $macc model for $flatten\rq.$mul$rtl/requant.sv:15$2 into $flatten\rq.$add$rtl/requant.sv:16$5.
+  creating $alu model for $macc $flatten\rq.$sub$rtl/requant.sv:16$3.
+  creating $macc cell for $add$rtl/mac_tile.sv:24$18: $auto$alumacc.cc:382:replace_macc$37
+  creating $macc cell for $flatten\rq.$add$rtl/requant.sv:16$5: $auto$alumacc.cc:382:replace_macc$38
+  creating $alu model for $flatten\rq.$gt$rtl/requant.sv:17$7 ($gt): new $alu
+  creating $alu model for $flatten\rq.$lt$rtl/requant.sv:18$8 ($lt): new $alu
+  creating $alu cell for $flatten\rq.$lt$rtl/requant.sv:18$8: $auto$alumacc.cc:512:replace_alu$41
+  creating $alu cell for $flatten\rq.$gt$rtl/requant.sv:17$7: $auto$alumacc.cc:512:replace_alu$48
+  creating $alu cell for $flatten\rq.$sub$rtl/requant.sv:16$3: $auto$alumacc.cc:512:replace_alu$61
+  created 3 $alu and 2 $macc cells.
+
+3.15. Executing SHARE pass (SAT-based resource sharing).
+Found 5 cells in module mac_tile that may be considered for resource sharing.
+  Analyzing resource sharing options for $mul$rtl/mac_tile.sv:18$9 ($mul):
+    Found cell that is never activated: $add$rtl/mac_tile.sv:20$15
+    Found cell that is never activated: $add$rtl/mac_tile.sv:18$11
+    Found cell that is never activated: $mul$rtl/mac_tile.sv:18$9
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $mul$rtl/mac_tile.sv:18$10 ($mul):
+    Found cell that is never activated: $mul$rtl/mac_tile.sv:18$10
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $mul$rtl/mac_tile.sv:19$12 ($mul):
+    Found cell that is never activated: $add$rtl/mac_tile.sv:19$14
+    Found cell that is never activated: $mul$rtl/mac_tile.sv:19$12
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $mul$rtl/mac_tile.sv:19$13 ($mul):
+    Found cell that is never activated: $mul$rtl/mac_tile.sv:19$13
+    Cell is never active. Sharing is pointless, we simply remove it.
+  Analyzing resource sharing options for $flatten\rq.$mul$rtl/requant.sv:15$2 ($mul):
+    Found cell that is never activated: $flatten\rq.$mul$rtl/requant.sv:15$2
+    Cell is never active. Sharing is pointless, we simply remove it.
+Removing 8 cells in module mac_tile:
+  Removing cell $flatten\rq.$mul$rtl/requant.sv:15$2 ($mul).
+  Removing cell $mul$rtl/mac_tile.sv:19$13 ($mul).
+  Removing cell $mul$rtl/mac_tile.sv:19$12 ($mul).
+  Removing cell $add$rtl/mac_tile.sv:19$14 ($add).
+  Removing cell $mul$rtl/mac_tile.sv:18$10 ($mul).
+  Removing cell $mul$rtl/mac_tile.sv:18$9 ($mul).
+  Removing cell $add$rtl/mac_tile.sv:18$11 ($add).
+  Removing cell $add$rtl/mac_tile.sv:20$15 ($add).
+
+3.16. Executing OPT pass (performing simple optimizations).
+
+3.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+<suppressed ~1 debug messages>
+
+3.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 19 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 19 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+Removed 1 unused cells and 7 unused wires.
+<suppressed ~2 debug messages>
+
+3.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 18 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.17. Executing MEMORY pass.
+
+3.17.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.17.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.17.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.17.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.17.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.17.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.17.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.17.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.17.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.17.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.18. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.19. Executing OPT pass (performing simple optimizations).
+
+3.19.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.19.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 18 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.19.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.19.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.19.5. Finished fast OPT passes.
+
+3.20. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.21. Executing OPT pass (performing simple optimizations).
+
+3.21.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.21.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 18 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.21.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \mac_tile..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+3.21.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \mac_tile.
+Performed a total of 0 changes.
+
+3.21.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 18 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Removed a total of 0 cells.
+
+3.21.6. Executing OPT_SHARE pass.
+
+3.21.7. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.21.8. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+
+3.21.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+
+3.21.10. Finished fast OPT passes. (There is nothing left to do.)
+
+3.22. Executing TECHMAP pass (map to technology primitives).
+
+3.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.22.2. Continuing TECHMAP pass.
+Using template $paramod$a04dd9d4d8b430140c4ff94b50470fb380fda2a0\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod$constmap:586cb701bdbf9cf16b6a426b456e6b3682c970cf$paramod$88eea8db8954ba064a2e8671fc71d372945341cd\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshr.
+Using template $paramod$6c1427baecfd2a40ecb05e66200acc045618b4ad\_90_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \acc * { 1'0 \mult } (32x32 bits, signed)
+  add $flatten\rq.$sshl$rtl/requant.sv:16$4_Y (64 bits, signed)
+  add \x0 * \w0 (8x8 bits, signed)
+  add \x2 * \w2 (8x8 bits, signed)
+  add \x1 * \w1 (8x8 bits, signed)
+  add \x3 * \w3 (8x8 bits, signed)
+  add \acc (32 bits, signed)
+Using extmapper simplemap for cells of type $sdffe.
+Using extmapper simplemap for cells of type $logic_or.
+Using template $paramod$constmap:f501ccb95eba315fdd813d103ab02e647504d34c$paramod$651f30a72f0b71150a8784328f5efe0b91d60ca8\_90_shift_ops_shr_shl_sshl_sshr for cells of type $sshl.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000001 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000100000 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000011111 for cells of type $fa.
+Using template $paramod$fbc7873bff55778c0b3173955b7e4bce1d9d6834\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000001000000 for cells of type $fa.
+Using template $paramod$039520c137afc9cd69dd56c3fb11a4e1fbe5f664\_90_alu for cells of type $alu.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000110 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000110 for cells of type $lcu.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000001000000 for cells of type $lcu.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000100000 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~3934 debug messages>
+
+3.23. Executing OPT pass (performing simple optimizations).
+
+3.23.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module mac_tile.
+<suppressed ~5699 debug messages>
+
+3.23.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\mac_tile'.
+Computing hashes of 16450 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 15233 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 14463 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 13789 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 13401 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12958 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12634 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12456 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12288 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12108 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 12003 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11898 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11840 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11797 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11783 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11757 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11731 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11718 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+Computing hashes of 11694 cells of `\mac_tile'.
+Finding duplicate cells in `\mac_tile'.
+<suppressed ~14268 debug messages>
+Removed a total of 4756 cells.
+
+3.23.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.23.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \mac_tile..
+Removed 494 unused cells and 1286 unused wires.
+<suppressed ~495 debug messages>
+
+3.23.5. Finished fast OPT passes.
+
+3.24. Executing ABC pass (technology mapping using ABC).
+
+3.24.1. Extracting gate netlist of module `\mac_tile' to `<abc-temp-dir>/input.blif'..

@@ -1,0 +1,11 @@
+{
+  "DESIGN_NAME": "mac_tile",
+  "VERILOG_FILES": ["dir::../rtl/requant.sv", "dir::../rtl/mac_tile.sv"],
+  "CLOCK_PORT": "clk",
+  "CLOCK_PERIOD": 20.0,
+  "PL_TARGET_DENSITY": 0.55,
+  "FP_CORE_UTIL": 45,
+  "PDK": "sky130A",
+  "STD_CELL_LIBRARY": "sky130_fd_sc_hd",
+  "//": "compute tile = 4x int8 MAC + int32 accumulator + gemmlowp requant. memory-free -> hardens cleanly. run: `openlane gds/config.json` (needs docker + sky130 PDK via volare). CLOCK_PERIOD 20ns = 50MHz target; tighten during timing exploration."
+}
