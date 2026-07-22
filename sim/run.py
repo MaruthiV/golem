@@ -12,7 +12,7 @@ BLOCKS = {
     "softmax": (["divu.sv", "softmax_row.sv"], "softmax_row", "test_softmax_row"),
     "gelu": (["gelu_lut.sv"], "gelu_lut", "test_gelu_lut"),
     "block": (["requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv", "softmax_row.sv",
-               "gelu_lut.sv", "block.sv"], "block", "test_block"),
+               "gelu_lut.sv", "block.sv", "sim_mem.sv"], "block_sim", "test_block"),
 }
 
 

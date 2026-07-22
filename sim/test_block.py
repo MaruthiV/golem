@@ -23,7 +23,7 @@ def pack_words(row_i8):
 async def setup(dut):
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
     for sig in (dut.start, dut.xr_we, dut.cfg_we, dut.gc_we, dut.p_we, dut.sl_we,
-                dut.gl_we, dut.kvd_we, dut.w_valid):
+                dut.gl_we, dut.w_valid):
         sig.value = 0
     dut.rst.value = 1
     for _ in range(3):
@@ -140,20 +140,14 @@ async def test_sequential_tokens(dut):
 
 
 @cocotb.test()
-async def test_deep_position_with_preloaded_kv(dut):
+async def test_deep_position_natural_kv(dut):
+    # KV now lives in external memory (block_sim's kv_mem); build it naturally by
+    # streaming a real sequence's activations position-by-position, checking each r3.
     q = dict(np.load(DATA / "golem_int8.npz"))
     vec = dict(np.load(DATA / "vectors" / "seq0.npz"))
     await setup(dut)
     await load_layer(dut, q)
-    for t in range(100):
-        for vsel, name in ((0, "layers.0.k"), (1, "layers.0.v")):
-            words = pack_words(vec[name][0, t])
-            for wi, wv in enumerate(words.tolist()):
-                dut.kvd_we.value = 1
-                dut.kvd_v.value = vsel
-                dut.kvd_addr.value = t * 64 + wi
-                dut.kvd_data.value = int(wv)
-                await RisingEdge(dut.clk)
-    dut.kvd_we.value = 0
-    got = await run_token(dut, 100, vec["x0"][0, 100], weight_stream(q))
-    check("t100", got, vec["layers.0.r3"][0, 100])
+    wflat = weight_stream(q)
+    for t in range(40):
+        got = await run_token(dut, t, vec["x0"][0, t], wflat)
+        check(f"t{t}", got, vec["layers.0.r3"][0, t])

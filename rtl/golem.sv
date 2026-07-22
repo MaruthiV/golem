@@ -10,6 +10,14 @@ module golem (
     output logic [21:0] mrd_addr,
     input  logic [31:0] mrd_data,
 
+    output logic        kv_we,
+    output logic        kv_wsel,
+    output logic [16:0] kv_waddr,
+    output logic [31:0] kv_wdata,
+    output logic [16:0] kv_raddr,
+    output logic        kv_rsel,
+    input  logic [31:0] kv_rdata,
+
     output logic        tok_valid,
     output logic [11:0] tok_out
 );
@@ -75,7 +83,8 @@ module golem (
     .p_we(p_we), .p_addr(p_a), .p_mult(mtmp), .p_shift(stmp),
     .sl_we(sl_we), .sl_addr(sl_a), .sl_data(sl_d),
     .gl_we(gl_we), .gl_addr(gl_a), .gl_data(gl_d),
-    .kvd_we(1'b0), .kvd_v(1'b0), .kvd_addr(14'd0), .kvd_data(32'd0),
+    .kv_we(kv_we), .kv_wsel(kv_wsel), .kv_waddr(kv_waddr), .kv_wdata(kv_wdata),
+    .kv_raddr(kv_raddr), .kv_rsel(kv_rsel), .kv_rdata(kv_rdata),
     .w_valid(st==S_WT), .w_data0(mb0), .w_data1(mb1), .w_data2(mb2), .w_data3(mb3), .w_ready(w_rdy),
     .r3_valid(r3_v), .r3_idx(r3_i), .r3_data(r3_d));
 

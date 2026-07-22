@@ -34,10 +34,14 @@ module block (
     input  logic [7:0]        gl_addr,
     input  logic signed [7:0] gl_data,
 
-    input  logic        kvd_we,
-    input  logic        kvd_v,
-    input  logic [13:0] kvd_addr,
-    input  logic [31:0] kvd_data,
+    // KV cache lives in external memory (SDRAM on the board): read + write ports
+    output logic        kv_we,
+    output logic        kv_wsel,
+    output logic [16:0] kv_waddr,
+    output logic [31:0] kv_wdata,
+    output logic [16:0] kv_raddr,
+    output logic        kv_rsel,
+    input  logic [31:0] kv_rdata,
 
     input  logic              w_valid,
     input  logic signed [7:0] w_data0,
@@ -59,6 +63,7 @@ module block (
 
   logic [3:0] state;
   logic [7:0] tok;
+  logic [23:0] pack;
   logic [2:0] h;
   logic [8:0] s;
   logic [2:0] c;
@@ -77,8 +82,6 @@ module block (
   logic signed [7:0] qb1 [0:63];
   logic signed [7:0] qb2 [0:63];
   logic signed [7:0] qb3 [0:63];
-  logic [31:0] k_mem [0:131071];
-  logic [31:0] v_mem [0:131071];
   logic signed [31:0] aacc [0:31];
 
   logic [30:0] r_mult [0:7];
@@ -92,8 +95,6 @@ module block (
       r_mult[cfg_sel] <= cfg_mult;
       r_shift[cfg_sel] <= cfg_shift;
     end
-    if (kvd_we && !kvd_v) k_mem[{layer, kvd_addr}] <= kvd_data;
-    if (kvd_we && kvd_v) v_mem[{layer, kvd_addr}] <= kvd_data;
   end
 
   // norm engine, x/g served by phase
@@ -174,8 +175,16 @@ module block (
   // score engine
   logic signed [31:0] sc_acc;
   logic [31:0] kword, vword;
-  assign kword = k_mem[{layer, s[7:0], h, c}];
-  assign vword = v_mem[{layer, s[7:0], h, c}];
+  // one external read port: K during scoring (S_SC), V during attention (S_AT)
+  assign kv_raddr = {layer, s[7:0], h, c};
+  assign kv_rsel  = (state == S_SC);
+  assign kword = kv_rdata;
+  assign vword = kv_rdata;
+  // write the assembled 32-bit K/V word every 4th output element of MM_K/MM_V
+  assign kv_we    = mm_ov && (mm_oi[1:0] == 2'd3) && (state == S_MM_K || state == S_MM_V);
+  assign kv_wsel  = (state == S_MM_K);
+  assign kv_waddr = {layer, tok, mm_oi[7:2]};
+  assign kv_wdata = {mm_od, pack};
   logic signed [7:0] kb0, kb1, kb2, kb3;
   assign {kb3, kb2, kb1, kb0} = kword;
   logic signed [17:0] sc_sum;
@@ -216,8 +225,6 @@ module block (
     else res_q = res_sum[7:0];
   end
 
-  // k/v word packers
-  logic [23:0] pack;
 
   assign busy = (state != S_IDLE);
 
@@ -257,20 +264,14 @@ module block (
           end
         end
         S_MM_K: begin
-          if (mm_ov) begin
-            if (mm_oi[1:0] == 2'd3) k_mem[{layer, tok, mm_oi[7:2]}] <= {mm_od, pack};
-            else pack <= {mm_od, pack[23:8]};
-          end
+          if (mm_ov && mm_oi[1:0] != 2'd3) pack <= {mm_od, pack[23:8]};
           if (!mm_busy && !mm_start) begin
             mm_pbase <= PB_WV; mm_start <= 1'b1;
             state <= S_MM_V;
           end
         end
         S_MM_V: begin
-          if (mm_ov) begin
-            if (mm_oi[1:0] == 2'd3) v_mem[{layer, tok, mm_oi[7:2]}] <= {mm_od, pack};
-            else pack <= {mm_od, pack[23:8]};
-          end
+          if (mm_ov && mm_oi[1:0] != 2'd3) pack <= {mm_od, pack[23:8]};
           if (!mm_busy && !mm_start) begin
             h <= 3'd0;
             s <= 9'd0;

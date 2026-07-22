@@ -1,7 +1,6 @@
 <testsuites name="results">
   <testsuite name="all" package="all">
-    <property name="random_seed" value="1784707255" />
-    <testcase name="test_sequential_tokens" classname="test_block" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/sim/test_block.py" lineno="130" time="137.02775025367737" sim_time_ns="27581230.0" ratio_time="201282.07570320094" />
-    <testcase name="test_deep_position_with_preloaded_kv" classname="test_block" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/sim/test_block.py" lineno="142" time="10.779491186141968" sim_time_ns="2275340.0" ratio_time="211080.46388359775" />
+    <property name="random_seed" value="1784711534" />
+    <testcase name="generate" classname="test_golem" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/sim/test_golem.py" lineno="15" time="300.41005396842957" sim_time_ns="83073200.0" ratio_time="276532.6889117042" />
   </testsuite>
 </testsuites>
