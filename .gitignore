@@ -19,8 +19,13 @@ wandb/
 # sim/hardware build artifacts
 obj_dir/
 build/
+sim/build_*/
 *.vcd
 *.fst
 *.bit
 *.fs
+*.vvp
+cmds.f
 results/
+results.xml
+*.log
