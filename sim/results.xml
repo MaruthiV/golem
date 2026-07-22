@@ -1,6 +1,0 @@
-<testsuites name="results">
-  <testsuite name="all" package="all">
-    <property name="random_seed" value="1784729628" />
-    <testcase name="generate" classname="test_golem" file="/Users/maruthi/Documents/dev/summer-projects/random/golem/sim/test_golem.py" lineno="15" time="277.4881589412689" sim_time_ns="96832900.0" ratio_time="348962.2777759498" />
-  </testsuite>
-</testsuites>

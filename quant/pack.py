@@ -88,6 +88,7 @@ def main():
     data = Path(config.DATA_DIR)
     q = dict(np.load(data / "golem_int8.npz"))
     w = build(q)
+    w.off["KV_BASE"] = len(w.words)  # KV region lives right after the weight/config image
     hexpath = data / "golem_mem.hex"
     with open(hexpath, "w") as f:
         f.write("\n".join(f"{v:08x}" for v in w.words) + "\n")

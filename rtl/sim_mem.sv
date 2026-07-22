@@ -89,6 +89,36 @@ module golem_sim (
               .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
 endmodule
 
+// golem + arbiter + ONE unified SDRAM — the real board memory architecture, in sim.
+module golem_soc (
+    input  logic        clk,
+    input  logic        rst,
+    input  logic        start,
+    input  logic [11:0] token,
+    input  logic [7:0]  pos,
+    output logic        busy,
+    output logic        tok_valid,
+    output logic [11:0] tok_out
+);
+  logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
+  logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
+  logic o_valid, o_wr, sd_ready, sd_rvalid; logic [21:0] o_addr; logic [31:0] o_wdata, sd_rdata;
+
+  golem u_golem(.clk(clk), .rst(rst), .start(start), .token(token), .pos(pos), .busy(busy),
+                .mrd_addr(mrd_addr), .mrd_req(mrd_req), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
+                .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
+                .tok_valid(tok_valid), .tok_out(tok_out));
+  mem_arbiter u_arb(.clk(clk), .rst(rst),
+                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
+                .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
+                .i_ready(sd_ready), .i_rvalid(sd_rvalid), .i_rdata(sd_rdata));
+  sdram_model u_sd(.clk(clk), .cmd_valid(o_valid), .cmd_wr(o_wr), .cmd_addr(o_addr),
+                .cmd_wdata(o_wdata), .cmd_ready(sd_ready), .rd_valid(sd_rvalid), .rd_data(sd_rdata));
+endmodule
+
 // block + KV memory, for the block-level test (block now has external KV ports)
 module block_sim (
     input  logic clk, input logic rst,

@@ -6,3 +6,4 @@ localparam int MEM_POS_EMB = 584;
 localparam int MEM_TOK_EMB = 16968;
 localparam int MEM_LAYERS = 279112;
 localparam int MEM_LAYER_STRIDE = 168144;
+localparam int MEM_KV_BASE = 1624264;
