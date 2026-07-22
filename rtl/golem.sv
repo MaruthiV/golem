@@ -8,6 +8,8 @@ module golem (
     output logic        busy,
 
     output logic [21:0] mrd_addr,
+    output logic        mrd_req,
+    input  logic        mrd_valid,
     input  logic [31:0] mrd_data,
 
     output logic        kv_we,
@@ -85,7 +87,7 @@ module golem (
     .gl_we(gl_we), .gl_addr(gl_a), .gl_data(gl_d),
     .kv_we(kv_we), .kv_wsel(kv_wsel), .kv_waddr(kv_waddr), .kv_wdata(kv_wdata),
     .kv_raddr(kv_raddr), .kv_rsel(kv_rsel), .kv_rdata(kv_rdata),
-    .w_valid(st==S_WT), .w_data0(mb0), .w_data1(mb1), .w_data2(mb2), .w_data3(mb3), .w_ready(w_rdy),
+    .w_valid((st==S_WT) && mrd_valid), .w_data0(mb0), .w_data1(mb1), .w_data2(mb2), .w_data3(mb3), .w_ready(w_rdy),
     .r3_valid(r3_v), .r3_idx(r3_i), .r3_data(r3_d));
 
   logic nrm_start, nrm_busy, nrm_v; logic [7:0] nrm_xa, nrm_ga, nrm_i; logic signed [7:0] nrm_o;
@@ -98,6 +100,12 @@ module golem (
   wire [21:0] lbase = 22'(MEM_LAYERS + li*MEM_LAYER_STRIDE);
 
   assign busy = (st != S_IDLE);
+  // states that read the weight/config SDRAM. real SDRAM has latency, so the FSM
+  // must wait for mrd_valid before consuming — `stall` freezes it until data arrives.
+  assign mrd_req = (st==S_HDR || st==S_LUT || st==S_ETOK || st==S_EPOS || st==S_SCAL ||
+                    st==S_PARM || st==S_GATN || st==S_GMLP || st==S_GELU || st==S_WT ||
+                    st==S_ON_G || st==S_LG);
+  wire stall = mrd_req && !mrd_valid;
 
   always_comb begin
     unique case (st)
@@ -124,6 +132,7 @@ module golem (
     // weights arrive), so capture it in any state the block is running.
     if (r3_v) xbuf[r3_i]<=r3_d;
     if (rst) st<=S_IDLE;
+    else if (stall) begin end  // waiting on SDRAM: hold the FSM, re-request same addr
     else case (st)
       S_IDLE: if (start) begin cnt<=0; st<=S_HDR; end
       S_HDR: begin

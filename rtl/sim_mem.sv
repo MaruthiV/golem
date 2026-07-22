@@ -13,6 +13,31 @@ module sim_mem (
   assign data = m[addr];
 endmodule
 
+// latency-accurate SDRAM read model: data becomes valid LAT cycles after a stable
+// (req, addr). Represents CAS/activate latency — the real thing golem must tolerate.
+module sdram_rd #(parameter LAT = 4) (
+    input  logic        clk,
+    input  logic        req,
+    input  logic [21:0] addr,
+    output logic        valid,
+    output logic [31:0] data
+);
+  logic [31:0] m [0:(1<<21)-1];
+  string hf;
+  initial begin
+    if (!$value$plusargs("HEX=%s", hf)) hf = "data/golem_mem.hex";
+    $readmemh(hf, m);
+  end
+  logic [21:0] la; logic [2:0] cnt;
+  always_ff @(posedge clk) begin
+    if (!req) begin cnt <= LAT[2:0]; la <= 22'h3FFFFF; end
+    else if (addr != la) begin la <= addr; cnt <= LAT[2:0]; end
+    else if (cnt != 0) cnt <= cnt - 3'd1;
+  end
+  assign valid = req && (addr == la) && (cnt == 0);
+  assign data = m[addr];
+endmodule
+
 // behavioral KV memory (the SDRAM KV region in sim): sync write, async read.
 module kv_mem (
     input  logic        clk,
@@ -42,14 +67,14 @@ module golem_sim (
     output logic        tok_valid,
     output logic [11:0] tok_out
 );
-  logic [21:0] a; logic [31:0] d;
+  logic [21:0] a; logic [31:0] d; logic rq, rv;
   logic kw, kws, krs; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
   golem u_golem(.clk(clk), .rst(rst), .start(start), .token(token), .pos(pos), .busy(busy),
-                .mrd_addr(a), .mrd_data(d),
+                .mrd_addr(a), .mrd_req(rq), .mrd_valid(rv), .mrd_data(d),
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rdata(krd),
                 .tok_valid(tok_valid), .tok_out(tok_out));
-  sim_mem u_mem(.addr(a), .data(d));
+  sdram_rd u_mem(.clk(clk), .req(rq), .addr(a), .valid(rv), .data(d));
   kv_mem u_kv(.clk(clk), .we(kw), .wsel(kws), .waddr(kwa), .wdata(kwd),
               .raddr(kra), .rsel(krs), .rdata(krd));
 endmodule
