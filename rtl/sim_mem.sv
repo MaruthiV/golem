@@ -38,15 +38,17 @@ module sdram_rd #(parameter LAT = 4) (
   assign data = m[addr];
 endmodule
 
-// behavioral KV memory (the SDRAM KV region in sim): sync write, async read.
-module kv_mem (
+// behavioral KV memory (the SDRAM KV region in sim): posted (sync) write, LAT-cycle read.
+module kv_mem #(parameter LAT = 4) (
     input  logic        clk,
     input  logic        we,
     input  logic        wsel,
     input  logic [16:0] waddr,
     input  logic [31:0] wdata,
+    input  logic        rreq,
     input  logic [16:0] raddr,
     input  logic        rsel,
+    output logic        rvalid,
     output logic [31:0] rdata
 );
   logic [31:0] kmem [0:(1<<17)-1];
@@ -54,6 +56,14 @@ module kv_mem (
   always_ff @(posedge clk) if (we) begin
     if (wsel) kmem[waddr] <= wdata; else vmem[waddr] <= wdata;
   end
+  logic [17:0] la; logic [2:0] cnt;
+  wire [17:0] cur = {rsel, raddr};
+  always_ff @(posedge clk) begin
+    if (!rreq) begin cnt <= LAT[2:0]; la <= 18'h3FFFF; end
+    else if (cur != la) begin la <= cur; cnt <= LAT[2:0]; end
+    else if (cnt != 0) cnt <= cnt - 3'd1;
+  end
+  assign rvalid = rreq && (cur == la) && (cnt == 0);
   assign rdata = rsel ? kmem[raddr] : vmem[raddr];
 endmodule
 
@@ -68,15 +78,15 @@ module golem_sim (
     output logic [11:0] tok_out
 );
   logic [21:0] a; logic [31:0] d; logic rq, rv;
-  logic kw, kws, krs; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
+  logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
   golem u_golem(.clk(clk), .rst(rst), .start(start), .token(token), .pos(pos), .busy(busy),
                 .mrd_addr(a), .mrd_req(rq), .mrd_valid(rv), .mrd_data(d),
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
-                .kv_raddr(kra), .kv_rsel(krs), .kv_rdata(krd),
+                .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(tok_valid), .tok_out(tok_out));
   sdram_rd u_mem(.clk(clk), .req(rq), .addr(a), .valid(rv), .data(d));
   kv_mem u_kv(.clk(clk), .we(kw), .wsel(kws), .waddr(kwa), .wdata(kwd),
-              .raddr(kra), .rsel(krs), .rdata(krd));
+              .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
 endmodule
 
 // block + KV memory, for the block-level test (block now has external KV ports)
@@ -92,7 +102,7 @@ module block_sim (
     input  logic w_valid, input logic signed [7:0] w_data0, w_data1, w_data2, w_data3, output logic w_ready,
     output logic r3_valid, output logic [7:0] r3_idx, output logic signed [7:0] r3_data
 );
-  logic kw, kws, krs; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
+  logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
   block u_block(.clk(clk), .rst(rst), .start(start), .t(t), .layer(layer), .busy(busy),
     .xr_we(xr_we), .xr_addr(xr_addr), .xr_data(xr_data),
     .cfg_we(cfg_we), .cfg_sel(cfg_sel), .cfg_mult(cfg_mult), .cfg_shift(cfg_shift),
@@ -101,9 +111,9 @@ module block_sim (
     .sl_we(sl_we), .sl_addr(sl_addr), .sl_data(sl_data),
     .gl_we(gl_we), .gl_addr(gl_addr), .gl_data(gl_data),
     .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
-    .kv_raddr(kra), .kv_rsel(krs), .kv_rdata(krd),
+    .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
     .w_valid(w_valid), .w_data0(w_data0), .w_data1(w_data1), .w_data2(w_data2), .w_data3(w_data3),
     .w_ready(w_ready), .r3_valid(r3_valid), .r3_idx(r3_idx), .r3_data(r3_data));
   kv_mem u_kv(.clk(clk), .we(kw), .wsel(kws), .waddr(kwa), .wdata(kwd),
-              .raddr(kra), .rsel(krs), .rdata(krd));
+              .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
 endmodule

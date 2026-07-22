@@ -41,6 +41,8 @@ module block (
     output logic [31:0] kv_wdata,
     output logic [16:0] kv_raddr,
     output logic        kv_rsel,
+    output logic        kv_rreq,
+    input  logic        kv_rvalid,
     input  logic [31:0] kv_rdata,
 
     input  logic              w_valid,
@@ -178,8 +180,10 @@ module block (
   // one external read port: K during scoring (S_SC), V during attention (S_AT)
   assign kv_raddr = {layer, s[7:0], h, c};
   assign kv_rsel  = (state == S_SC);
+  assign kv_rreq  = (state == S_SC || state == S_AT);  // KV read every cycle here
   assign kword = kv_rdata;
   assign vword = kv_rdata;
+  wire kv_stall = kv_rreq && !kv_rvalid;  // wait for the cache word from SDRAM
   // write the assembled 32-bit K/V word every 4th output element of MM_K/MM_V
   assign kv_we    = mm_ov && (mm_oi[1:0] == 2'd3) && (state == S_MM_K || state == S_MM_V);
   assign kv_wsel  = (state == S_MM_K);
@@ -236,6 +240,7 @@ module block (
     r3_valid <= 1'b0;
     if (rst) begin
       state <= S_IDLE;
+    end else if (kv_stall) begin  // scoring/attention waiting on the KV cache
     end else begin
       case (state)
         S_IDLE: if (start) begin

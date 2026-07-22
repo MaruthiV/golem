@@ -18,6 +18,8 @@ module golem (
     output logic [31:0] kv_wdata,
     output logic [16:0] kv_raddr,
     output logic        kv_rsel,
+    output logic        kv_rreq,
+    input  logic        kv_rvalid,
     input  logic [31:0] kv_rdata,
 
     output logic        tok_valid,
@@ -86,7 +88,8 @@ module golem (
     .sl_we(sl_we), .sl_addr(sl_a), .sl_data(sl_d),
     .gl_we(gl_we), .gl_addr(gl_a), .gl_data(gl_d),
     .kv_we(kv_we), .kv_wsel(kv_wsel), .kv_waddr(kv_waddr), .kv_wdata(kv_wdata),
-    .kv_raddr(kv_raddr), .kv_rsel(kv_rsel), .kv_rdata(kv_rdata),
+    .kv_raddr(kv_raddr), .kv_rsel(kv_rsel), .kv_rreq(kv_rreq), .kv_rvalid(kv_rvalid),
+    .kv_rdata(kv_rdata),
     .w_valid((st==S_WT) && mrd_valid), .w_data0(mb0), .w_data1(mb1), .w_data2(mb2), .w_data3(mb3), .w_ready(w_rdy),
     .r3_valid(r3_v), .r3_idx(r3_i), .r3_data(r3_d));
 
