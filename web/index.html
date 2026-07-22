@@ -3,200 +3,302 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>golem — a language model thinking on silicon</title>
+<title>golem — the specimen sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,400&family=Space+Mono:wght@400;700&family=Frank+Ruhl+Libre:wght@500&display=swap" rel="stylesheet">
 <style>
-  :root { --bg:#0b0e14; --panel:#11151f; --line:#1e2636; --dim:#3a4256; --amber:#ffb454; --hot:#ff7043; --cyan:#39d0d8; --txt:#c8d0e0; --mute:#5c6780; }
-  * { box-sizing:border-box; }
-  body { margin:0; background:var(--bg); color:var(--txt); font:14px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace; }
-  header { padding:18px 24px 10px; border-bottom:1px solid var(--line); }
-  h1 { margin:0; font-size:19px; font-weight:600; letter-spacing:.3px; }
-  h1 b { color:var(--amber); }
-  .sub { color:var(--mute); font-size:12px; margin-top:3px; }
-  .wrap { display:grid; grid-template-columns: 1fr 320px; gap:16px; padding:16px 24px; max-width:1180px; }
-  canvas { width:100%; background:var(--panel); border:1px solid var(--line); border-radius:8px; }
-  .side { display:flex; flex-direction:column; gap:12px; }
-  .card { background:var(--panel); border:1px solid var(--line); border-radius:8px; padding:12px 14px; }
-  .card h2 { margin:0 0 8px; font-size:11px; text-transform:uppercase; letter-spacing:1px; color:var(--mute); font-weight:600; }
-  .stat { display:flex; justify-content:space-between; font-size:12.5px; padding:2px 0; }
-  .stat span:last-child { color:var(--amber); }
-  .op { color:var(--cyan); font-weight:600; }
-  #story { min-height:96px; font-size:15px; line-height:1.7; color:#e6ebf5; }
-  #story .cursor { color:var(--hot); animation:blink 1s steps(1) infinite; }
-  @keyframes blink { 50% { opacity:0; } }
-  .bar { height:7px; background:#0a0d13; border-radius:4px; overflow:hidden; margin-top:5px; }
-  .bar > div { height:100%; width:0; background:linear-gradient(90deg,var(--hot),var(--amber)); }
-  .foot { padding:6px 24px 22px; color:var(--mute); font-size:11.5px; }
-  .foot b { color:var(--txt); }
-  button { background:var(--line); color:var(--txt); border:1px solid #2a3346; border-radius:6px; padding:5px 12px; cursor:pointer; font:inherit; font-size:12px; }
-  button:hover { border-color:var(--amber); }
-  .row { display:flex; gap:8px; align-items:center; }
+  :root{
+    --paper:#efe5cf; --paper2:#e7dbbf; --panel:#f5edda;
+    --ink:#241c14; --ink2:#5c4c37; --faint:#8a785c;
+    --clay:#b8442a; --clay2:#d5673f; --brass:#a67c2b; --brass2:#c99a3f;
+    --rule:#cbb98f; --rule2:#d8caa6;
+    --serif:"Fraunces",Georgia,serif; --mono:"Space Mono",monospace; --carve:"Cinzel",serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--serif);
+    line-height:1.5;
+    background-image:
+      radial-gradient(ellipse at 50% 0%, rgba(255,250,235,.6), transparent 60%),
+      radial-gradient(120% 90% at 50% 40%, transparent 55%, rgba(60,42,20,.10) 100%),
+      repeating-linear-gradient(0deg, transparent 0 33px, rgba(120,95,55,.05) 33px 34px),
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.05'/%3E%3C/svg%3E");
+    min-height:100vh;
+  }
+  .aleph{position:fixed; inset:0; display:flex; align-items:center; justify-content:center;
+    font-family:"Frank Ruhl Libre",serif; font-size:52vh; color:rgba(120,60,30,.045);
+    pointer-events:none; z-index:0; letter-spacing:.05em; user-select:none;}
+  .sheet{position:relative; z-index:1; max-width:1000px; margin:0 auto; padding:38px 30px 60px;}
+
+  /* orchestrated load */
+  @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;}}
+  @keyframes draw{from{transform:scaleX(0);} to{transform:scaleX(1);}}
+  @keyframes fade{from{opacity:0;} to{opacity:1;}}
+  .r{opacity:0; animation:rise .9s cubic-bezier(.2,.7,.2,1) forwards;}
+  .d1{animation-delay:.05s;} .d2{animation-delay:.28s;} .d3{animation-delay:.5s;}
+  .d4{animation-delay:.72s;} .d5{animation-delay:.95s;}
+  @media (prefers-reduced-motion: reduce){ .r{opacity:1; animation:none;} .rule{animation:none;} }
+
+  .mast{text-align:center; padding-bottom:6px;}
+  .kicker{font-family:var(--mono); font-size:11px; letter-spacing:.42em; text-transform:uppercase;
+    color:var(--clay); margin-bottom:14px;}
+  h1{font-family:var(--carve); font-weight:700; font-size:clamp(58px,13vw,132px); margin:0;
+    letter-spacing:.06em; color:var(--ink); line-height:.92;
+    text-shadow:0 1px 0 #fff7e6, 0 2px 1px rgba(70,45,20,.18);}
+  .tag{font-family:var(--serif); font-style:italic; font-size:clamp(15px,2.2vw,20px);
+    color:var(--ink2); margin-top:10px;}
+  .rule{height:2px; background:linear-gradient(90deg,transparent,var(--ink) 12%,var(--ink) 88%,transparent);
+    transform-origin:center; animation:draw 1.1s cubic-bezier(.6,0,.2,1) both; margin:20px 0;}
+  .rule.thin{height:1px; background:linear-gradient(90deg,transparent,var(--rule),transparent);}
+  .lineno{display:flex; justify-content:space-between; font-family:var(--mono); font-size:10.5px;
+    letter-spacing:.24em; text-transform:uppercase; color:var(--faint); margin:-8px 2px 22px;}
+
+  .grid{display:grid; grid-template-columns:1fr 268px; gap:0;}
+  .plate{position:relative; padding:16px; background:var(--panel);
+    border:1.5px solid var(--ink); box-shadow:5px 6px 0 rgba(60,42,20,.14);}
+  .plate::before,.plate::after{content:""; position:absolute; width:14px; height:14px; border:1.5px solid var(--clay);}
+  .plate::before{top:5px; left:5px; border-right:none; border-bottom:none;}
+  .plate::after{bottom:5px; right:5px; border-left:none; border-top:none;}
+  .plate .cap{font-family:var(--mono); font-size:10px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--faint); display:flex; justify-content:space-between; margin-bottom:8px;}
+  canvas{width:100%; display:block; image-rendering:auto;}
+
+  .margin{border-top:1.5px solid var(--ink); border-right:1.5px solid var(--ink);
+    border-bottom:1.5px solid var(--ink); background:linear-gradient(180deg,var(--panel),var(--paper2));
+    padding:0;}
+  .entry{padding:14px 16px; border-bottom:1px solid var(--rule);}
+  .entry:last-child{border-bottom:none;}
+  .lbl{font-family:var(--mono); font-size:9.5px; letter-spacing:.28em; text-transform:uppercase;
+    color:var(--clay); margin-bottom:6px;}
+  .big{font-family:var(--carve); font-size:19px; color:var(--ink); letter-spacing:.02em;}
+  .kv{display:flex; justify-content:space-between; align-items:baseline; padding:3px 0;
+    font-family:var(--mono); font-size:12.5px; color:var(--ink2);}
+  .kv b{font-weight:700; color:var(--clay); font-size:14px;}
+  .gauge{height:9px; background:#e2d4b2; border:1px solid var(--rule); margin-top:8px; position:relative; overflow:hidden;}
+  .gauge>div{height:100%; width:0; background:repeating-linear-gradient(90deg,var(--brass) 0 5px,var(--brass2) 5px 8px); transition:width .12s linear;}
+  .opnow{font-family:var(--serif); font-style:italic; font-size:17px; color:var(--clay); min-height:24px;}
+
+  .story-wrap{margin-top:26px; position:relative; padding:30px 34px;
+    border:1.5px solid var(--ink); background:
+      linear-gradient(180deg, rgba(255,252,242,.7), rgba(231,219,191,.5));
+    box-shadow:5px 6px 0 rgba(60,42,20,.14);}
+  .story-wrap .cap{font-family:var(--mono); font-size:10px; letter-spacing:.3em; text-transform:uppercase;
+    color:var(--faint); margin-bottom:16px; display:flex; justify-content:space-between; gap:16px;}
+  .drop{font-family:var(--serif);}
+  #story{font-family:var(--serif); font-size:clamp(19px,2.7vw,25px); line-height:1.62; color:var(--ink);}
+  #story::first-letter{font-family:var(--carve); font-weight:700; font-size:3.1em; float:left;
+    line-height:.72; padding:6px 12px 2px 0; color:var(--clay);}
+  #story .cur{color:var(--clay2); font-weight:600; animation:blink 1.05s steps(1) infinite;}
+  @keyframes blink{50%{opacity:0;}}
+
+  .colophon{margin-top:34px; display:flex; gap:22px; align-items:flex-start; flex-wrap:wrap;
+    font-family:var(--mono); font-size:11px; color:var(--faint); letter-spacing:.04em; line-height:1.7;}
+  .colophon .heb{font-family:"Frank Ruhl Libre",serif; font-size:20px; color:var(--clay); letter-spacing:.1em;}
+  .colophon b{color:var(--ink2);}
+  button{font-family:var(--mono); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase;
+    background:transparent; color:var(--ink); border:1.5px solid var(--ink); padding:6px 12px; cursor:pointer;
+    transition:.15s;}
+  button:hover{background:var(--clay); color:var(--paper); border-color:var(--clay);}
+  @media(max-width:720px){ .grid{grid-template-columns:1fr;} .margin{border-top:none;} }
 </style>
 </head>
 <body>
-<header>
-  <h1><b>golem</b> — a language model thinking on silicon I designed</h1>
-  <div class="sub">a 6.36M-parameter transformer, running on a from-scratch chip. every flash is real compute, timed from the RTL.</div>
-</header>
+<div class="aleph">אמת</div>
+<div class="sheet">
+  <div class="mast">
+    <div class="kicker r d1">Specimen № 001 · a from-scratch processor</div>
+    <h1 class="r d1">GOLEM</h1>
+    <div class="tag r d2">a language model, thinking on silicon I designed &amp; carved by hand</div>
+  </div>
+  <div class="rule d2"></div>
+  <div class="lineno r d3"><span>6.36M parameters · int8</span><span id="ln-mid">TinyStories · 8 layers</span><span>verified bit-exact</span></div>
 
-<div class="wrap">
-  <canvas id="die" width="820" height="520"></canvas>
-  <div class="side">
-    <div class="card">
-      <h2>now computing</h2>
-      <div class="row"><div class="op" id="opname">booting…</div></div>
-      <div class="stat"><span>layer</span><span id="layer">–</span></div>
-      <div class="stat"><span>phase</span><span id="phase">–</span></div>
-      <div class="bar"><div id="opbar"></div></div>
+  <div class="grid">
+    <div class="plate r d3">
+      <div class="cap"><span>Plate I — the die, computing</span><span id="livecycle">—</span></div>
+      <canvas id="die" width="820" height="500"></canvas>
     </div>
-    <div class="card">
-      <h2>weight bandwidth</h2>
-      <div class="sub" style="margin:0 0 4px">tok/s ≈ memory bandwidth ÷ model bytes</div>
-      <div class="bar"><div id="bw"></div></div>
-      <div class="stat" style="margin-top:6px"><span>weights streamed</span><span id="wstream">0.0 MB</span></div>
+    <div class="margin r d4">
+      <div class="entry">
+        <div class="lbl">Now inscribing</div>
+        <div class="opnow" id="opname">awakening…</div>
+        <div class="kv"><span>layer</span><span id="layer">—</span></div>
+      </div>
+      <div class="entry">
+        <div class="lbl">Weight bandwidth</div>
+        <div class="gauge"><div id="bw"></div></div>
+        <div class="kv" style="margin-top:6px"><span>streamed</span><span id="wstream">0.00 MB</span></div>
+        <div style="font-family:var(--serif);font-style:italic;font-size:12px;color:var(--ink2);margin-top:6px">tokens ⁄ sec = bandwidth ÷ mass</div>
+      </div>
+      <div class="entry">
+        <div class="lbl">The specimen</div>
+        <div class="kv"><span>parameters</span><b id="params">6.36M</b></div>
+        <div class="kv"><span>cycles ⁄ token</span><b id="cpt">—</b></div>
+        <div class="kv"><span>tok⁄s · 27 MHz</span><b id="tps">—</b></div>
+      </div>
+      <div class="entry" style="text-align:center">
+        <button id="speed">tempo · 1×</button>
+      </div>
     </div>
-    <div class="card">
-      <h2>this chip</h2>
-      <div class="stat"><span>parameters</span><span id="params">6.36M</span></div>
-      <div class="stat"><span>precision</span><span>int8</span></div>
-      <div class="stat"><span>cycles / token</span><span id="cpt">–</span></div>
-      <div class="stat"><span>tok/s @ 27MHz</span><span id="tps">–</span></div>
-      <div class="row" style="margin-top:8px"><button id="speed">speed: 1×</button></div>
-    </div>
+  </div>
+
+  <div class="story-wrap r d5">
+    <div class="cap"><span>Plate II — what the golem writes</span><span>greedy · deterministic</span></div>
+    <div id="story"><span class="cur">❦</span></div>
+  </div>
+
+  <div class="colophon r d5">
+    <div class="heb">אמת</div>
+    <div style="max-width:560px">In the legend the golem wakes when the word <b>emet</b> — <i>truth</i> — is inscribed upon it, and returns to clay when a single letter is erased. This one wakes on inscribed <b>weights</b>. Every operation shown is verified <b>bit-exact</b> against the golden model; the schedule is timed from the RTL. ~<b>1.35M cycles</b> carve each word.</div>
+    <div style="margin-left:auto">golem · MMXXVI<br>made of MACs, on a Mac</div>
   </div>
 </div>
 
-<div class="wrap" style="grid-template-columns:1fr">
-  <div class="card"><h2>what it's writing</h2><div id="story"><span class="cursor">▌</span></div></div>
-</div>
-<div class="foot">every operation shown is verified <b>bit-exact</b> against the golden model. schedule timing captured from the RTL simulation (Icarus). trained on TinyStories; ~<b>1.35M cycles/token</b>.</div>
-
 <script>
-const C = document.getElementById('die'), X = C.getContext('2d');
-const $ = id => document.getElementById(id);
-let T = null, speed = 1;
-const SPEEDS = [1, 4, 16, 64];
-
-// die floorplan: engines as boxes
-const ENG = {}; // filled after layout
-const UNITS = [
-  {k:'mem',   label:'SDRAM (weights)', x:30,  y:60,  w:150, h:60,  c:'#5c6780'},
-  {k:'rmsnorm',label:'RMSNorm',        x:230, y:40,  w:130, h:44,  c:'#39d0d8'},
-  {k:'matmul',label:'MAC array',       x:230, y:110, w:200, h:120, c:'#ff7043'},
-  {k:'scores',label:'scores',          x:470, y:110, w:110, h:36,  c:'#ffb454'},
-  {k:'softmax',label:'softmax',        x:470, y:158, w:110, h:36,  c:'#ffb454'},
-  {k:'attn',  label:'attention',       x:470, y:206, w:110, h:36,  c:'#ffb454'},
-  {k:'gelu',  label:'GELU',            x:230, y:250, w:130, h:40,  c:'#39d0d8'},
-  {k:'buffer',label:'residual buffer', x:230, y:306, w:200, h:36,  c:'#8b9bb8'},
+const C=document.getElementById('die'), X=C.getContext('2d'), $=id=>document.getElementById(id);
+let T=null, speed=1; const SPEEDS=[1,4,16,64];
+const P={ink:'#241c14', ink2:'#5c4c37', faint:'#8a785c', paper:'#f5edda', panel:'#efe5cf',
+  clay:'#b8442a', clay2:'#d5673f', brass:'#a67c2b', rule:'#cbb98f'};
+const ENG={};
+const UNITS=[
+  {k:'mem',    label:'SDRAM · the weights', x:26, y:52, w:158, h:64, kind:'mem'},
+  {k:'rmsnorm',label:'rmsnorm',   x:238, y:36,  w:132, h:42, kind:'aux'},
+  {k:'matmul', label:'MAC array', x:238, y:104, w:206, h:118, kind:'main'},
+  {k:'scores', label:'scores',    x:482, y:104, w:112, h:34, kind:'attn'},
+  {k:'softmax',label:'softmax',   x:482, y:150, w:112, h:34, kind:'attn'},
+  {k:'attn',   label:'attention', x:482, y:196, w:112, h:34, kind:'attn'},
+  {k:'gelu',   label:'gelu',      x:238, y:242, w:132, h:38, kind:'aux'},
+  {k:'buffer', label:'residual',  x:238, y:300, w:206, h:34, kind:'aux'},
 ];
-function hex(c,a){ const n=parseInt(c.slice(1),16); return `rgba(${n>>16&255},${n>>8&255},${n&255},${a})`; }
+const rgba=(hex,a)=>{const n=parseInt(hex.slice(1),16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
+function frame_(x,y,w,h,r){X.beginPath();X.moveTo(x+r,y);X.arcTo(x+w,y,x+w,y+h,r);X.arcTo(x+w,y+h,x,y+h,r);X.arcTo(x,y+h,x,y,r);X.arcTo(x,y,x+w,y,r);X.closePath();}
 
-function draw(active, opProg, layer, bw){
+function draw(active,prog,layer,bw){
   X.clearRect(0,0,C.width,C.height);
-  // layer strip
-  const lx=30, ly=400, lw=760, seg=lw/8;
-  X.fillStyle='#5c6780'; X.font='11px monospace'; X.fillText('8 transformer layers', lx, ly-10);
-  for(let i=0;i<8;i++){
-    const on = i===layer;
-    X.fillStyle = on? hex('#ffb454',.9) : '#141a26';
-    X.fillRect(lx+i*seg+2, ly, seg-4, 30);
-    X.strokeStyle= on?'#ffb454':'#232c3e'; X.strokeRect(lx+i*seg+2, ly, seg-4, 30);
-    X.fillStyle= on?'#0b0e14':'#5c6780'; X.fillText('L'+i, lx+i*seg+seg/2-8, ly+19);
-  }
-  X.fillStyle='#39d0d8'; X.fillText('EMBED', lx, 470);
-  X.fillStyle='#ff7043'; X.fillText('→  LOGITS → argmax → next token', lx+70, 470);
+  // paper plate + engraved inner frame
+  X.fillStyle=P.panel; X.fillRect(0,0,C.width,C.height);
+  X.strokeStyle=rgba('#241c14',.5); X.lineWidth=1; X.strokeRect(8.5,8.5,C.width-17,C.height-17);
+  X.strokeStyle=rgba('#241c14',.22); X.strokeRect(13.5,13.5,C.width-27,C.height-27);
 
-  // data flow lines
-  X.strokeStyle='#1e2636'; X.lineWidth=1;
-  const link=(a,b)=>{ const A=ENG[a],B=ENG[b]; if(!A||!B)return; X.beginPath();
-    X.moveTo(A.x+A.w,A.y+A.h/2); X.lineTo(B.x,B.y+B.h/2); X.stroke(); };
-  link('mem','matmul'); link('rmsnorm','matmul'); link('matmul','scores');
-  link('scores','softmax'); link('softmax','attn'); link('matmul','gelu');
+  // ink flow lines (engraving)
+  X.strokeStyle=rgba('#5c4c37',.5); X.lineWidth=1;
+  const link=(a,b)=>{const A=ENG[a],B=ENG[b];if(!A||!B)return;X.beginPath();
+    X.moveTo(A.x+A.w,A.y+A.h/2);X.bezierCurveTo(A.x+A.w+18,A.y+A.h/2,B.x-18,B.y+B.h/2,B.x,B.y+B.h/2);X.stroke();};
+  link('mem','matmul');link('rmsnorm','matmul');link('matmul','scores');
+  link('scores','softmax');link('softmax','attn');link('matmul','gelu');link('matmul','buffer');
 
   for(const u of UNITS){
-    const on = active.includes(u.k);
-    X.fillStyle = on ? hex(u.c,.22) : '#0f1420';
-    X.strokeStyle = on ? u.c : '#232c3e';
-    X.lineWidth = on ? 2 : 1;
-    round(u.x,u.y,u.w,u.h,7); X.fill(); X.stroke();
-    if(on){ X.shadowColor=u.c; X.shadowBlur=18; X.stroke(); X.shadowBlur=0; }
-    X.fillStyle = on ? u.c : '#6b7690'; X.font='12px monospace';
-    X.fillText(u.label, u.x+12, u.y+u.h/2+4);
+    const on=active.includes(u.k);
+    const accent = u.kind==='main'?P.clay : u.kind==='attn'?P.brass : u.kind==='mem'?P.ink2 : P.ink2;
+    X.lineWidth = on?2:1.1;
+    X.strokeStyle = on?accent:rgba('#241c14',.55);
+    X.fillStyle = on? rgba(accent,.16) : rgba('#fff7e6',.35);
+    frame_(u.x,u.y,u.w,u.h,3); X.fill(); X.stroke();
+    if(on){ // hatch wash
+      X.save(); frame_(u.x,u.y,u.w,u.h,3); X.clip(); X.strokeStyle=rgba(accent,.22); X.lineWidth=1;
+      for(let d=-u.h;d<u.w;d+=6){X.beginPath();X.moveTo(u.x+d,u.y+u.h);X.lineTo(u.x+d+u.h,u.y);X.stroke();} X.restore();
+    }
+    X.fillStyle = on?accent:P.ink2;
+    X.font = '600 13px "Fraunces", Georgia, serif';
+    // main unit labels at top; others centered
+    X.fillText(u.label, u.x+14, u.kind==='main'? u.y+20 : u.y+u.h/2+5);
   }
-  // MAC array grid pulse
+  // MAC array — ink cells filling like set type
   const mm=ENG['matmul'];
   if(active.includes('matmul')){
-    for(let r=0;r<4;r++)for(let c=0;c<8;c++){
-      const lit = Math.random() < .6;
-      X.fillStyle = lit? hex('#ff7043',.5+.5*Math.random()) : 'rgba(255,112,67,.08)';
-      X.fillRect(mm.x+18+c*20, mm.y+40+r*16, 15, 12);
+    for(let r=0;r<3;r++)for(let c=0;c<9;c++){
+      const lit=Math.random()<(.35+.5*prog);
+      X.fillStyle= lit? rgba(P.clay,.35+.5*Math.random()) : rgba('#241c14',.06);
+      X.fillRect(mm.x+16+c*20, mm.y+40+r*16, 16, 12);
     }
-    X.fillStyle=hex('#ffb454',.8); X.font='10px monospace';
-    X.fillText('4 int8 MACs × streaming', mm.x+16, mm.y+26);
+    X.fillStyle=rgba(P.clay,.8); X.font='10px "Space Mono", monospace';
+    X.fillText('4 int8 MACs · streaming', mm.x+16, mm.y+110);
   }
-  // attention heatmap when softmax/attn active
-  if((active.includes('softmax')||active.includes('attn')) && T.attention){
-    const ax=610, ay=110, cell=6, N=Math.min(28,T.attention.length);
-    X.fillStyle='#5c6780'; X.font='10px monospace'; X.fillText('attention (real)', ax, ay-6);
+  // attention — sepia ink density
+  if((active.includes('softmax')||active.includes('attn'))&&T.attention){
+    const ax=616,ay=104,cell=6,N=Math.min(30,T.attention.length);
+    X.fillStyle=P.faint; X.font='10px "Space Mono", monospace'; X.fillText('attention (real)',ax,ay-6);
     for(let i=0;i<N;i++)for(let j=0;j<=i;j++){
-      X.fillStyle=hex('#39d0d8', T.attention[i][j]/255*.9+.05);
+      X.fillStyle=rgba(P.clay, T.attention[i][j]/255*.85+.04);
       X.fillRect(ax+j*cell, ay+i*cell, cell-1, cell-1);
     }
   }
-  // op progress under MAC
-  $('opbar').style.width = (opProg*100)+'%';
-  $('bw').style.width = (bw*100)+'%';
-}
-function round(x,y,w,h,r){ X.beginPath(); X.moveTo(x+r,y); X.arcTo(x+w,y,x+w,y+h,r);
-  X.arcTo(x+w,y+h,x,y+h,r); X.arcTo(x,y+h,x,y,r); X.arcTo(x,y,x+w,y,r); X.closePath(); }
-
-// animation state
-let li=0, pi=0, elapsed=0, wi=0, wbytes=0;
-const LAYER_BYTES = 655360, TOTAL_BYTES = 6.36e6;
-let last=performance.now();
-function frame(now){
-  const dt=(now-last); last=now;
-  if(!T){ requestAnimationFrame(frame); return; }
-  const ph = T.phases[pi];
-  const durMs = Math.max(ph.dur/1000/1000*4, 40); // compress; 4ns->~scaled
-  elapsed += dt*speed/ (durMs);
-  const prog = Math.min(elapsed,1);
-  const active=[ph.engine];
-  if(ph.engine==='matmul') active.push('mem');
-  // bandwidth: fills during matmul phases across the token
-  const bw = ph.engine==='matmul' ? (0.4+0.6*prog) : 0.12;
-  draw(active, prog, li, bw);
-  $('opname').textContent = ph.op.replace('_',' ');
-  $('layer').textContent = 'L'+li+' / 8';
-  $('phase').textContent = (pi+1)+' / '+T.phases.length;
-  $('wstream').textContent = ((wbytes+ (ph.engine==='matmul'?prog*LAYER_BYTES/6:0))/1e6).toFixed(2)+' MB';
-  if(elapsed>=1){
-    elapsed=0;
-    if(ph.engine==='matmul') wbytes+=LAYER_BYTES/6;
-    pi++;
-    if(pi>=T.phases.length){ pi=0; li++;
-      if(li>=T.n_layers){ li=0; wbytes=0; emitWord(); }
-    }
+  // layer register at the foot
+  const lx=26, ly=402, seg=(C.width-52)/8;
+  X.fillStyle=P.faint; X.font='10px "Space Mono", monospace'; X.fillText('VIII TRANSFORMER LAYERS', lx, ly-9);
+  for(let i=0;i<8;i++){
+    const on=i===layer;
+    X.fillStyle= on? rgba(P.clay,.85):rgba('#fff7e6',.4);
+    X.strokeStyle= on?P.clay:rgba('#241c14',.4); X.lineWidth=on?1.6:1;
+    frame_(lx+i*seg+2,ly,seg-4,28,2); X.fill(); X.stroke();
+    X.fillStyle= on?P.paper:P.ink2; X.font='11px "Space Mono", monospace';
+    const rom=['I','II','III','IV','V','VI','VII','VIII'][i];
+    X.fillText(rom, lx+i*seg+seg/2-X.measureText(rom).width/2, ly+18);
   }
-  requestAnimationFrame(frame);
-}
-function emitWord(){
-  if(!T.words.length) return;
-  const w=T.words[wi% T.words.length]; wi++;
-  const el=$('story'); el.querySelector('.cursor')?.remove();
-  el.insertAdjacentText('beforeend', w);
-  el.insertAdjacentHTML('beforeend','<span class="cursor">▌</span>');
-  if(wi% T.words.length===0) setTimeout(()=>{ $('story').innerHTML='<span class="cursor">▌</span>'; wi=0; }, 2500);
-}
-$('speed').onclick=()=>{ let i=(SPEEDS.indexOf(speed)+1)%SPEEDS.length; speed=SPEEDS[i]; $('speed').textContent='speed: '+speed+'×'; };
+  X.fillStyle=P.ink2; X.font='italic 12px "Fraunces", serif';
+  X.fillText('embed  →  8 layers  →  norm  →  logits  →  argmax  →  next word', lx, ly+52);
 
-fetch('trace.json').then(r=>r.json()).then(d=>{
-  T=d;
-  for(const u of UNITS) ENG[u.k]=u;
+  $('bw').style.width=(bw*100)+'%';
+}
+
+const OPTEXT={norm:'root-mean-square norm',matmul_Q:'projecting queries',matmul_K:'projecting keys',
+  matmul_V:'projecting values',scores:'scoring attention',softmax:'softmax over the past',attention:'gathering values',
+  matmul_O:'output projection',matmul_up:'lifting to 768',matmul_down:'folding back to 256',load:'staging'};
+// die animation: ambient, paced to ~1.7s per layer (compressed real schedule)
+let li=0,pi=0,el=0,wb=0,scale=1; const LAYER_BYTES=655360; let last=performance.now();
+function tick(now){
+  const dt=now-last; last=now;
+  if(!T){requestAnimationFrame(tick);return;}
+  const ph=T.phases[pi];
+  const durMs=Math.max(ph.dur*scale,48);
+  el += dt*speed/durMs; const prog=Math.min(el,1);
+  const active=[ph.engine]; if(ph.engine==='matmul')active.push('mem');
+  const bw = ph.engine==='matmul'? .35+.6*prog : .1;
+  draw(active,prog,li,bw);
+  $('opname').textContent=OPTEXT[ph.op]||ph.op.replace('_',' ');
+  $('layer').textContent='№ '+(li+1)+' of 8';
+  $('livecycle').textContent='phase '+(pi+1)+'/'+T.phases.length;
+  $('wstream').textContent=((wb+(ph.engine==='matmul'?prog*LAYER_BYTES/6:0))/1e6).toFixed(2)+' MB';
+  if(el>=1){ el=0; if(ph.engine==='matmul')wb+=LAYER_BYTES/6; pi++;
+    if(pi>=T.phases.length){pi=0;li++; if(li>=T.n_layers){li=0;wb=0;}} }
+  requestAnimationFrame(tick);
+}
+// story: types at a readable pace, independent of the die; loops
+let wi=0, typer=null;
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+function startStory(){
+  const box=$('story');
+  clearInterval(typer);
+  const step=()=>{
+    if(wi>=T.words.length){
+      clearInterval(typer);
+      setTimeout(()=>{ wi=0; box.innerHTML='<span class="cur">❦</span>'; startStory(); }, 4200);
+      return;
+    }
+    box.querySelector('.cur')?.remove();
+    box.insertAdjacentText('beforeend', T.words[wi]); wi++;
+    box.insertAdjacentHTML('beforeend','<span class="cur">❦</span>');
+  };
+  typer=setInterval(step, 130);
+}
+$('speed').onclick=()=>{speed=SPEEDS[(SPEEDS.indexOf(speed)+1)%SPEEDS.length];$('speed').textContent='tempo · '+speed+'×';};
+
+Promise.all([fetch('trace.json').then(r=>r.json()), (document.fonts?document.fonts.ready:Promise.resolve())])
+.then(([d])=>{
+  T=d; for(const u of UNITS)ENG[u.k]=u;
+  const layerNs=T.phases.reduce((a,p)=>a+p.dur,0);
+  scale = 1700/Math.max(layerNs,1); // ~1.7s per layer of ambient motion
   $('cpt').textContent=(d.cycles_per_token/1e6).toFixed(2)+'M';
   $('tps').textContent=(27e6/d.cycles_per_token).toFixed(1);
   $('params').textContent=d.params_m+'M';
-  requestAnimationFrame(frame);
-}).catch(()=>{ $('opname').textContent='run gen_trace.py to build trace.json'; });
+  $('ln-mid').textContent='TinyStories · '+d.n_layers+' layers · '+d.heads+' heads';
+  requestAnimationFrame(tick);
+  startStory();
+}).catch(()=>{$('opname').textContent='run gen_trace.py first';});
 </script>
 </body>
 </html>
