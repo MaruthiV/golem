@@ -89,8 +89,8 @@ class IntGolem:
         q = self.q
         tok = q["tok_emb.w"][tokens].astype(np.int64)
         pos = q["pos_emb.w"][np.arange(tokens.shape[-1])].astype(np.int64)
-        a = ops.requant(tok, int(q["emb_tok.m"]), int(q["emb_tok.s"]))
-        b = ops.requant(pos, int(q["emb_pos.m"]), int(q["emb_pos.s"]))
+        a = ops.sat16(ops.requant(tok, int(q["emb_tok.m"]), int(q["emb_tok.s"])))
+        b = ops.sat16(ops.requant(pos, int(q["emb_pos.m"]), int(q["emb_pos.s"])))
         x = ops.sat8(a + b)
         self.cap("x0", x)
         for i in range(config.N_LAYERS):
@@ -114,8 +114,8 @@ class IntGolem:
             self.cap(p + "att", att)
             o = self.linear(att, p + "wo")
             self.cap(p + "o", o)
-            ra = ops.requant(x.astype(np.int64), int(q[p + "r2_in.m"]), int(q[p + "r2_in.s"]))
-            rb = ops.requant(o.astype(np.int64), int(q[p + "r2_out.m"]), int(q[p + "r2_out.s"]))
+            ra = ops.sat16(ops.requant(x.astype(np.int64), int(q[p + "r2_in.m"]), int(q[p + "r2_in.s"])))
+            rb = ops.sat16(ops.requant(o.astype(np.int64), int(q[p + "r2_out.m"]), int(q[p + "r2_out.s"])))
             x = ops.sat8(ra + rb)
             self.cap(p + "r2", x)
             mn = ops.int_rmsnorm(x, q[p + "mlp_norm.w"], int(q[p + "mlp_norm.m"]),
@@ -127,8 +127,8 @@ class IntGolem:
             self.cap(p + "gel", gel)
             dn = self.linear(gel, p + "down")
             self.cap(p + "dn", dn)
-            ra = ops.requant(x.astype(np.int64), int(q[p + "r3_in.m"]), int(q[p + "r3_in.s"]))
-            rb = ops.requant(dn.astype(np.int64), int(q[p + "r3_out.m"]), int(q[p + "r3_out.s"]))
+            ra = ops.sat16(ops.requant(x.astype(np.int64), int(q[p + "r3_in.m"]), int(q[p + "r3_in.s"])))
+            rb = ops.sat16(ops.requant(dn.astype(np.int64), int(q[p + "r3_out.m"]), int(q[p + "r3_out.s"])))
             x = ops.sat8(ra + rb)
             self.cap(p + "r3", x)
         on = ops.int_rmsnorm(x, q["out_norm.w"], int(q["out_norm.m"]), int(q["out_norm.s"]))

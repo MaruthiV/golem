@@ -4,7 +4,8 @@ module matmul_row (
 
     input  logic       start,
     input  logic [9:0] cfg_k,
-    input  logic [8:0] cfg_j,
+    input  logic [9:0] cfg_j,
+    input  logic [11:0] cfg_pbase,
     output logic       busy,
 
     input  logic              x_we,
@@ -12,7 +13,7 @@ module matmul_row (
     input  logic signed [7:0] x_data,
 
     input  logic        p_we,
-    input  logic [7:0]  p_addr,
+    input  logic [11:0] p_addr,
     input  logic [30:0] p_mult,
     input  logic [5:0]  p_shift,
 
@@ -24,14 +25,15 @@ module matmul_row (
     output logic              w_ready,
 
     output logic              out_valid,
-    output logic [7:0]        out_idx,
+    output logic [9:0]        out_idx,
     output logic signed [7:0] out_data
 );
   localparam IDLE = 2'd0, ACC = 2'd1, EMIT = 2'd2;
 
   logic [1:0] state;
   logic [7:0] kw, k_words;
-  logic [8:0] j, j_total;
+  logic [9:0] j, j_total;
+  logic [11:0] pbase;
   logic signed [31:0] acc_r;
 
   // x buffer banked by k%4 so one weight word meets four x bytes per cycle
@@ -39,7 +41,7 @@ module matmul_row (
   logic signed [7:0] xb1 [0:191];
   logic signed [7:0] xb2 [0:191];
   logic signed [7:0] xb3 [0:191];
-  logic [36:0] params [0:255];
+  logic [36:0] params [0:4095];
 
   always_ff @(posedge clk) begin
     if (x_we) begin
@@ -60,7 +62,7 @@ module matmul_row (
   assign sum4 = s01 + s23;
 
   logic [36:0] p_cur;
-  assign p_cur = params[j[7:0]];
+  assign p_cur = params[pbase + {2'b0, j}];
 
   logic signed [7:0] q_out;
   requant rq (
@@ -84,7 +86,8 @@ module matmul_row (
           if (start) begin
             k_words <= cfg_k[9:2] - 8'd1;
             j_total <= cfg_j;
-            j <= 9'd0;
+            pbase <= cfg_pbase;
+            j <= 10'd0;
             kw <= 8'd0;
             acc_r <= 32'sd0;
             state <= ACC;
@@ -99,13 +102,13 @@ module matmul_row (
         end
         EMIT: begin
           out_valid <= 1'b1;
-          out_idx <= j[7:0];
+          out_idx <= j;
           out_data <= q_out;
           acc_r <= 32'sd0;
           kw <= 8'd0;
-          if (j == j_total - 9'd1) state <= IDLE;
+          if (j == j_total - 10'd1) state <= IDLE;
           else begin
-            j <= j + 9'd1;
+            j <= j + 10'd1;
             state <= ACC;
           end
         end

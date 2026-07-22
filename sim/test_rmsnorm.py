@@ -6,39 +6,45 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 import cocotb
 import numpy as np
 from cocotb.clock import Clock
-from cocotb.triggers import ReadOnly, RisingEdge
+from cocotb.triggers import ReadOnly, ReadWrite, RisingEdge
 
 from golden import ops
 
 DATA = Path(__file__).resolve().parents[1] / "data"
+
+HOLD = {"x": np.zeros(256, dtype=np.int64), "g": np.zeros(256, dtype=np.int64)}
+
+
+async def serve_mem(dut):
+    while True:
+        await RisingEdge(dut.clk)
+        await ReadWrite()
+        xa, ga = dut.x_rd_addr.value, dut.g_rd_addr.value
+        if xa.is_resolvable:
+            dut.x_rd_data.value = int(HOLD["x"][int(xa)]) & 0xFF
+        if ga.is_resolvable:
+            dut.g_rd_data.value = int(HOLD["g"][int(ga)]) & 0xFF
 
 
 async def setup(dut):
     cocotb.start_soon(Clock(dut.clk, 10, unit="ns").start())
     dut.rst.value = 1
     dut.start.value = 0
-    dut.x_we.value = 0
-    dut.g_we.value = 0
+    dut.x_rd_data.value = 0
+    dut.g_rd_data.value = 0
     for _ in range(3):
         await RisingEdge(dut.clk)
     dut.rst.value = 0
+    cocotb.start_soon(serve_mem(dut))
     await RisingEdge(dut.clk)
 
 
-async def write_port(dut, we, addr, data, values):
-    for i, v in enumerate(values.tolist()):
-        we.value = 1
-        addr.value = i
-        data.value = int(v) & 0xFF
-        await RisingEdge(dut.clk)
-    we.value = 0
-
-
 async def run_norm(dut, x, g, m, s):
-    await write_port(dut, dut.x_we, dut.x_addr, dut.x_data, x)
-    await write_port(dut, dut.g_we, dut.g_addr, dut.g_data, g)
+    HOLD["x"][:] = x
+    HOLD["g"][:] = g
     dut.cfg_mult.value = int(m)
     dut.cfg_shift.value = int(s)
+    await RisingEdge(dut.clk)
     dut.start.value = 1
     await RisingEdge(dut.clk)
     dut.start.value = 0

@@ -10,8 +10,9 @@ BLOCKS = {
     "matmul": (["requant.sv", "matmul_row.sv"], "matmul_row", "test_matmul_row"),
     "rmsnorm": (["requant.sv", "divu.sv", "rmsnorm.sv"], "rmsnorm", "test_rmsnorm"),
     "softmax": (["divu.sv", "softmax_row.sv"], "softmax_row", "test_softmax_row"),
-    "attmul": (["requant.sv", "attmul_row.sv"], "attmul_row", "test_attmul_row"),
     "gelu": (["gelu_lut.sv"], "gelu_lut", "test_gelu_lut"),
+    "block": (["requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv", "softmax_row.sv",
+               "gelu_lut.sv", "block.sv"], "block", "test_block"),
 }
 
 

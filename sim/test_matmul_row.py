@@ -25,6 +25,7 @@ async def setup(dut):
     dut.x_we.value = 0
     dut.p_we.value = 0
     dut.w_valid.value = 0
+    dut.cfg_pbase.value = 0
     for _ in range(3):
         await RisingEdge(dut.clk)
     dut.rst.value = 0

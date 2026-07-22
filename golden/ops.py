@@ -39,6 +39,10 @@ def sat8(x):
     return np.clip(x, -127, 127).astype(np.int8)
 
 
+def sat16(x):
+    return np.clip(x, -32767, 32767)
+
+
 def matmul_i8(x_i8, w_i8_t):
     # int8 x int8 with int32 accum, computed exactly in float64 blas for speed
     acc = x_i8.astype(np.float64) @ w_i8_t.astype(np.float64)

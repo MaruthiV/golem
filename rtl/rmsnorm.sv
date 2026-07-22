@@ -5,13 +5,10 @@ module rmsnorm (
     input  logic start,
     output logic busy,
 
-    input  logic              x_we,
-    input  logic [7:0]        x_addr,
-    input  logic signed [7:0] x_data,
-
-    input  logic              g_we,
-    input  logic [7:0]        g_addr,
-    input  logic signed [7:0] g_data,
+    output logic [7:0]        x_rd_addr,
+    input  logic signed [7:0] x_rd_data,
+    output logic [7:0]        g_rd_addr,
+    input  logic signed [7:0] g_rd_data,
 
     input  logic [30:0] cfg_mult,
     input  logic [5:0]  cfg_shift,
@@ -23,8 +20,6 @@ module rmsnorm (
   localparam IDLE = 3'd0, SQ = 3'd1, LATCH = 3'd2, SQRT = 3'd3, DIV = 3'd4, DIVW = 3'd5, OUT = 3'd6;
 
   logic [2:0] state;
-  logic signed [7:0] xbuf [0:255];
-  logic signed [7:0] gbuf [0:255];
   logic [7:0] idx;
   logic [31:0] n32;
   logic [13:0] msq;
@@ -50,8 +45,10 @@ module rmsnorm (
   logic signed [28:0] xinv;
   logic signed [36:0] full;
   logic signed [31:0] acc_sat;
-  assign xinv = xbuf[idx] * $signed({1'b0, inv});
-  assign full = xinv * gbuf[idx];
+  assign x_rd_addr = idx;
+  assign g_rd_addr = idx;
+  assign xinv = x_rd_data * $signed({1'b0, inv});
+  assign full = xinv * g_rd_data;
   always_comb begin
     if (full > 37'sd2147483646) acc_sat = 32'sd2147483646;
     else if (full < -37'sd2147483646) acc_sat = -32'sd2147483646;
@@ -66,8 +63,6 @@ module rmsnorm (
   always_ff @(posedge clk) begin
     out_valid <= 1'b0;
     div_start <= 1'b0;
-    if (x_we) xbuf[x_addr] <= x_data;
-    if (g_we) gbuf[g_addr] <= g_data;
     if (rst) begin
       state <= IDLE;
     end else begin
@@ -78,7 +73,7 @@ module rmsnorm (
           state <= SQ;
         end
         SQ: begin
-          n32 <= n32 + 32'(xbuf[idx] * xbuf[idx]);
+          n32 <= n32 + 32'(x_rd_data * x_rd_data);
           idx <= idx + 8'd1;
           if (idx == 8'd255) state <= LATCH;
         end
