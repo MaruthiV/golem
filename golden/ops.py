@@ -62,7 +62,8 @@ def int_rmsnorm(x_i8, g_i8, m, shift):
     t = np.maximum(t, 1)
     inv = ((1 << (spec.NORM_INV_SHIFT + spec.NORM_ISQRT_SHIFT // 2)) + t // 2) // t
     inv = np.where(msq == 0, 0, inv)
-    acc = x * inv * g_i8.astype(np.int64)
+    # saturate to int32 so the contract is total: hw carries this acc in 32 bits
+    acc = np.clip(x * inv * g_i8.astype(np.int64), -(1 << 31) + 1, (1 << 31) - 1)
     return sat8(requant(acc, m, shift))
 
 
