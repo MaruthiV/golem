@@ -4,6 +4,7 @@ module block (
 
     input  logic       start,
     input  logic [7:0] t,
+    input  logic [2:0] layer,
     output logic       busy,
 
     input  logic              xr_we,
@@ -76,8 +77,8 @@ module block (
   logic signed [7:0] qb1 [0:63];
   logic signed [7:0] qb2 [0:63];
   logic signed [7:0] qb3 [0:63];
-  logic [31:0] k_mem [0:16383];
-  logic [31:0] v_mem [0:16383];
+  logic [31:0] k_mem [0:131071];
+  logic [31:0] v_mem [0:131071];
   logic signed [31:0] aacc [0:31];
 
   logic [30:0] r_mult [0:7];
@@ -91,8 +92,8 @@ module block (
       r_mult[cfg_sel] <= cfg_mult;
       r_shift[cfg_sel] <= cfg_shift;
     end
-    if (kvd_we && !kvd_v) k_mem[kvd_addr] <= kvd_data;
-    if (kvd_we && kvd_v) v_mem[kvd_addr] <= kvd_data;
+    if (kvd_we && !kvd_v) k_mem[{layer, kvd_addr}] <= kvd_data;
+    if (kvd_we && kvd_v) v_mem[{layer, kvd_addr}] <= kvd_data;
   end
 
   // norm engine, x/g served by phase
@@ -173,8 +174,8 @@ module block (
   // score engine
   logic signed [31:0] sc_acc;
   logic [31:0] kword, vword;
-  assign kword = k_mem[{s[7:0], h, c}];
-  assign vword = v_mem[{s[7:0], h, c}];
+  assign kword = k_mem[{layer, s[7:0], h, c}];
+  assign vword = v_mem[{layer, s[7:0], h, c}];
   logic signed [7:0] kb0, kb1, kb2, kb3;
   assign {kb3, kb2, kb1, kb0} = kword;
   logic signed [17:0] sc_sum;
@@ -257,7 +258,7 @@ module block (
         end
         S_MM_K: begin
           if (mm_ov) begin
-            if (mm_oi[1:0] == 2'd3) k_mem[{tok, mm_oi[7:2]}] <= {mm_od, pack};
+            if (mm_oi[1:0] == 2'd3) k_mem[{layer, tok, mm_oi[7:2]}] <= {mm_od, pack};
             else pack <= {mm_od, pack[23:8]};
           end
           if (!mm_busy && !mm_start) begin
@@ -267,7 +268,7 @@ module block (
         end
         S_MM_V: begin
           if (mm_ov) begin
-            if (mm_oi[1:0] == 2'd3) v_mem[{tok, mm_oi[7:2]}] <= {mm_od, pack};
+            if (mm_oi[1:0] == 2'd3) v_mem[{layer, tok, mm_oi[7:2]}] <= {mm_od, pack};
             else pack <= {mm_od, pack[23:8]};
           end
           if (!mm_busy && !mm_start) begin

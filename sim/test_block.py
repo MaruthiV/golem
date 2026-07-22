@@ -85,6 +85,7 @@ async def run_token(dut, t, xrow, wflat):
         await RisingEdge(dut.clk)
     dut.xr_we.value = 0
     dut.t.value = t
+    dut.layer.value = 0
     dut.start.value = 1
     await RisingEdge(dut.clk)
     dut.start.value = 0

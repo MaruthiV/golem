@@ -1,0 +1,23 @@
+Skipping compilation of /Users/maruthi/Documents/dev/summer-projects/random/golem/sim/build_block/sim.vvp
+     -.--ns INFO     gpi                                ..mbed/gpi_embed.cpp:94   in _embed_init_python              Using Python 3.11.9 interpreter at /Users/maruthi/Documents/dev/summer-projects/random/golem/.venv/bin/python3
+     -.--ns INFO     gpi                                ../gpi/GpiCommon.cpp:79   in gpi_print_registered_impl       VPI registered
+     0.00ns INFO     cocotb                             Running on Icarus Verilog version 13.0 (stable)
+     0.00ns INFO     cocotb                             Seeding Python random module with 1784697964
+     0.00ns INFO     cocotb                             Initialized cocotb v2.0.1 from /Users/maruthi/Documents/dev/summer-projects/random/golem/.venv/lib/python3.11/site-packages/cocotb
+     0.00ns INFO     cocotb                             Running tests
+     0.00ns INFO     cocotb.regression                  running conductor.generate (1/1)
+13750590.00ns INFO     cocotb.block                       pos 0: rtl=437 golden=437 ok
+27529950.00ns INFO     cocotb.block                       pos 1: rtl=446 golden=446 ok
+41343230.00ns INFO     cocotb.block                       pos 2: rtl=259 golden=259 ok
+55190430.00ns INFO     cocotb.block                       pos 3: rtl=403 golden=403 ok
+69071550.00ns INFO     cocotb.block                       pos 4: rtl=12 golden=12 ok
+82986590.00ns INFO     cocotb.block                       pos 5: rtl=407 golden=407 ok
+82986590.00ns INFO     cocotb.block                       PASS: 6 tokens bit-exact vs golden greedy
+82986590.00ns INFO     cocotb.regression                  conductor.generate passed
+82986590.00ns INFO     cocotb.regression                  **************************************************************************************
+                                                          ** TEST                          STATUS  SIM TIME (ns)  REAL TIME (s)  RATIO (ns/s) **
+                                                          **************************************************************************************
+                                                          ** conductor.generate             PASS    82986590.00         414.24     200336.43  **
+                                                          **************************************************************************************
+                                                          ** TESTS=1 PASS=1 FAIL=0 SKIP=0           82986590.00         414.24     200335.38  **
+                                                          **************************************************************************************
