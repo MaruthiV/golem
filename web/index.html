@@ -10,7 +10,7 @@
 <style>
   :root{
     --bg:#fbfaf8; --ink:#1c1b19; --muted:#77746d; --faint:#9c988f;
-    --line:#e8e5df; --line2:#f0ede7; --accent:#a8462a; --accent-soft:#f4e7e0;
+    --line:#e8e5df; --line2:#f0ede7; --accent:#42597a; --accent-soft:#e7ecf3;
     --serif:"Newsreader",Georgia,serif; --mono:"IBM Plex Mono",ui-monospace,monospace;
   }
   *{box-sizing:border-box;}
@@ -89,7 +89,7 @@
 <script>
 const C=document.getElementById('die'), X=C.getContext('2d'), $=id=>document.getElementById(id);
 let T=null, speed=1; const SPEEDS=[1,4,16];
-const col={ink:'#1c1b19', muted:'#77746d', faint:'#c9c5bc', line:'#e2ded7', accent:'#a8462a', soft:'#f4e7e0', bg:'#fbfaf8'};
+const col={ink:'#1c1b19', muted:'#77746d', faint:'#c9c5bc', line:'#e2ded7', accent:'#42597a', soft:'#e7ecf3', bg:'#fbfaf8'};
 const rgba=(h,a)=>{const n=parseInt(h.slice(1),16);return`rgba(${n>>16&255},${n>>8&255},${n&255},${a})`;};
 const ENG={};
 const STAGES=[
