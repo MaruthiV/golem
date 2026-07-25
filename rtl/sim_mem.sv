@@ -89,6 +89,65 @@ module golem_sim (
               .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
 endmodule
 
+// SDRAM controller + behavioral chip, exposing golem's command port — for the ctrl unit test.
+module sdram_sys (
+    input  logic        clk,
+    input  logic        rst,
+    input  logic        cmd_valid,
+    input  logic        cmd_wr,
+    input  logic [21:0] cmd_addr,
+    input  logic [31:0] cmd_wdata,
+    output logic        cmd_ready,
+    output logic        rd_valid,
+    output logic [31:0] rd_data
+);
+  logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a;
+  logic [31:0] dqo, dqi; logic dqoe;
+  sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(cmd_valid), .cmd_wr(cmd_wr),
+    .cmd_addr(cmd_addr), .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
+    .rd_valid(rd_valid), .rd_data(rd_data),
+    .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
+    .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
+  sdram_chip u_chip(.clk(clk), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
+    .ba(ba), .a(a), .dq_i(dqo), .dq_o(dqi));
+endmodule
+
+// golem + arbiter + real SDRAM controller + chip model — the full board memory path in sim.
+module golem_board (
+    input  logic        clk,
+    input  logic        rst,
+    input  logic        start,
+    input  logic [11:0] token,
+    input  logic [7:0]  pos,
+    output logic        busy,
+    output logic        tok_valid,
+    output logic [11:0] tok_out
+);
+  logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
+  logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
+  logic o_valid, o_wr, c_ready, c_rvalid; logic [21:0] o_addr; logic [31:0] o_wdata, c_rdata;
+  logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a; logic [31:0] dqo, dqi; logic dqoe;
+
+  golem u_golem(.clk(clk), .rst(rst), .start(start), .token(token), .pos(pos), .busy(busy),
+                .mrd_addr(mrd_addr), .mrd_req(mrd_req), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
+                .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
+                .tok_valid(tok_valid), .tok_out(tok_out));
+  mem_arbiter u_arb(.clk(clk), .rst(rst),
+                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
+                .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
+                .i_ready(c_ready), .i_rvalid(c_rvalid), .i_rdata(c_rdata));
+  sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(o_valid), .cmd_wr(o_wr),
+                .cmd_addr(o_addr), .cmd_wdata(o_wdata), .cmd_ready(c_ready),
+                .rd_valid(c_rvalid), .rd_data(c_rdata),
+                .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
+                .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
+  sdram_chip u_chip(.clk(clk), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
+                .ba(ba), .a(a), .dq_i(dqo), .dq_o(dqi));
+endmodule
+
 // golem + arbiter + ONE unified SDRAM — the real board memory architecture, in sim.
 module golem_soc (
     input  logic        clk,
