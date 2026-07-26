@@ -19,6 +19,7 @@ wandb/
 # sim/hardware build artifacts
 obj_dir/
 build/
+fpga/out/
 sim/build_*/
 *.vcd
 *.fst

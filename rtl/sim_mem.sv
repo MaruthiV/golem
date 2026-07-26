@@ -89,6 +89,41 @@ module golem_sim (
               .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
 endmodule
 
+// weight_loader + SDRAM (ctrl+chip) + a test read port — for the loader unit test.
+module loader_sys #(parameter [21:0] N_WORDS = 22'd20) (
+    input  logic        clk,
+    input  logic        rst,
+    input  logic [7:0]  rx_data,
+    input  logic        rx_valid,
+    output logic        load_done,
+    input  logic        t_valid,
+    input  logic [21:0] t_addr,
+    output logic        t_ready,
+    output logic        t_rvalid,
+    output logic [31:0] t_rdata
+);
+  logic ld_valid, ld_wr; logic [21:0] ld_addr; logic [31:0] ld_wdata; logic ld_ready;
+  weight_loader #(.N_WORDS(N_WORDS)) u_ld(.clk(clk), .rst(rst), .rx_data(rx_data),
+    .rx_valid(rx_valid), .cmd_valid(ld_valid), .cmd_wr(ld_wr), .cmd_addr(ld_addr),
+    .cmd_wdata(ld_wdata), .cmd_ready(ld_ready), .done(load_done));
+  wire loading = !load_done;
+  logic c_valid, c_wr; logic [21:0] c_addr; logic [31:0] c_wdata, c_rdata; logic c_ready, c_rvalid;
+  assign c_valid = loading ? ld_valid : t_valid;
+  assign c_wr    = loading ? ld_wr    : 1'b0;
+  assign c_addr  = loading ? ld_addr  : t_addr;
+  assign c_wdata = ld_wdata;
+  assign ld_ready = loading ? c_ready : 1'b0;
+  assign t_ready  = loading ? 1'b0 : c_ready;
+  assign t_rvalid = c_rvalid; assign t_rdata = c_rdata;
+  logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a; logic [31:0] dqo, dqi; logic dqoe;
+  sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr), .cmd_addr(c_addr),
+    .cmd_wdata(c_wdata), .cmd_ready(c_ready), .rd_valid(c_rvalid), .rd_data(c_rdata),
+    .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
+    .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
+  sdram_chip u_chip(.clk(clk), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
+    .ba(ba), .a(a), .dq_i(dqo), .dq_o(dqi));
+endmodule
+
 // SDRAM controller + behavioral chip, exposing golem's command port — for the ctrl unit test.
 module sdram_sys (
     input  logic        clk,
@@ -205,4 +240,29 @@ module block_sim (
     .w_ready(w_ready), .r3_valid(r3_valid), .r3_idx(r3_idx), .r3_data(r3_data));
   kv_mem u_kv(.clk(clk), .we(kw), .wsel(kws), .waddr(kwa), .wdata(kwd),
               .rreq(krq), .raddr(kra), .rsel(krs), .rvalid(krv), .rdata(krd));
+endmodule
+
+// same command port, but the inout-bus chip model — isolates sdram_chip_io tristate timing.
+module sdram_sys_io (
+    input  logic        clk,
+    input  logic        rst,
+    input  logic        cmd_valid,
+    input  logic        cmd_wr,
+    input  logic [21:0] cmd_addr,
+    input  logic [31:0] cmd_wdata,
+    output logic        cmd_ready,
+    output logic        rd_valid,
+    output logic [31:0] rd_data
+);
+  logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a;
+  logic [31:0] dqo, dqi; logic dqoe;
+  wire [31:0] dq = dqoe ? dqo : 32'bz;
+  assign dqi = dq;
+  sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(cmd_valid), .cmd_wr(cmd_wr),
+    .cmd_addr(cmd_addr), .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
+    .rd_valid(rd_valid), .rd_data(rd_data),
+    .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
+    .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
+  sdram_chip_io u_chip(.clk(clk), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
+    .ba(ba), .a(a), .dq(dq));
 endmodule

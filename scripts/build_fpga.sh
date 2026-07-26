@@ -4,20 +4,24 @@
 #   https://github.com/YosysHQ/oss-cad-suite-build/releases  (darwin-arm64)
 #   then: source <oss-cad-suite>/environment
 #
-# TOP = golem_board = golem_fpga + the SDRAM controller + a weight loader (see docs/board.md).
-# To just check fabric fit + Fmax of the core logic first, set TOP=golem_fpga and drop
-# sdram_ctrl.sv / golem_board.sv from RTL (its SDRAM command port floats as I/O).
+# TOP = golem_board_top: the full board design — golem + arbiter + SDRAM controller +
+# UART rx/tx + weight loader, with physical SDRAM pins (see docs/board.md).
+# To just check fabric fit + Fmax of the core logic first, set TOP=golem_fpga (its SDRAM
+# command port floats as I/O; drops the controller / loader / uart_rx).
 set -e
 cd "$(dirname "$0")/.."
 
-TOP=${TOP:-golem_board}
+TOP=${TOP:-golem_board_top}
 DEVICE="GW2AR-LV18QN88C8/I7"
 FAMILY="GW2A-18C"
 
 RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
-     rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/uart_tx.sv \
-     rtl/golem_fpga.sv"
-[ "$TOP" = "golem_board" ] && RTL="$RTL rtl/sdram_ctrl.sv rtl/golem_board.sv"
+     rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/uart_tx.sv"
+if [ "$TOP" = "golem_board_top" ]; then
+  RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/golem_board_top.sv"
+else
+  RTL="$RTL rtl/golem_fpga.sv"
+fi
 
 mkdir -p fpga/out
 yosys -p "read_verilog -sv $RTL; synth_gowin -top $TOP -json fpga/out/$TOP.json"
