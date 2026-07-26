@@ -45,9 +45,11 @@ module sdram_ctrl #(
 
   assign {cs_n, ras_n, cas_n, we_n} = cmd;
   assign cke = 1'b1;
+  // combinational: accurately reflects "I will accept a command THIS cycle" (no refresh race)
+  assign cmd_ready = (st == S_IDLE) && !refresh_due;
 
   always_ff @(posedge clk) begin
-    cmd <= C_NOP; rd_valid <= 1'b0; cmd_ready <= 1'b0; dq_oe <= 1'b0;
+    cmd <= C_NOP; rd_valid <= 1'b0; dq_oe <= 1'b0;
     refctr <= refctr + 16'd1;
     if (rst) begin st <= S_INIT; tcnt <= INIT_WAIT; refctr <= 0; end
     else case (st)
@@ -62,13 +64,9 @@ module sdram_ctrl #(
       S_LMR:  if (tcnt == 0) begin st <= S_IDLE; refctr <= 0; end else tcnt <= tcnt - 16'd1;
       S_IDLE: begin
         if (refresh_due) begin cmd <= C_REF; refctr <= 0; st <= S_REF; tcnt <= tRFC; end
-        else begin
-          cmd_ready <= 1'b1;
-          if (cmd_valid) begin
-            cmd_ready <= 1'b0;
-            pend_wr <= cmd_wr; pend_addr <= cmd_addr; pend_wdata <= cmd_wdata;
-            cmd <= C_ACT; ba <= b_bank; a <= {2'b0, b_row}; st <= S_ACT; tcnt <= tRCD;
-          end
+        else if (cmd_valid) begin
+          pend_wr <= cmd_wr; pend_addr <= cmd_addr; pend_wdata <= cmd_wdata;
+          cmd <= C_ACT; ba <= b_bank; a <= {2'b0, b_row}; st <= S_ACT; tcnt <= tRCD;
         end
       end
       S_ACT: if (tcnt == 0) begin

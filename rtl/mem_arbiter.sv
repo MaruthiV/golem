@@ -38,34 +38,37 @@ module mem_arbiter (
   endfunction
 
   logic wpend; logic [21:0] waddr_l; logic [31:0] wdata_l;
-  logic [1:0] st;  // 0 = idle/issue, 1 = waiting for read data, 2 = cooldown
+  logic [2:0] st;  // 0 pick, 1 issue-write, 2 issue-read, 3 wait-data, 4 cooldown
   logic tag;       // 0 = mrd, 1 = kv
 
+  // held-valid handshake: o_valid stays asserted until (o_valid && i_ready) — the command
+  // is never lost to a refresh, since i_ready (cmd_ready) truly means "accepted this cycle".
   always_ff @(posedge clk) begin
     o_valid <= 1'b0; mrd_valid <= 1'b0; kv_rvalid <= 1'b0;
-    if (rst) begin st <= 2'd0; wpend <= 1'b0; end
+    if (rst) begin st <= 3'd0; wpend <= 1'b0; end
     else begin
       case (st)
-        2'd0: if (i_ready) begin
+        3'd0: begin  // pick a request
           if (wpend) begin
             o_valid <= 1'b1; o_wr <= 1'b1; o_addr <= waddr_l; o_wdata <= wdata_l;
-            wpend <= 1'b0;
+            wpend <= 1'b0; st <= 3'd1;
           end else if (kv_rreq) begin
             o_valid <= 1'b1; o_wr <= 1'b0; o_addr <= kvaddr(kv_rsel, kv_raddr);
-            tag <= 1'b1; st <= 2'd1;
+            tag <= 1'b1; st <= 3'd2;
           end else if (mrd_req) begin
             o_valid <= 1'b1; o_wr <= 1'b0; o_addr <= mrd_addr;
-            tag <= 1'b0; st <= 2'd1;
+            tag <= 1'b0; st <= 3'd2;
           end
         end
-        2'd1: if (i_rvalid) begin
+        3'd1: begin o_valid <= 1'b1; if (i_ready) begin o_valid <= 1'b0; st <= 3'd0; end end
+        3'd2: begin o_valid <= 1'b1; if (i_ready) begin o_valid <= 1'b0; st <= 3'd3; end end
+        3'd3: if (i_rvalid) begin
           if (tag) begin kv_rdata <= i_rdata; kv_rvalid <= 1'b1; end
           else begin mrd_data <= i_rdata; mrd_valid <= 1'b1; end
-          st <= 2'd2;  // cooldown: let the consumer advance its address before re-issuing
+          st <= 3'd4;  // cooldown: let the consumer advance its address before re-issuing
         end
-        2'd2: st <= 2'd0;
+        3'd4: st <= 3'd0;
       endcase
-      // latch a KV write last so it is never dropped by a same-cycle drain
       if (kv_we) begin wpend <= 1'b1; waddr_l <= kvaddr(kv_wsel, kv_waddr); wdata_l <= kv_wdata; end
     end
   end
