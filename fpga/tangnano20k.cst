@@ -6,10 +6,12 @@ IO_PORT "clk27" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 IO_LOC "rst_n" 88;            // onboard button S1
 IO_PORT "rst_n" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
-IO_LOC "uart_tx" 69;         // to onboard BL616 USB-UART bridge
-IO_PORT "uart_tx" IO_TYPE=LVCMOS33 DRIVE=8;
-IO_LOC "uart_rx" 70;
-IO_PORT "uart_rx" IO_TYPE=LVCMOS33 PULL_MODE=UP;
+// names must match golem_board_top's ports exactly — these were "uart_tx"/"uart_rx"
+// (an older top's names), so the constraints silently applied to nothing
+IO_LOC "uart_tx_pin" 69;     // to onboard BL616 USB-UART bridge
+IO_PORT "uart_tx_pin" IO_TYPE=LVCMOS33 DRIVE=8;
+IO_LOC "uart_rx_pin" 70;
+IO_PORT "uart_rx_pin" IO_TYPE=LVCMOS33 PULL_MODE=UP;
 
 IO_LOC "led[0]" 15;
 IO_LOC "led[1]" 16;

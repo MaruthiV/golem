@@ -5,9 +5,10 @@
 #   then: source <oss-cad-suite>/environment
 #
 # TOP = golem_board_top: the full board design — golem + arbiter + SDRAM controller +
-# UART rx/tx + weight loader, with physical SDRAM pins (see docs/board.md).
-# To just check fabric fit + Fmax of the core logic first, set TOP=golem_fpga (its SDRAM
-# command port floats as I/O; drops the controller / loader / uart_rx).
+# UART rx/tx + weight loader, using the dedicated SiP SDRAM port names (see docs/board.md).
+# This is the ONLY viable P&R target. TOP=golem_fpga synthesizes but can NEVER place: it
+# exposes the whole command port as ~100 I/O (o_addr + o_wdata + i_rdata + o_len + handshakes)
+# on an 88-pin package. It is kept only as a synthesis-only resource probe.
 set -e
 cd "$(dirname "$0")/.."
 

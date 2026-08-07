@@ -14,14 +14,16 @@ module board_tb #(
     output logic       uart_tx_pin,
     output logic [5:0] led
 );
-  wire cs, ras, cas, we, cke; wire [1:0] ba; wire [12:0] a;
+  wire cs, ras, cas, we, cke, sdclk; wire [1:0] ba; wire [10:0] a; wire [3:0] dqm;
   wire [31:0] dq;
 
   golem_board_top #(.CLKS_PER_BIT(CLKS_PER_BIT), .N_WORDS(N_WORDS), .MAX_TOKENS(MAX_TOKENS))
     u_top(.clk27(clk27), .rst_n(rst_n), .uart_rx_pin(uart_rx_pin), .uart_tx_pin(uart_tx_pin),
-        .led(led), .sdram_cs_n(cs), .sdram_ras_n(ras), .sdram_cas_n(cas), .sdram_we_n(we),
-        .sdram_cke(cke), .sdram_ba(ba), .sdram_a(a), .sdram_dq(dq));
+        .led(led), .O_sdram_clk(sdclk), .O_sdram_cke(cke),
+        .O_sdram_cs_n(cs), .O_sdram_ras_n(ras), .O_sdram_cas_n(cas), .O_sdram_wen_n(we),
+        .O_sdram_dqm(dqm), .O_sdram_addr(a), .O_sdram_ba(ba), .IO_sdram_dq(dq));
 
+  // the chip model takes a 13-bit a; only 11 are wired on the real SiP part
   sdram_chip_io u_chip(.clk(clk27), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
-        .ba(ba), .a(a), .dq(dq));
+        .ba(ba), .a({2'b0, a}), .dq(dq));
 endmodule

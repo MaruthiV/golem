@@ -15,10 +15,18 @@ module golem_board_top #(
     output logic        uart_tx_pin,
     output logic [5:0]  led,
 
-    output logic        sdram_cs_n, sdram_ras_n, sdram_cas_n, sdram_we_n, sdram_cke,
-    output logic [1:0]  sdram_ba,
-    output logic [12:0] sdram_a,
-    inout  wire  [31:0] sdram_dq
+    // The GW2AR-18's SDRAM is inside the package (SiP). nextpnr-himbaechel wires it up via
+    // these EXACT dedicated port names — there are no IO_LOC constraints for SDRAM, which is
+    // why nand2mario's working .cst has none. Naming them anything else (we had sdram_cs_n
+    // etc.) makes nextpnr treat them as ordinary user I/O and fail with "Unconstrained IO".
+    // addr is 11 bits here (2048 rows), not the controller's generic 13.
+    output logic        O_sdram_clk,
+    output logic        O_sdram_cke,
+    output logic        O_sdram_cs_n, O_sdram_ras_n, O_sdram_cas_n, O_sdram_wen_n,
+    output logic [3:0]  O_sdram_dqm,
+    output logic [10:0] O_sdram_addr,
+    output logic [1:0]  O_sdram_ba,
+    inout  wire  [31:0] IO_sdram_dq
 );
   wire clk = clk27;
   logic [1:0] rsync;
@@ -74,15 +82,19 @@ module golem_board_top #(
   assign ld_ready  = loading ? c_ready : 1'b0;
   assign arb_ready = loading ? 1'b0    : c_ready;
 
-  logic [31:0] dq_o, dq_i; logic dq_oe;
+  logic [31:0] dq_o, dq_i; logic dq_oe; logic [12:0] a_full;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr),
                 .cmd_addr(c_addr), .cmd_len(c_len), .rd_last(c_rlast),
                 .cmd_wdata(c_wdata), .cmd_ready(c_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
-                .cs_n(sdram_cs_n), .ras_n(sdram_ras_n), .cas_n(sdram_cas_n), .we_n(sdram_we_n),
-                .cke(sdram_cke), .ba(sdram_ba), .a(sdram_a), .dq_o(dq_o), .dq_oe(dq_oe), .dq_i(dq_i));
-  assign sdram_dq = dq_oe ? dq_o : 32'bz;   // tristate the bidirectional data bus
-  assign dq_i = sdram_dq;
+                .cs_n(O_sdram_cs_n), .ras_n(O_sdram_ras_n), .cas_n(O_sdram_cas_n),
+                .we_n(O_sdram_wen_n), .cke(O_sdram_cke), .ba(O_sdram_ba), .a(a_full),
+                .dq_o(dq_o), .dq_oe(dq_oe), .dq_i(dq_i));
+  assign O_sdram_addr = a_full[10:0];       // 2048 rows; A10 is also the auto-precharge bit
+  assign O_sdram_dqm  = 4'b0000;            // never mask: every access is a full 32-bit word
+  assign O_sdram_clk  = clk;                // TODO(bring-up): may need a PLL phase shift
+  assign IO_sdram_dq = dq_oe ? dq_o : 32'bz;   // tristate the bidirectional data bus
+  assign dq_i = IO_sdram_dq;
 
   // ---- UART tx ----
   logic u_send, u_busy; logic [7:0] u_data;
