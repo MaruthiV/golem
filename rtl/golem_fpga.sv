@@ -17,9 +17,11 @@ module golem_fpga #(
     output logic        o_valid,
     output logic        o_wr,
     output logic [21:0] o_addr,
+    output logic [8:0]  o_len,
     output logic [31:0] o_wdata,
     input  logic        i_ready,
     input  logic        i_rvalid,
+    input  logic        i_rlast,
     input  logic [31:0] i_rdata
 );
   logic [1:0] rsync;
@@ -28,6 +30,7 @@ module golem_fpga #(
 
   logic g_start, g_busy, g_tvalid; logic [11:0] g_token, g_tout; logic [7:0] g_pos;
   logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
+  logic ws_req, ws_valid, ws_last; logic [21:0] ws_addr; logic [8:0] ws_len; logic [31:0] ws_data;
   logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
 
   golem u_golem(.clk(clk), .rst(rst), .start(g_start), .token(g_token), .pos(g_pos), .busy(g_busy),
@@ -35,12 +38,17 @@ module golem_fpga #(
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(g_tvalid), .tok_out(g_tout));
-  mem_arbiter u_arb(.clk(clk), .rst(rst),
+  wstream u_ws(.clk(clk), .rst(rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .m_req(ws_req), .m_addr(ws_addr), .m_len(ws_len),
+                .m_valid(ws_valid), .m_last(ws_last), .m_data(ws_data));
+  mem_arbiter u_arb(.clk(clk), .rst(rst),
+                .mrd_req(ws_req), .mrd_addr(ws_addr), .mrd_len(ws_len),
+                .mrd_valid(ws_valid), .mrd_last(ws_last), .mrd_data(ws_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
                 .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
-                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
-                .i_ready(i_ready), .i_rvalid(i_rvalid), .i_rdata(i_rdata));
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_len(o_len), .o_wdata(o_wdata),
+                .i_ready(i_ready), .i_rvalid(i_rvalid), .i_rlast(i_rlast), .i_rdata(i_rdata));
 
   logic u_send, u_busy; logic [7:0] u_data;
   uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT)) u_uart(.clk(clk), .rst(rst), .send(u_send), .data(u_data),

@@ -28,12 +28,14 @@ module golem_top #(
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(g_tvalid), .tok_out(g_tout));
+  // single-word path (sdram_model): no bursts here, so len=1 and every word is the last
   mem_arbiter u_arb(.clk(clk), .rst(rst),
-                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_len(9'd1),
+                .mrd_valid(mrd_valid), .mrd_last(), .mrd_data(mrd_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
                 .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
-                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
-                .i_ready(sd_ready), .i_rvalid(sd_rvalid), .i_rdata(sd_rdata));
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_len(), .o_wdata(o_wdata),
+                .i_ready(sd_ready), .i_rvalid(sd_rvalid), .i_rlast(sd_rvalid), .i_rdata(sd_rdata));
   sdram_model u_sd(.clk(clk), .cmd_valid(o_valid), .cmd_wr(o_wr), .cmd_addr(o_addr),
                 .cmd_wdata(o_wdata), .cmd_ready(sd_ready), .rd_valid(sd_rvalid), .rd_data(sd_rdata));
 
