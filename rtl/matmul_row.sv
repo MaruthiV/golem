@@ -55,6 +55,13 @@ module matmul_row (
     if (p_we) params[p_addr] <= {p_mult, p_shift};
   end
 
+  // params is 4096x37 = 151,552 bits. As an ASYNC-read array it inferred ~2,560 distributed
+  // RAM16SDP4 cells against the 648 the GW2AR-18 has (T45 P&R died right here), plus a
+  // 4096-deep read mux. Registering the read makes it a simple dual-port sync RAM, which maps
+  // to BSRAM (18 of 46 blocks used, so there is room).
+  // Safe without any pipeline change: p_cur is consumed only in EMIT, and j/pbase are stable
+  // for the whole ACC phase that precedes every EMIT, so the read always has >=1 cycle.
+
   logic signed [16:0] s01, s23;
   logic signed [17:0] sum4;
   assign s01 = xb0[kw] * w_data0 + xb1[kw] * w_data1;
@@ -62,7 +69,7 @@ module matmul_row (
   assign sum4 = s01 + s23;
 
   logic [36:0] p_cur;
-  assign p_cur = params[pbase + {2'b0, j}];
+  always_ff @(posedge clk) p_cur <= params[pbase + {2'b0, j}];
 
   logic signed [7:0] q_out;
   requant rq (
