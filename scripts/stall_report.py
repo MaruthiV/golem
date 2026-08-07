@@ -35,7 +35,10 @@ def main():
     reads = d["n_mrd_reads"] + d["n_kv_reads"]
     ideal = tot - mrd_stall - kv_stall
 
+    final = bool(d.get("final", 1))
     print(f"\nT30 STALL ACCOUNTING — {p.name} ({d['tokens']} token)")
+    if not final:
+        print("*** PARTIAL SNAPSHOT mid-token — ratios are valid, per-token totals are NOT ***")
     print("=" * 74)
     print(f"total cycles/token        {tot:>14,}")
     print(f"ideal (instant memory)    {ideal:>14,}   <- what it'd be with 0-latency reads")
@@ -84,8 +87,13 @@ def main():
     print("=" * 74)
     print(f"per-word ACT+tRP+CAS overhead   {per_word_overhead:>10.2f} cycles")
     print(f"amortized over a {PAGE}-word page  {per_word_overhead / PAGE:>10.4f} cycles")
-    print(f"predicted cycles/token          {burst_tot:>10,.0f}   ({tot / max(burst_tot, 1):.1f}x faster)")
-    print(f"predicted tok/s @ 27MHz         {27e6 / max(burst_tot, 1):>10.1f}   (from {27e6 / tot:.2f} today)")
+    print(f"speedup on this traffic         {tot / max(burst_tot, 1):>10.1f}x")
+    if final:
+        print(f"predicted cycles/token          {burst_tot:>10,.0f}")
+        print(f"predicted tok/s @ 27MHz         {27e6 / max(burst_tot, 1):>10.1f}   (from {27e6 / tot:.2f} today)")
+        print(f"predicted tok/s @ 166MHz mem    {166e6 / max(burst_tot, 1):>10.1f}   (T34.5, needs the PLL)")
+    else:
+        print("(per-token and tok/s projections suppressed — partial snapshot)")
     print("\nGATE G3.5: weight-read stalls must dominate, and T34 must measure >=4x.")
     print()
 

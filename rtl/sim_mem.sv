@@ -117,6 +117,7 @@ module loader_sys #(parameter [21:0] N_WORDS = 22'd20) (
   assign t_rvalid = c_rvalid; assign t_rdata = c_rdata;
   logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a; logic [31:0] dqo, dqi; logic dqoe;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr), .cmd_addr(c_addr),
+    .cmd_len(9'd1), .rd_last(),
     .cmd_wdata(c_wdata), .cmd_ready(c_ready), .rd_valid(c_rvalid), .rd_data(c_rdata),
     .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
     .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
@@ -131,16 +132,18 @@ module sdram_sys (
     input  logic        cmd_valid,
     input  logic        cmd_wr,
     input  logic [21:0] cmd_addr,
+    input  logic [8:0]  cmd_len,
     input  logic [31:0] cmd_wdata,
     output logic        cmd_ready,
     output logic        rd_valid,
+    output logic        rd_last,
     output logic [31:0] rd_data
 );
   logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a;
   logic [31:0] dqo, dqi; logic dqoe;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(cmd_valid), .cmd_wr(cmd_wr),
-    .cmd_addr(cmd_addr), .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
-    .rd_valid(rd_valid), .rd_data(rd_data),
+    .cmd_addr(cmd_addr), .cmd_len(cmd_len), .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
+    .rd_valid(rd_valid), .rd_last(rd_last), .rd_data(rd_data),
     .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
     .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
   sdram_chip u_chip(.clk(clk), .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we),
@@ -175,7 +178,8 @@ module golem_board (
                 .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
                 .i_ready(c_ready), .i_rvalid(c_rvalid), .i_rdata(c_rdata));
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(o_valid), .cmd_wr(o_wr),
-                .cmd_addr(o_addr), .cmd_wdata(o_wdata), .cmd_ready(c_ready),
+                .cmd_addr(o_addr), .cmd_len(9'd1), .rd_last(),
+                .cmd_wdata(o_wdata), .cmd_ready(c_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
                 .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
                 .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));
@@ -259,7 +263,8 @@ module sdram_sys_io (
   wire [31:0] dq = dqoe ? dqo : 32'bz;
   assign dqi = dq;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(cmd_valid), .cmd_wr(cmd_wr),
-    .cmd_addr(cmd_addr), .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
+    .cmd_addr(cmd_addr), .cmd_len(9'd1), .rd_last(),
+    .cmd_wdata(cmd_wdata), .cmd_ready(cmd_ready),
     .rd_valid(rd_valid), .rd_data(rd_data),
     .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
     .dq_o(dqo), .dq_oe(dqoe), .dq_i(dqi));

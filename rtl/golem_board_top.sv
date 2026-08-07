@@ -66,7 +66,8 @@ module golem_board_top #(
 
   logic [31:0] dq_o, dq_i; logic dq_oe;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr),
-                .cmd_addr(c_addr), .cmd_wdata(c_wdata), .cmd_ready(c_ready),
+                .cmd_addr(c_addr), .cmd_len(9'd1), .rd_last(),
+                .cmd_wdata(c_wdata), .cmd_ready(c_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
                 .cs_n(sdram_cs_n), .ras_n(sdram_ras_n), .cas_n(sdram_cas_n), .we_n(sdram_we_n),
                 .cke(sdram_cke), .ba(sdram_ba), .a(sdram_a), .dq_o(dq_o), .dq_oe(dq_oe), .dq_i(dq_i));

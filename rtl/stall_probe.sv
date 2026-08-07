@@ -28,10 +28,13 @@ module stall_probe (
   reg [63:0] a_cyc   [0:NA-1];
   reg [3:0]  c_st_q;
   reg [8*256:1] outp;
+  reg [31:0] snap_every, snap_ctr;
   integer i, fd;
 
   wire g_stall  = g_req && !g_valid;
   wire kv_stall = kv_rreq && !kv_rvalid;
+  // periodic snapshots too: a $finish racing the final dump would otherwise lose everything
+  wire do_dump = dump || (busy && snap_ctr == 0);
 
   initial begin
     cyc_total = 0; cyc_stall = 0; cyc_kvstall = 0; cyc_cmdwait = 0;
@@ -42,10 +45,13 @@ module stall_probe (
     for (i = 0; i < NC; i = i + 1) c_cyc[i] = 0;
     for (i = 0; i < NA; i = i + 1) a_cyc[i] = 0;
     if (!$value$plusargs("STALLOUT=%s", outp)) outp = "data/stall_baseline.json";
+    if (!$value$plusargs("SNAPEVERY=%d", snap_every)) snap_every = 32'd4000000;
+    snap_ctr = snap_every;
   end
 
   always @(posedge clk) if (!rst) begin
     if (busy) begin
+      snap_ctr <= (snap_ctr == 0) ? snap_every : snap_ctr - 1;
       cyc_total <= cyc_total + 1;
       g_cyc[g_st] <= g_cyc[g_st] + 1;
       c_cyc[c_st] <= c_cyc[c_st] + 1;
@@ -69,10 +75,11 @@ module stall_probe (
     c_st_q <= c_st;
   end
 
-  always @(posedge clk) if (!rst && dump) begin
-    n_tok = n_tok + 1;
+  always @(posedge clk) if (!rst && do_dump) begin
+    if (dump) n_tok = n_tok + 1;
     fd = $fopen(outp, "w");
     $fwrite(fd, "{\n");
+    $fwrite(fd, "  \"final\": %0d,\n", dump);
     $fwrite(fd, "  \"tokens\": %0d,\n", n_tok);
     $fwrite(fd, "  \"cyc_total\": %0d,\n", cyc_total);
     $fwrite(fd, "  \"cyc_useful\": %0d,\n", cyc_useful);
