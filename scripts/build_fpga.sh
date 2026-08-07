@@ -16,7 +16,7 @@ DEVICE="GW2AR-LV18QN88C8/I7"
 FAMILY="GW2A-18C"
 
 RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
-     rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/uart_tx.sv"
+     rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/wstream.sv rtl/uart_tx.sv"
 if [ "$TOP" = "golem_board_top" ]; then
   RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/golem_board_top.sv"
 else

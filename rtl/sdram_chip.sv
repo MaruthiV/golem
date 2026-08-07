@@ -10,7 +10,8 @@ module sdram_chip #(parameter CAS = 2) (
     input  logic [1:0]  ba,
     input  logic [12:0] a,
     input  logic [31:0] dq_i,
-    output logic [31:0] dq_o
+    output logic [31:0] dq_o,
+    output logic        dq_oe      // for the inout wrapper; leave open for the split-bus users
 );
   localparam AW = 21;                 // 2M words = 64Mbit at 32-bit
   localparam PAGE = 256;
@@ -50,8 +51,10 @@ module sdram_chip #(parameter CAS = 2) (
   // CAS delay line: a word fetched this cycle lands on dq_o CAS cycles later
   logic [31:0] dl [0:3];
   logic [3:0]  dv;
+  logic [2:0]  oecnt;
   integer k;
-  initial begin rb_left = 0; dv = 0; end
+  initial begin rb_left = 0; dv = 0; oecnt = 0; end   // power up hi-Z, like a real chip
+  assign dq_oe = (oecnt != 0);
 
   always_ff @(posedge clk) begin
     for (k = 0; k < 3; k = k + 1) begin dl[k] <= dl[k+1]; dv[k] <= dv[k+1]; end
@@ -73,6 +76,10 @@ module sdram_chip #(parameter CAS = 2) (
       rb_left <= rb_left - 9'd1;
     end
 
-    if (dv[0]) dq_o <= dl[0];
+    // drive dq for as long as burst data keeps arriving, plus a short tail; a WRITE
+    // releases it immediately so the controller's drive can never collide with ours
+    if (dv[0]) begin dq_o <= dl[0]; oecnt <= 3'd2; end
+    else if (cmd == CMD_WR) oecnt <= 3'd0;
+    else if (oecnt != 0) oecnt <= oecnt - 3'd1;
   end
 endmodule

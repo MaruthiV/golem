@@ -9,8 +9,11 @@
 //
 // Lines are page-aligned and LINE <= one SDRAM page, so a burst never crosses a row (a sequential
 // SDRAM burst wraps inside its page, which would silently read the wrong row).
-// Only golem's mrd path goes through here. KV lives at MEM_KV_BASE and above, weights/configs
-// strictly below, so KV writes can never alias these lines and no invalidation is needed.
+// Fills are CLAMPED at MEM_KV_BASE. Without that, the last weight line straddles the KV region
+// (weights end at MEM_KV_BASE, which is not line-aligned), so a prefetch would read never-written
+// KV addresses -- board_tb's X-checker caught exactly this -- and a cached boundary line could go
+// stale under a KV write. With the clamp, mrd lines and the KV region are genuinely disjoint, so
+// KV writes cannot alias them and no invalidation is needed.
 module wstream #(parameter LB = 8) (
     input  logic clk,
     input  logic rst,
@@ -29,8 +32,10 @@ module wstream #(parameter LB = 8) (
     input  logic        m_last,
     input  logic [31:0] m_data
 );
+  `include "golem_mem.svh"
   localparam LINE = 1 << LB;
   localparam TW = 22 - LB;                  // tag width
+  localparam [22:0] LIMIT = 23'(MEM_KV_BASE);   // never fetch at or above the KV region
 
   logic [31:0]    line [0:2*LINE-1];        // {sel, idx}
   logic [TW-1:0]  tag  [0:1];
@@ -55,12 +60,22 @@ module wstream #(parameter LB = 8) (
 
   // fill the line we are NOT serving from, so a fill never clobbers the line in use
   wire victim = hit0 ? 1'b1 : 1'b0;
-  wire start_demand = mrd_req && !hit;          // blocking: golem is stalled on this
-  wire start_pre    = mrd_req && hit && !have_next;   // overlapped: golem keeps consuming
+  // a line's base address, and how many words of it sit below the KV region
+  function automatic [22:0] room(input logic [TW-1:0] t);
+    logic [22:0] b;
+    b = {1'b0, t, {LB{1'b0}}};
+    room = (b >= LIMIT) ? 23'd0 : (LIMIT - b);
+  endfunction
+
+  wire start_demand = mrd_req && !hit;                                  // golem is stalled on this
+  wire start_pre    = mrd_req && hit && !have_next && |room(next_tag);  // overlapped, and in range
+
+  wire [22:0] fill_room = room(fill_tag);
 
   assign m_req  = filling;
   assign m_addr = {fill_tag, {LB{1'b0}}};
-  assign m_len  = 9'(LINE);
+  // clamp so a fill never reads into the KV region
+  assign m_len  = (fill_room >= 23'(LINE)) ? 9'(LINE) : 9'(fill_room);
 
   always_ff @(posedge clk) begin
     if (rst) begin
