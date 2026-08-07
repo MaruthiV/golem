@@ -85,9 +85,11 @@ module sdram_ctrl #(
         else if (cmd_valid) begin
           pend_wr <= cmd_wr; pend_addr <= cmd_addr; pend_wdata <= cmd_wdata;
           pend_len <= eff_len;
+          // synthesis translate_off
           if (!cmd_wr && cmd_len > page_left && cmd_len != 0)
             $display("[sdram_ctrl] burst clamped %0d->%0d at col %0d (requester should page-align)",
                      cmd_len, page_left, b_col);
+          // synthesis translate_on
           cmd <= C_ACT; ba <= b_bank; a <= {2'b0, b_row}; st <= S_ACT; tcnt <= tRCD;
         end
       end

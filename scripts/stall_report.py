@@ -14,7 +14,7 @@ G = [
     ("S_LG", "LOGITS argmax"), ("S_DONE", "done"),
 ]
 C = ["init", "init-precharge", "init-refresh", "init-LMR", "IDLE (accepting)", "ACT (tRCD wait)",
-     "rcd", "rd", "CAS wait", "WR", "tRP wait", "REFRESH"]
+     "STREAM (data flowing)", "PCH (precharge)", "CAS wait", "WR", "tRP wait", "REFRESH"]
 A = ["pick", "issue-write", "issue-read", "wait-data", "cooldown"]
 
 PAGE = 256  # words per SDRAM page from the {bank,row,col[7:0]} map

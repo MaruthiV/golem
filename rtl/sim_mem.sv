@@ -162,8 +162,10 @@ module golem_board (
     output logic [11:0] tok_out
 );
   logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
+  logic ws_req, ws_valid, ws_last; logic [21:0] ws_addr; logic [8:0] ws_len; logic [31:0] ws_data;
   logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
-  logic o_valid, o_wr, c_ready, c_rvalid; logic [21:0] o_addr; logic [31:0] o_wdata, c_rdata;
+  logic o_valid, o_wr, c_ready, c_rvalid, c_rlast; logic [21:0] o_addr; logic [8:0] o_len;
+  logic [31:0] o_wdata, c_rdata;
   logic cs, ras, cas, we, cke; logic [1:0] ba; logic [12:0] a; logic [31:0] dqo, dqi; logic dqoe;
 
   golem u_golem(.clk(clk), .rst(rst), .start(start), .token(token), .pos(pos), .busy(busy),
@@ -171,14 +173,19 @@ module golem_board (
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(tok_valid), .tok_out(tok_out));
-  mem_arbiter u_arb(.clk(clk), .rst(rst),
+  wstream u_ws(.clk(clk), .rst(rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .m_req(ws_req), .m_addr(ws_addr), .m_len(ws_len),
+                .m_valid(ws_valid), .m_last(ws_last), .m_data(ws_data));
+  mem_arbiter u_arb(.clk(clk), .rst(rst),
+                .mrd_req(ws_req), .mrd_addr(ws_addr), .mrd_len(ws_len),
+                .mrd_valid(ws_valid), .mrd_last(ws_last), .mrd_data(ws_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
                 .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
-                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
-                .i_ready(c_ready), .i_rvalid(c_rvalid), .i_rdata(c_rdata));
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_len(o_len), .o_wdata(o_wdata),
+                .i_ready(c_ready), .i_rvalid(c_rvalid), .i_rlast(c_rlast), .i_rdata(c_rdata));
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(o_valid), .cmd_wr(o_wr),
-                .cmd_addr(o_addr), .cmd_len(9'd1), .rd_last(),
+                .cmd_addr(o_addr), .cmd_len(o_len), .rd_last(c_rlast),
                 .cmd_wdata(o_wdata), .cmd_ready(c_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
                 .cs_n(cs), .ras_n(ras), .cas_n(cas), .we_n(we), .cke(cke), .ba(ba), .a(a),
@@ -208,11 +215,12 @@ module golem_soc (
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(tok_valid), .tok_out(tok_out));
   mem_arbiter u_arb(.clk(clk), .rst(rst),
-                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_len(9'd1),
+                .mrd_valid(mrd_valid), .mrd_last(), .mrd_data(mrd_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
                 .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
-                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_wdata(o_wdata),
-                .i_ready(sd_ready), .i_rvalid(sd_rvalid), .i_rdata(sd_rdata));
+                .o_valid(o_valid), .o_wr(o_wr), .o_addr(o_addr), .o_len(), .o_wdata(o_wdata),
+                .i_ready(sd_ready), .i_rvalid(sd_rvalid), .i_rlast(sd_rvalid), .i_rdata(sd_rdata));
   sdram_model u_sd(.clk(clk), .cmd_valid(o_valid), .cmd_wr(o_wr), .cmd_addr(o_addr),
                 .cmd_wdata(o_wdata), .cmd_ready(sd_ready), .rd_valid(sd_rvalid), .rd_data(sd_rdata));
 endmodule

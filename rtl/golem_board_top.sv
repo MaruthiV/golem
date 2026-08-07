@@ -40,33 +40,43 @@ module golem_board_top #(
   wire fsm_rst = rst | loading;   // hold generation until weights are loaded
   logic g_start, g_busy, g_tvalid; logic [11:0] g_token, g_tout; logic [7:0] g_pos;
   logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
+  logic ws_req, ws_valid, ws_last; logic [21:0] ws_addr; logic [8:0] ws_len; logic [31:0] ws_data;
   logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
   logic arb_valid, arb_wr; logic [21:0] arb_addr; logic [31:0] arb_wdata; logic arb_ready;
-  logic c_valid, c_wr; logic [21:0] c_addr; logic [31:0] c_wdata, c_rdata; logic c_ready, c_rvalid;
+  logic [8:0] arb_len;
+  logic c_valid, c_wr; logic [21:0] c_addr; logic [31:0] c_wdata, c_rdata;
+  logic [8:0] c_len; logic c_ready, c_rvalid, c_rlast;
 
   golem u_golem(.clk(clk), .rst(fsm_rst), .start(g_start), .token(g_token), .pos(g_pos),
                 .busy(g_busy), .mrd_addr(mrd_addr), .mrd_req(mrd_req), .mrd_valid(mrd_valid),
                 .mrd_data(mrd_data), .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(g_tvalid), .tok_out(g_tout));
-  mem_arbiter u_arb(.clk(clk), .rst(fsm_rst),
+  wstream u_ws(.clk(clk), .rst(fsm_rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
+                .m_req(ws_req), .m_addr(ws_addr), .m_len(ws_len),
+                .m_valid(ws_valid), .m_last(ws_last), .m_data(ws_data));
+  mem_arbiter u_arb(.clk(clk), .rst(fsm_rst),
+                .mrd_req(ws_req), .mrd_addr(ws_addr), .mrd_len(ws_len),
+                .mrd_valid(ws_valid), .mrd_last(ws_last), .mrd_data(ws_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
                 .kv_we(kw), .kv_waddr(kwa), .kv_wsel(kws), .kv_wdata(kwd),
-                .o_valid(arb_valid), .o_wr(arb_wr), .o_addr(arb_addr), .o_wdata(arb_wdata),
-                .i_ready(arb_ready), .i_rvalid(c_rvalid), .i_rdata(c_rdata));
+                .o_valid(arb_valid), .o_wr(arb_wr), .o_addr(arb_addr), .o_len(arb_len),
+                .o_wdata(arb_wdata),
+                .i_ready(arb_ready), .i_rvalid(c_rvalid), .i_rlast(c_rlast), .i_rdata(c_rdata));
 
   // ---- SDRAM command port mux: loader owns it while loading, arbiter while running ----
   assign c_valid = loading ? ld_valid : arb_valid;
   assign c_wr    = loading ? ld_wr    : arb_wr;
   assign c_addr  = loading ? ld_addr  : arb_addr;
+  assign c_len   = loading ? 9'd1     : arb_len;
   assign c_wdata = loading ? ld_wdata : arb_wdata;
   assign ld_ready  = loading ? c_ready : 1'b0;
   assign arb_ready = loading ? 1'b0    : c_ready;
 
   logic [31:0] dq_o, dq_i; logic dq_oe;
   sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr),
-                .cmd_addr(c_addr), .cmd_len(9'd1), .rd_last(),
+                .cmd_addr(c_addr), .cmd_len(c_len), .rd_last(c_rlast),
                 .cmd_wdata(c_wdata), .cmd_ready(c_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
                 .cs_n(sdram_cs_n), .ras_n(sdram_ras_n), .cas_n(sdram_cas_n), .we_n(sdram_we_n),

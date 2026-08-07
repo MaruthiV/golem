@@ -1,15 +1,18 @@
 // Multiplex golem's three memory accessors onto the ONE SDRAM command port:
-//   - weight/config reads (mrd)   - KV cache reads   - KV cache writes
+//   - weight/config reads (mrd, bursts via wstream)   - KV cache reads   - KV cache writes
 // Priority: pending write > KV read > weight read (so attention makes progress).
-// Reads are single-outstanding; writes are posted via a 1-deep latch (KV writes are
-// sparse — ~1 per 260 cycles — so they always drain before the next).
+// Reads are single-outstanding; a read may return many words (mrd_len), all forwarded to the
+// requester until rd_last. Writes are posted via a 1-deep latch (KV writes are sparse -- ~1 per
+// 260 cycles -- so they always drain before the next).
 module mem_arbiter (
     input  logic        clk,
     input  logic        rst,
 
     input  logic        mrd_req,
     input  logic [21:0] mrd_addr,
+    input  logic [8:0]  mrd_len,
     output logic        mrd_valid,
+    output logic        mrd_last,
     output logic [31:0] mrd_data,
 
     input  logic        kv_rreq,
@@ -26,9 +29,11 @@ module mem_arbiter (
     output logic        o_valid,
     output logic        o_wr,
     output logic [21:0] o_addr,
+    output logic [8:0]  o_len,
     output logic [31:0] o_wdata,
     input  logic        i_ready,
     input  logic        i_rvalid,
+    input  logic        i_rlast,
     input  logic [31:0] i_rdata
 );
   `include "golem_mem.svh"
@@ -44,28 +49,29 @@ module mem_arbiter (
   // held-valid handshake: o_valid stays asserted until (o_valid && i_ready) — the command
   // is never lost to a refresh, since i_ready (cmd_ready) truly means "accepted this cycle".
   always_ff @(posedge clk) begin
-    o_valid <= 1'b0; mrd_valid <= 1'b0; kv_rvalid <= 1'b0;
+    o_valid <= 1'b0; mrd_valid <= 1'b0; mrd_last <= 1'b0; kv_rvalid <= 1'b0;
     if (rst) begin st <= 3'd0; wpend <= 1'b0; end
     else begin
       case (st)
         3'd0: begin  // pick a request
           if (wpend) begin
             o_valid <= 1'b1; o_wr <= 1'b1; o_addr <= waddr_l; o_wdata <= wdata_l;
-            wpend <= 1'b0; st <= 3'd1;
+            o_len <= 9'd1; wpend <= 1'b0; st <= 3'd1;
           end else if (kv_rreq) begin
             o_valid <= 1'b1; o_wr <= 1'b0; o_addr <= kvaddr(kv_rsel, kv_raddr);
-            tag <= 1'b1; st <= 3'd2;
+            o_len <= 9'd1; tag <= 1'b1; st <= 3'd2;
           end else if (mrd_req) begin
             o_valid <= 1'b1; o_wr <= 1'b0; o_addr <= mrd_addr;
-            tag <= 1'b0; st <= 3'd2;
+            o_len <= mrd_len; tag <= 1'b0; st <= 3'd2;
           end
         end
         3'd1: begin o_valid <= 1'b1; if (i_ready) begin o_valid <= 1'b0; st <= 3'd0; end end
         3'd2: begin o_valid <= 1'b1; if (i_ready) begin o_valid <= 1'b0; st <= 3'd3; end end
         3'd3: if (i_rvalid) begin
+          // forward every word of the burst; only the last one advances the FSM
           if (tag) begin kv_rdata <= i_rdata; kv_rvalid <= 1'b1; end
-          else begin mrd_data <= i_rdata; mrd_valid <= 1'b1; end
-          st <= 3'd4;  // cooldown: let the consumer advance its address before re-issuing
+          else begin mrd_data <= i_rdata; mrd_valid <= 1'b1; mrd_last <= i_rlast; end
+          if (i_rlast) st <= 3'd4;  // cooldown: let the consumer advance before re-issuing
         end
         3'd4: st <= 3'd0;
       endcase

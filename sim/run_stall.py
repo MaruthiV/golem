@@ -10,7 +10,7 @@ RTL = ROOT / "rtl"
 def main():
     srcs = ["requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv", "softmax_row.sv",
             "gelu_lut.sv", "block.sv", "golem.sv", "mem_arbiter.sv", "sdram_ctrl.sv",
-            "sdram_chip.sv", "sim_mem.sv", "stall_probe.sv"]
+            "sdram_chip.sv", "wstream.sv", "sim_mem.sv", "stall_probe.sv"]
     runner = get_runner("icarus")
     runner.build(sources=[RTL / s for s in srcs], hdl_toplevel="golem_board_probe",
                  build_dir=ROOT / "sim" / "build_stall", build_args=["-g2012", "-I", str(RTL)],
