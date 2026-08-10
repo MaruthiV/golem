@@ -1,3 +1,9 @@
+// All three arrays here (sbuf 256x32, ebuf 256x17, lut 512x17 = ~21 Kbit) used ASYNC reads,
+// which infer distributed LUTRAM plus a read mux per bit — a 256:1 mux is ~85 LUT4 per bit, and
+// the 512-deep lut is worse. T45 P&R showed that class of mux tree is what blows the LUT4 budget.
+// Registering every read maps them to BSRAM instead. The scan phases each gain a cycle per
+// element (MAX 2/elem, EXP 3/elem, +1 before each divide) — a few % of a token, and the divides
+// already dominate this engine — in exchange for the fabric it frees.
 module softmax_row (
     input  logic clk,
     input  logic rst,
@@ -20,9 +26,10 @@ module softmax_row (
     output logic [7:0]  out_idx,
     output logic [16:0] out_data
 );
-  localparam IDLE = 3'd0, MAX = 3'd1, EXP = 3'd2, PDIV = 3'd3, PDIVW = 3'd4;
+  localparam IDLE = 4'd0, MAXA = 4'd1, MAXB = 4'd2, EXPA = 4'd3, EXPB = 4'd4, EXPC = 4'd5,
+             PDIVR = 4'd6, PDIV = 4'd7, PDIVW = 4'd8;
 
-  logic [2:0] state;
+  logic [3:0] state;
   logic signed [31:0] sbuf [0:255];
   logic [16:0] ebuf [0:255];
   logic [16:0] lut [0:511];
@@ -31,7 +38,16 @@ module softmax_row (
   logic signed [31:0] row_max;
   logic [23:0] denom;
 
-  wire signed [32:0] diff = row_max - sbuf[idx[7:0]];
+  // registered reads -> BSRAM
+  logic signed [31:0] s_q;
+  logic [16:0] lut_q, e_q;
+  // eb_we is registered, so it lands a cycle after EXPC — by then idx has advanced, so the
+  // write address has to be latched alongside the data
+  logic        eb_we;
+  logic [7:0]  eb_waddr;
+  logic [16:0] eb_wdata;
+
+  wire signed [32:0] diff = row_max - s_q;
   logic [63:0] scaled;
   logic [8:0] lut_idx;
   always_comb begin
@@ -39,11 +55,24 @@ module softmax_row (
     lut_idx = (scaled > 64'd511) ? 9'd511 : scaled[8:0];
   end
 
+  always_ff @(posedge clk) begin
+    if (s_we) sbuf[s_addr] <= s_data;
+    s_q <= sbuf[idx[7:0]];
+  end
+  always_ff @(posedge clk) begin
+    if (lut_we) lut[lut_addr] <= lut_data;
+    lut_q <= lut[lut_idx];
+  end
+  always_ff @(posedge clk) begin
+    if (eb_we) ebuf[eb_waddr] <= eb_wdata;
+    e_q <= ebuf[idx[7:0]];
+  end
+
   logic div_start, div_busy, div_done;
   logic [31:0] div_q;
   divu #(.DW(32), .VW(24)) p_div (
       .clk(clk), .rst(rst), .start(div_start),
-      .dividend({ebuf[idx[7:0]], 15'b0}),
+      .dividend({e_q, 15'b0}),
       .divisor(denom),
       .busy(div_busy), .done(div_done), .quotient(div_q)
   );
@@ -53,8 +82,7 @@ module softmax_row (
   always_ff @(posedge clk) begin
     out_valid <= 1'b0;
     div_start <= 1'b0;
-    if (s_we) sbuf[s_addr] <= s_data;
-    if (lut_we) lut[lut_addr] <= lut_data;
+    eb_we <= 1'b0;
     if (rst) begin
       state <= IDLE;
     end else begin
@@ -63,26 +91,33 @@ module softmax_row (
           len <= cfg_len;
           idx <= 9'd0;
           row_max <= 32'sh80000000;
-          state <= MAX;
+          state <= MAXA;
         end
-        MAX: begin
-          if (sbuf[idx[7:0]] > row_max) row_max <= sbuf[idx[7:0]];
+        // MAXA presents sbuf[idx]; s_q holds it in MAXB
+        MAXA: state <= MAXB;
+        MAXB: begin
+          if (s_q > row_max) row_max <= s_q;
           idx <= idx + 9'd1;
           if (idx == len - 9'd1) begin
             idx <= 9'd0;
             denom <= 24'd0;
-            state <= EXP;
-          end
+            state <= EXPA;
+          end else state <= MAXA;
         end
-        EXP: begin
-          ebuf[idx[7:0]] <= lut[lut_idx];
-          denom <= denom + {7'd0, lut[lut_idx]};
+        // EXPA presents sbuf[idx]; EXPB has s_q and presents lut[lut_idx]; EXPC has lut_q
+        EXPA: state <= EXPB;
+        EXPB: state <= EXPC;
+        EXPC: begin
+          eb_we <= 1'b1; eb_waddr <= idx[7:0]; eb_wdata <= lut_q;
+          denom <= denom + {7'd0, lut_q};
           idx <= idx + 9'd1;
           if (idx == len - 9'd1) begin
             idx <= 9'd0;
-            state <= PDIV;
-          end
+            state <= PDIVR;
+          end else state <= EXPA;
         end
+        // PDIVR presents ebuf[idx]; e_q feeds the divider in PDIV
+        PDIVR: state <= PDIV;
         PDIV: begin
           div_start <= 1'b1;
           state <= PDIVW;
@@ -93,7 +128,7 @@ module softmax_row (
           out_data <= div_q[16:0];
           idx <= idx + 9'd1;
           if (idx == len - 9'd1) state <= IDLE;
-          else state <= PDIV;
+          else state <= PDIVR;
         end
         default: state <= IDLE;
       endcase
