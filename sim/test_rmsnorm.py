@@ -16,14 +16,21 @@ HOLD = {"x": np.zeros(256, dtype=np.int64), "g": np.zeros(256, dtype=np.int64)}
 
 
 async def serve_mem(dut):
+    # rmsnorm now presents its address a cycle ahead and expects a REGISTERED read, so serve
+    # the data for the address captured on the previous edge, not this one
+    prev = None
     while True:
         await RisingEdge(dut.clk)
         await ReadWrite()
-        xa, ga = dut.x_rd_addr.value, dut.g_rd_addr.value
-        if xa.is_resolvable:
-            dut.x_rd_data.value = int(HOLD["x"][int(xa)]) & 0xFF
-        if ga.is_resolvable:
-            dut.g_rd_data.value = int(HOLD["g"][int(ga)]) & 0xFF
+        if prev is not None:
+            xa, ga = prev
+            if xa is not None:
+                dut.x_rd_data.value = int(HOLD["x"][xa]) & 0xFF
+            if ga is not None:
+                dut.g_rd_data.value = int(HOLD["g"][ga]) & 0xFF
+        xv, gv = dut.x_rd_addr.value, dut.g_rd_addr.value
+        prev = (int(xv) if xv.is_resolvable else None,
+                int(gv) if gv.is_resolvable else None)
 
 
 async def setup(dut):

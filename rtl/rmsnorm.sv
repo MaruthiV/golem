@@ -21,6 +21,11 @@ module rmsnorm (
 
   logic [2:0] state;
   logic [7:0] idx;
+  // x/g reads are REGISTERED by the parent (they are BSRAM now, not LUT mux trees), so the
+  // address is presented one cycle ahead of the data: x_rd_data in cycle n is mem[raddr@n-1].
+  // raddr leads, idx is the index whose data is valid this cycle, dvalid covers the fill cycle.
+  logic [7:0] raddr;
+  logic       dvalid;
   logic [31:0] n32;
   logic [13:0] msq;
   logic [25:0] rad;
@@ -45,8 +50,8 @@ module rmsnorm (
   logic signed [28:0] xinv;
   logic signed [36:0] full;
   logic signed [31:0] acc_sat;
-  assign x_rd_addr = idx;
-  assign g_rd_addr = idx;
+  assign x_rd_addr = raddr;
+  assign g_rd_addr = raddr;
   assign xinv = x_rd_data * $signed({1'b0, inv});
   assign full = xinv * g_rd_data;
   always_comb begin
@@ -69,13 +74,19 @@ module rmsnorm (
       case (state)
         IDLE: if (start) begin
           idx <= 8'd0;
+          raddr <= 8'd0;
+          dvalid <= 1'b0;
           n32 <= 32'd0;
           state <= SQ;
         end
         SQ: begin
-          n32 <= n32 + 32'(x_rd_data * x_rd_data);
-          idx <= idx + 8'd1;
-          if (idx == 8'd255) state <= LATCH;
+          raddr <= raddr + 8'd1;
+          dvalid <= 1'b1;
+          if (dvalid) begin
+            n32 <= n32 + 32'(x_rd_data * x_rd_data);
+            idx <= idx + 8'd1;
+            if (idx == 8'd255) begin state <= LATCH; dvalid <= 1'b0; end
+          end
         end
         LATCH: begin
           msq <= 14'((n32 + 32'd128) >> 8);
@@ -95,7 +106,7 @@ module rmsnorm (
         DIV: begin
           if (msq == 0) begin
             inv <= 21'd0;
-            idx <= 8'd0;
+            idx <= 8'd0; raddr <= 8'd0; dvalid <= 1'b0;
             state <= OUT;
           end else begin
             div_start <= 1'b1;
@@ -104,15 +115,19 @@ module rmsnorm (
         end
         DIVW: if (div_done) begin
           inv <= div_q[20:0];
-          idx <= 8'd0;
+          idx <= 8'd0; raddr <= 8'd0; dvalid <= 1'b0;
           state <= OUT;
         end
         OUT: begin
-          out_valid <= 1'b1;
-          out_idx <= idx;
-          out_data <= q_out;
-          idx <= idx + 8'd1;
-          if (idx == 8'd255) state <= IDLE;
+          raddr <= raddr + 8'd1;
+          dvalid <= 1'b1;
+          if (dvalid) begin
+            out_valid <= 1'b1;
+            out_idx <= idx;
+            out_data <= q_out;
+            idx <= idx + 8'd1;
+            if (idx == 8'd255) begin state <= IDLE; dvalid <= 1'b0; end
+          end
         end
         default: state <= IDLE;
       endcase

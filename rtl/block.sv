@@ -102,9 +102,14 @@ module block (
   // norm engine, x/g served by phase
   logic nm_start, nm_busy, nm_ov;
   logic [7:0] nm_xa, nm_ga, nm_oi;
-  logic signed [7:0] nm_xd, nm_gd, nm_od;
-  assign nm_xd = phase_mlp ? r2buf[nm_xa] : xres[nm_xa];
-  assign nm_gd = phase_mlp ? g_mlp[nm_ga] : g_attn[nm_ga];
+  logic signed [7:0] nm_od;
+  logic signed [7:0] nm_xd, nm_gd;
+  // registered reads: rmsnorm presents its address a cycle ahead, so these can be real
+  // memories instead of flip-flops behind a mux tree per reader
+  always_ff @(posedge clk) begin
+    nm_xd <= phase_mlp ? r2buf[nm_xa] : xres[nm_xa];
+    nm_gd <= phase_mlp ? g_mlp[nm_ga] : g_attn[nm_ga];
+  end
   rmsnorm nm (
       .clk(clk), .rst(rst), .start(nm_start), .busy(nm_busy),
       .x_rd_addr(nm_xa), .x_rd_data(nm_xd), .g_rd_addr(nm_ga), .g_rd_data(nm_gd),

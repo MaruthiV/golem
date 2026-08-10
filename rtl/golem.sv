@@ -94,8 +94,14 @@ module golem (
     .r3_valid(r3_v), .r3_idx(r3_i), .r3_data(r3_d));
 
   logic nrm_start, nrm_busy, nrm_v; logic [7:0] nrm_xa, nrm_ga, nrm_i; logic signed [7:0] nrm_o;
+  // registered reads so xbuf/gbuf stop being flip-flops behind a mux tree
+  logic signed [7:0] nrm_xd, nrm_gd;
+  always_ff @(posedge clk) begin
+    nrm_xd <= xbuf[nrm_xa];
+    nrm_gd <= gbuf[nrm_ga];
+  end
   rmsnorm u_norm(.clk(clk), .rst(rst), .start(nrm_start), .busy(nrm_busy),
-    .x_rd_addr(nrm_xa), .x_rd_data(xbuf[nrm_xa]), .g_rd_addr(nrm_ga), .g_rd_data(gbuf[nrm_ga]),
+    .x_rd_addr(nrm_xa), .x_rd_data(nrm_xd), .g_rd_addr(nrm_ga), .g_rd_data(nrm_gd),
     .cfg_mult(on_m), .cfg_shift(on_s), .out_valid(nrm_v), .out_idx(nrm_i), .out_data(nrm_o));
 
   wire signed [17:0] hs = ob0[cnt[5:0]]*mb0 + ob1[cnt[5:0]]*mb1 + ob2[cnt[5:0]]*mb2 + ob3[cnt[5:0]]*mb3;
