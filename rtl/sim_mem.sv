@@ -173,7 +173,7 @@ module golem_board (
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(tok_valid), .tok_out(tok_out));
-  wstream #(.LB(8)) u_ws(.clk(clk), .rst(rst),
+  wstream #(.LB(7)) u_ws(.clk(clk), .rst(rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
                 .m_req(ws_req), .m_addr(ws_addr), .m_len(ws_len),
                 .m_valid(ws_valid), .m_last(ws_last), .m_data(ws_data));
