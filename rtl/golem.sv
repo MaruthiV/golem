@@ -65,8 +65,8 @@ module golem (
   // 7 across the design. S_ECMB goes 256 -> 512 cycles, against ~1.74M per token.
   logic signed [15:0] etq, epq; logic signed [16:0] esum; logic signed [7:0] e8;
   logic eph;                                   // 0 = token phase, 1 = position phase
-  requant #(.OUT_W(16)) e_rq(
-      .acc  (eph ? 32'(pbuf[ei[7:0]]) : 32'(tbuf[ei[7:0]])),
+  requant #(.ACC_W(8), .OUT_W(16)) e_rq(
+      .acc  (eph ? pbuf[ei[7:0]] : tbuf[ei[7:0]]),
       .mult (eph ? emp_m : emt_m),
       .shift(eph ? emp_s : emt_s),
       .q    (epq));

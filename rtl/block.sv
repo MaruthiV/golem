@@ -217,13 +217,13 @@ module block (
   logic signed [15:0] res_a, res_b;
   logic signed [16:0] res_sum;
   logic signed [7:0] res_q;
-  requant #(.OUT_W(16)) rq_ra (
-      .acc(32'(phase_mlp ? r2buf[mm_oi[7:0]] : xres[mm_oi[7:0]])),
+  requant #(.ACC_W(8), .OUT_W(16)) rq_ra (
+      .acc(phase_mlp ? r2buf[mm_oi[7:0]] : xres[mm_oi[7:0]]),
       .mult(phase_mlp ? r_mult[6] : r_mult[4]),
       .shift(phase_mlp ? r_shift[6] : r_shift[4]), .q(res_a)
   );
-  requant #(.OUT_W(16)) rq_rb (
-      .acc(32'(mm_od)),
+  requant #(.ACC_W(8), .OUT_W(16)) rq_rb (
+      .acc(mm_od),
       .mult(phase_mlp ? r_mult[7] : r_mult[5]),
       .shift(phase_mlp ? r_shift[7] : r_shift[5]), .q(res_b)
   );
