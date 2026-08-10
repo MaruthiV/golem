@@ -60,10 +60,16 @@ module golem (
     2'd0: mbsub=mb0; 2'd1: mbsub=mb1; 2'd2: mbsub=mb2; default: mbsub=mb3;
   endcase
 
-  // embedding requant (int16 out), fed from tok/pos buffers
+  // embedding requant (int16 out). ONE shared engine time-multiplexed over two cycles per
+  // element instead of two instances: requant is ~2,220 LUT-equivalents each and there were
+  // 7 across the design. S_ECMB goes 256 -> 512 cycles, against ~1.74M per token.
   logic signed [15:0] etq, epq; logic signed [16:0] esum; logic signed [7:0] e8;
-  requant #(.OUT_W(16)) e_tok(.acc(32'(tbuf[ei[7:0]])), .mult(emt_m), .shift(emt_s), .q(etq));
-  requant #(.OUT_W(16)) e_pos(.acc(32'(pbuf[ei[7:0]])), .mult(emp_m), .shift(emp_s), .q(epq));
+  logic eph;                                   // 0 = token phase, 1 = position phase
+  requant #(.OUT_W(16)) e_rq(
+      .acc  (eph ? 32'(pbuf[ei[7:0]]) : 32'(tbuf[ei[7:0]])),
+      .mult (eph ? emp_m : emt_m),
+      .shift(eph ? emp_s : emt_s),
+      .q    (epq));
   always_comb begin
     esum = etq + epq;
     if (esum > 17'sd127) e8 = 8'sd127;
@@ -163,11 +169,15 @@ module golem (
       S_EPOS: begin
         pbuf[{cnt[5:0],2'd0}]<=mb0; pbuf[{cnt[5:0],2'd1}]<=mb1;
         pbuf[{cnt[5:0],2'd2}]<=mb2; pbuf[{cnt[5:0],2'd3}]<=mb3;
-        if (cnt==63) begin ei<=0; st<=S_ECMB; end else cnt<=cnt+1;
+        if (cnt==63) begin ei<=0; eph<=0; st<=S_ECMB; end else cnt<=cnt+1;
       end
       S_ECMB: begin
-        xbuf[ei[7:0]]<=e8;
-        if (ei==255) begin li<=0; cnt<=0; st<=S_LX; end else ei<=ei+1;
+        // cycle A: latch the token term; cycle B: epq is live, so esum/e8 are valid
+        if (!eph) begin etq<=epq; eph<=1; end
+        else begin
+          xbuf[ei[7:0]]<=e8; eph<=0;
+          if (ei==255) begin li<=0; cnt<=0; st<=S_LX; end else ei<=ei+1;
+        end
       end
       S_LX: begin
         xr_we<=1; xr_a<=cnt[7:0]; xr_d<=xbuf[cnt[7:0]];
