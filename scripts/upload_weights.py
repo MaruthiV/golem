@@ -66,6 +66,9 @@ def main():
     blob, nwords = load_image()
     ser = serial.Serial(port, BAUD, timeout=None)
     ser.reset_input_buffer()
+    # the SDRAM needs ~200us of power-up before the loader can take a word, and the board holds
+    # its UART receiver in reset until then. Bytes sent inside that window are simply not there.
+    time.sleep(0.05)
     print(f"uploading {nwords} words ({len(blob)/1e6:.2f} MB) to {port} @ {BAUD}")
     upload(ser, blob)
     read_story(ser)

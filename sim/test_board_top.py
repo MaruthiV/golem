@@ -61,6 +61,11 @@ async def board(dut):
         await RisingEdge(dut.clk27)
     dut.rst_n.value = 1
 
+    # the SDRAM's power-up sequence must finish before the loader can accept a word — the host
+    # has to wait for the same thing on the real board (see scripts/upload_weights.py)
+    while not int(dut.u_top.sdram_ready.value):
+        await RisingEdge(dut.clk27)
+
     got = []
     cocotb.start_soon(mon_tx(dut, got))
     xev = Event(); xinfo = {}

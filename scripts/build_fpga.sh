@@ -19,15 +19,41 @@ FAMILY="GW2A-18C"
 RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
      rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/wstream.sv rtl/uart_tx.sv"
 if [ "$TOP" = "golem_board_top" ]; then
-  RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/golem_board_top.sv"
+  RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/golem_board_top.sv"
 else
   RTL="$RTL rtl/golem_fpga.sv"
 fi
 
+# CLK_MHZ/USE_PLL pick the internal clock (T68). FREQ constrains nextpnr so timing is VERIFIED
+# at that clock rather than merely reported against himbaechel's 12 MHz default.
+CLK_MHZ=${CLK_MHZ:-27}
+USE_PLL=${USE_PLL:-0}
+FREQ=${FREQ:-$CLK_MHZ}
+# PLL dividers: CLK_MHZ = 27*(FBDIV+1)/(IDIV+1), and VCO = CLK_MHZ*ODIV must be 400..1200 MHz.
+# PHASE shifts the SDRAM's own clock in 16ths of a period — the knob the board self-test sweeps.
+PHASE=${PHASE:-10}
+case "$CLK_MHZ" in
+  27)  IDIV=0; FBDIV=0;  ODIV=32 ;;   # VCO 864
+  54)  IDIV=0; FBDIV=1;  ODIV=16 ;;   # VCO 864
+  60)  IDIV=8; FBDIV=19; ODIV=8  ;;   # VCO 480
+  66)  IDIV=8; FBDIV=21; ODIV=8  ;;   # VCO 528
+  81)  IDIV=0; FBDIV=2;  ODIV=8  ;;   # VCO 648
+  108) IDIV=0; FBDIV=3;  ODIV=8  ;;   # VCO 864
+  *) if [ "$USE_PLL" = "1" ]; then echo "no PLL dividers for CLK_MHZ=$CLK_MHZ" >&2; exit 1; fi ;;
+esac
+
+CHP=""
+if [ "$TOP" = "golem_board_top" ]; then
+  # -chparam on hierarchy, NOT the chparam command: chparam derives a copy and leaves the
+  # original as top, so the parameters silently do not apply.
+  CHP="-chparam CLK_MHZ $CLK_MHZ -chparam USE_PLL $USE_PLL -chparam PLL_IDIV $IDIV"
+  CHP="$CHP -chparam PLL_FBDIV $FBDIV -chparam PLL_ODIV $ODIV -chparam PLL_PHASE $PHASE"
+fi
+
 mkdir -p fpga/out
-yosys -p "read_verilog -sv $RTL; synth_gowin -top $TOP -json fpga/out/$TOP.json"
+yosys -p "read_verilog -sv $RTL; hierarchy -top $TOP $CHP; synth_gowin -top $TOP -json fpga/out/$TOP.json"
 nextpnr-himbaechel --json fpga/out/$TOP.json --write fpga/out/${TOP}_pnr.json \
-  --device "$DEVICE" --vopt family=$FAMILY --vopt cst=fpga/tangnano20k.cst
+  --device "$DEVICE" --vopt family=$FAMILY --vopt cst=fpga/tangnano20k.cst --freq $FREQ --seed ${SEED:-1}
 gowin_pack -d $FAMILY -o fpga/out/golem.fs fpga/out/${TOP}_pnr.json
 
 echo "bitstream: fpga/out/golem.fs"

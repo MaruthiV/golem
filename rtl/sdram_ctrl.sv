@@ -4,15 +4,23 @@
 // of paying them per word (T30 measured 11.0 cycles/word of that overhead). Writes keep
 // per-access auto-precharge — they are sparse (KV only) and not worth the complexity.
 // Mode register is programmed full-page + sequential, so any cmd_len up to the page works.
-// Timing params are small for sim; on the board set them from Gowin DS226-2.7E (32-bit,
-// 166 MHz, 4 banks x 2048 rows x 256 cols, CAS 2 or 3) and tune via the SDRAM self-test.
-// NOTE for the board: REFRESH_INT must leave room for a full burst, since refresh is only
-// taken in S_IDLE — set it to (tREFI in cycles) minus worst-case burst length.
+// Timings are given in NANOSECONDS and converted to cycles from CLK_MHZ, so the controller is
+// correct at any clock instead of only at the one it was tuned for. Values are the SDR numbers
+// nand2mario's Tang Nano 20K controller uses on this exact SiP part (tRCD/tRP 15 ns, tRC 60 ns,
+// CAS 2) — Gowin DS226-2.7E gives access time and CAS but not the full timing table. Treat them
+// as conservative-until-confirmed and tighten against the SDRAM self-test at bring-up.
+// Refresh: the part needs 4,096 refreshes per 64 ms = one per 15.625 us. Refresh is only taken
+// in S_IDLE, so the interval is shortened by a worst-case burst (MAXLEN) to leave room.
 module sdram_ctrl #(
-    parameter INIT_WAIT = 64,
-    parameter REFRESH_INT = 700,   // cycles between refreshes (board: tREFI * fclk - MAXLEN)
-    parameter tRCD = 2, parameter CAS = 2, parameter tRP = 2, parameter tRFC = 5,
-    parameter PAGE = 256
+    parameter int CLK_MHZ  = 27,
+    parameter int tRCD_NS  = 15,
+    parameter int tRP_NS   = 15,
+    parameter int tRC_NS   = 60,      // also used for tRFC
+    parameter int tREFI_NS = 15625,
+    parameter int INIT_NS  = 200000,  // power-up NOP wait before the first command
+    parameter int CAS      = 2,
+    parameter int PAGE     = 256,
+    parameter int MAXLEN   = 256      // longest burst a requester may ask for
 ) (
     input  logic clk,
     input  logic rst,
@@ -23,6 +31,7 @@ module sdram_ctrl #(
     input  logic [8:0]  cmd_len,     // sequential words to read (1..PAGE); ignored for writes
     input  logic [31:0] cmd_wdata,
     output logic        cmd_ready,
+    output logic        init_done,   // low until the power-up sequence has finished
     output logic        rd_valid,
     output logic        rd_last,     // high with the final word of a burst
     output logic [31:0] rd_data,
@@ -35,6 +44,18 @@ module sdram_ctrl #(
     output logic        dq_oe,
     input  logic [31:0] dq_i
 );
+  function automatic int ns2cyc(input int ns);
+    ns2cyc = (ns * CLK_MHZ + 999) / 1000;
+  endfunction
+  // tcnt is a countdown that fires at 0, so a stored value of N enforces N+1 cycles
+  localparam int C_RCD = ns2cyc(tRCD_NS), C_RP = ns2cyc(tRP_NS), C_RFC = ns2cyc(tRC_NS);
+  localparam int C_REFI = ns2cyc(tREFI_NS);
+  localparam [15:0] tRCD = 16'(C_RCD > 0 ? C_RCD - 1 : 0);
+  localparam [15:0] tRP  = 16'(C_RP  > 0 ? C_RP  - 1 : 0);
+  localparam [15:0] tRFC = 16'(C_RFC > 0 ? C_RFC - 1 : 0);
+  localparam [15:0] INIT_WAIT = 16'(ns2cyc(INIT_NS));
+  localparam [15:0] REFRESH_INT = 16'(C_REFI > MAXLEN + 8 ? C_REFI - MAXLEN - 8 : 8);
+
   localparam [3:0] C_NOP=4'b0111, C_ACT=4'b0011, C_RD=4'b0101, C_WR=4'b0100,
                    C_PRE=4'b0010, C_REF=4'b0001, C_LMR=4'b0000;
   localparam S_INIT=0, S_PRE=1, S_REF0=2, S_LMR=3, S_IDLE=4, S_ACT=5, S_STREAM=6,
@@ -61,6 +82,9 @@ module sdram_ctrl #(
   assign cke = 1'b1;
   // combinational: accurately reflects "I will accept a command THIS cycle" (no refresh race)
   assign cmd_ready = (st == S_IDLE) && !refresh_due;
+  // the 200 us power-up is real: anything upstream that streams data in must wait for this,
+  // or it spends the whole init window talking to a controller that cannot accept a word.
+  assign init_done = (st != S_INIT) && (st != S_PRE) && (st != S_REF0) && (st != S_LMR);
 
   always_ff @(posedge clk) begin
     cmd <= C_NOP; rd_valid <= 1'b0; rd_last <= 1'b0; dq_oe <= 1'b0;

@@ -5,42 +5,44 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 import cocotb
 from cocotb.clock import Clock
-from cocotb.triggers import RisingEdge
+from cocotb.triggers import FallingEdge, RisingEdge
 
 DATA = Path(__file__).resolve().parents[1] / "data"
 
 
-async def wait_ready(dut):
-    while not int(dut.cmd_ready.value):
+# cmd_ready is combinational and means "I will accept THIS cycle" — a refresh can steal any
+# given cycle, so a requester must hold cmd_valid until it sees ready, exactly as mem_arbiter
+# does. Sampling on the falling edge reads a settled value for the cycle about to end.
+async def issue(dut):
+    while True:
+        await FallingEdge(dut.clk)
+        if int(dut.cmd_ready.value):
+            await RisingEdge(dut.clk)
+            dut.cmd_valid.value = 0
+            return
         await RisingEdge(dut.clk)
 
 
 async def wr(dut, addr, val):
-    await wait_ready(dut)
     dut.cmd_valid.value = 1; dut.cmd_wr.value = 1
     dut.cmd_addr.value = addr; dut.cmd_wdata.value = val
-    await RisingEdge(dut.clk)
-    dut.cmd_valid.value = 0
+    await issue(dut)
     await RisingEdge(dut.clk)
 
 
 async def rd(dut, addr):
-    await wait_ready(dut)
     dut.cmd_valid.value = 1; dut.cmd_wr.value = 0; dut.cmd_addr.value = addr
     dut.cmd_len.value = 1
-    await RisingEdge(dut.clk)
-    dut.cmd_valid.value = 0
+    await issue(dut)
     while not int(dut.rd_valid.value):
         await RisingEdge(dut.clk)
     return int(dut.rd_data.value)
 
 
 async def burst(dut, addr, n):
-    await wait_ready(dut)
     dut.cmd_valid.value = 1; dut.cmd_wr.value = 0; dut.cmd_addr.value = addr
     dut.cmd_len.value = n
-    await RisingEdge(dut.clk)
-    dut.cmd_valid.value = 0
+    await issue(dut)
     words, cycles, saw_last = [], 0, False
     while len(words) < n:
         await RisingEdge(dut.clk)

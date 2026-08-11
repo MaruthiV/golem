@@ -4,7 +4,15 @@
 // NOTE: SDRAM modeled/wired 32-bit (matches the verified sim). Confirm the real chip's
 // data width/timing from the datasheet during bring-up and adapt the data phase if 16-bit.
 module golem_board_top #(
-    parameter CLKS_PER_BIT = 234,          // 27MHz / 115200
+    // Internal clock. USE_PLL=0 runs straight off the 27 MHz oscillator; USE_PLL=1 brings up the
+    // rPLL and everything (logic AND SDRAM) runs at CLK_MHZ. Raising this is the whole of T68:
+    // golem is only 6% memory-stalled, so tok/s is now linear in the clock. Divider values must
+    // satisfy CLK_MHZ = 27*(PLL_FBDIV+1)/(PLL_IDIV+1) with 400 <= CLK_MHZ*PLL_ODIV <= 1200.
+    parameter int CLK_MHZ = 27,
+    parameter int USE_PLL = 0,
+    parameter int PLL_IDIV = 8, parameter int PLL_FBDIV = 21, parameter int PLL_ODIV = 8,
+    parameter int PLL_PHASE = 10,          // SDRAM clock phase, 16ths of a period; swept on the board (T70/G7)
+    parameter int CLKS_PER_BIT = 0,        // 0 = derive from CLK_MHZ at 115200 baud
     parameter [11:0] START_TOK = 12'd0,
     parameter [7:0]  MAX_TOKENS = 8'd120,
     parameter [21:0] N_WORDS = 22'd1624264
@@ -28,15 +36,30 @@ module golem_board_top #(
     output logic [1:0]  O_sdram_ba,
     inout  wire  [31:0] IO_sdram_dq
 );
-  wire clk = clk27;
+  localparam int CPB = (CLKS_PER_BIT > 0) ? CLKS_PER_BIT : (CLK_MHZ * 1000000) / 115200;
+
+  wire clk, sdram_clk;
+  generate if (USE_PLL) begin : g_pll
+    pll #(.IDIV(PLL_IDIV), .FBDIV(PLL_FBDIV), .ODIV(PLL_ODIV), .PHASE(PLL_PHASE))
+      u_pll(.clkin(clk27), .clkout(clk), .clkoutp(sdram_clk), .lock());
+  end else begin : g_nopll
+    assign clk = clk27;
+    assign sdram_clk = clk27;
+  end endgenerate
+
   logic [1:0] rsync;
   always_ff @(posedge clk) rsync <= {rsync[0], ~rst_n};
   wire rst = rsync[1];
 
   // ---- UART rx -> weight loader ----
-  logic [7:0] rx_data; logic rx_valid;
-  uart_rx #(.CLKS_PER_BIT(CLKS_PER_BIT)) u_rx(.clk(clk), .rst(rst), .rx(uart_rx_pin),
-                .data(rx_data), .valid(rx_valid));
+  // bytes are ignored until the SDRAM finishes its 200 us power-up: otherwise they become words
+  // the controller cannot accept yet, the loader drops them while it waits, and the image
+  // desyncs. Gating valid costs one LUT; gating reset would sit on a high-fanout net.
+  logic sdram_ready;
+  logic [7:0] rx_data; logic rx_valid_raw;
+  wire rx_valid = rx_valid_raw & sdram_ready;
+  uart_rx #(.CLKS_PER_BIT(CPB)) u_rx(.clk(clk), .rst(rst), .rx(uart_rx_pin),
+                .data(rx_data), .valid(rx_valid_raw));
   logic ld_valid, ld_wr; logic [21:0] ld_addr; logic [31:0] ld_wdata; logic ld_ready, load_done;
   weight_loader #(.N_WORDS(N_WORDS)) u_ld(.clk(clk), .rst(rst),
                 .rx_data(rx_data), .rx_valid(rx_valid),
@@ -83,22 +106,22 @@ module golem_board_top #(
   assign arb_ready = loading ? 1'b0    : c_ready;
 
   logic [31:0] dq_o, dq_i; logic dq_oe; logic [12:0] a_full;
-  sdram_ctrl u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr),
+  sdram_ctrl #(.CLK_MHZ(CLK_MHZ)) u_ctrl(.clk(clk), .rst(rst), .cmd_valid(c_valid), .cmd_wr(c_wr),
                 .cmd_addr(c_addr), .cmd_len(c_len), .rd_last(c_rlast),
-                .cmd_wdata(c_wdata), .cmd_ready(c_ready),
+                .cmd_wdata(c_wdata), .cmd_ready(c_ready), .init_done(sdram_ready),
                 .rd_valid(c_rvalid), .rd_data(c_rdata),
                 .cs_n(O_sdram_cs_n), .ras_n(O_sdram_ras_n), .cas_n(O_sdram_cas_n),
                 .we_n(O_sdram_wen_n), .cke(O_sdram_cke), .ba(O_sdram_ba), .a(a_full),
                 .dq_o(dq_o), .dq_oe(dq_oe), .dq_i(dq_i));
   assign O_sdram_addr = a_full[10:0];       // 2048 rows; A10 is also the auto-precharge bit
   assign O_sdram_dqm  = 4'b0000;            // never mask: every access is a full 32-bit word
-  assign O_sdram_clk  = clk;                // TODO(bring-up): may need a PLL phase shift
+  assign O_sdram_clk  = sdram_clk;          // phase-shifted by the PLL when USE_PLL (T70 sweeps it)
   assign IO_sdram_dq = dq_oe ? dq_o : 32'bz;   // tristate the bidirectional data bus
   assign dq_i = IO_sdram_dq;
 
   // ---- UART tx ----
   logic u_send, u_busy; logic [7:0] u_data;
-  uart_tx #(.CLKS_PER_BIT(CLKS_PER_BIT)) u_tx(.clk(clk), .rst(rst), .send(u_send), .data(u_data),
+  uart_tx #(.CLKS_PER_BIT(CPB)) u_tx(.clk(clk), .rst(rst), .send(u_send), .data(u_data),
                 .tx(uart_tx_pin), .busy(u_busy));
 
   // ---- control FSM (autonomous generation, started once weights are loaded) ----
