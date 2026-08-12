@@ -16,12 +16,18 @@ TOP=${TOP:-golem_board_top}
 DEVICE="GW2AR-LV18QN88C8/I7"
 FAMILY="GW2A-18C"
 
-RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
-     rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/wstream.sv rtl/uart_tx.sv"
-if [ "$TOP" = "golem_board_top" ]; then
-  RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/golem_board_top.sv"
+if [ "$TOP" = "sdram_selftest" ]; then
+  # bring-up design: no golem at all, just the memory path. Builds in ~1 min and is what the
+  # clock/phase sweep flashes (T70 / gate G7).
+  RTL="rtl/uart_tx.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/sdram_selftest.sv"
 else
-  RTL="$RTL rtl/golem_fpga.sv"
+  RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
+       rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/wstream.sv rtl/uart_tx.sv"
+  if [ "$TOP" = "golem_board_top" ]; then
+    RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/golem_board_top.sv"
+  else
+    RTL="$RTL rtl/golem_fpga.sv"
+  fi
 fi
 
 # CLK_MHZ/USE_PLL pick the internal clock (T68). FREQ constrains nextpnr so timing is VERIFIED
@@ -43,7 +49,7 @@ case "$CLK_MHZ" in
 esac
 
 CHP=""
-if [ "$TOP" = "golem_board_top" ]; then
+if [ "$TOP" = "golem_board_top" ] || [ "$TOP" = "sdram_selftest" ]; then
   # -chparam on hierarchy, NOT the chparam command: chparam derives a copy and leaves the
   # original as top, so the parameters silently do not apply.
   CHP="-chparam CLK_MHZ $CLK_MHZ -chparam USE_PLL $USE_PLL -chparam PLL_IDIV $IDIV"
@@ -54,9 +60,15 @@ mkdir -p fpga/out
 yosys -p "read_verilog -sv $RTL; hierarchy -top $TOP $CHP; synth_gowin -top $TOP -json fpga/out/$TOP.json"
 nextpnr-himbaechel --json fpga/out/$TOP.json --write fpga/out/${TOP}_pnr.json \
   --device "$DEVICE" --vopt family=$FAMILY --vopt cst=fpga/tangnano20k.cst --freq $FREQ --seed ${SEED:-1}
-gowin_pack -d $FAMILY -o fpga/out/golem.fs fpga/out/${TOP}_pnr.json
+# one bitstream per top, no shared alias: TOP=sdram_selftest and TOP=golem_board_top are flashed
+# in the same session during bring-up, and a shared name means flashing whichever built last.
+gowin_pack -d $FAMILY -o fpga/out/${TOP}.fs fpga/out/${TOP}_pnr.json
 
-echo "bitstream: fpga/out/golem.fs"
-echo "flash (volatile SRAM): openFPGALoader -b tangnano20k fpga/out/golem.fs"
-echo "flash (persistent):    openFPGALoader -b tangnano20k -f fpga/out/golem.fs"
-echo "then: python scripts/read_story.py /dev/tty.usbserial-XXXX"
+echo "bitstream: fpga/out/${TOP}.fs"
+echo "flash (volatile SRAM): openFPGALoader -b tangnano20k fpga/out/${TOP}.fs"
+echo "flash (persistent):    openFPGALoader -b tangnano20k -f fpga/out/${TOP}.fs"
+if [ "$TOP" = "sdram_selftest" ]; then
+  echo "then: python scripts/read_selftest.py /dev/tty.usbserial-XXXX"
+else
+  echo "then: python scripts/upload_weights.py /dev/tty.usbserial-XXXX"
+fi
