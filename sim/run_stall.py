@@ -5,14 +5,15 @@ from cocotb_tools.runner import get_runner
 
 ROOT = Path(__file__).resolve().parents[1]
 RTL = ROOT / "rtl"
+LIB = ROOT / "lib" / "rtl"
 
 
 def main():
     srcs = ["requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv", "softmax_row.sv",
-            "gelu_lut.sv", "block.sv", "golem.sv", "mem_arbiter.sv", "sdram_ctrl.sv",
-            "sdram_chip.sv", "wstream.sv", "sim_mem.sv", "stall_probe.sv"]
+            "gelu_lut.sv", "block.sv", "golem.sv", LIB / "mem_arbiter.sv", LIB / "sdram_ctrl.sv",
+            "sdram_chip.sv", LIB / "wstream.sv", "sim_mem.sv", "stall_probe.sv"]
     runner = get_runner("icarus")
-    runner.build(sources=[RTL / s for s in srcs], hdl_toplevel="golem_board_probe",
+    runner.build(sources=[s if isinstance(s, Path) else RTL / s for s in srcs], hdl_toplevel="golem_board_probe",
                  build_dir=ROOT / "sim" / "build_stall", build_args=["-g2012", "-I", str(RTL)],
                  timescale=("1ns", "1ps"))
     snap = os.environ.get("SNAPEVERY", "4000000")

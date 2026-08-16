@@ -4,6 +4,7 @@ from cocotb_tools.runner import get_runner
 
 ROOT = Path(__file__).resolve().parents[1]
 RTL = ROOT / "rtl"
+LIB = ROOT / "lib" / "rtl"
 
 
 def main():
@@ -11,7 +12,7 @@ def main():
     runner.build(
         sources=[RTL / s for s in ["requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv",
                                    "softmax_row.sv", "gelu_lut.sv", "block.sv", "golem.sv",
-                                   "sdram_model.sv", "mem_arbiter.sv", "sim_mem.sv"]],
+                                   "sdram_model.sv", LIB / "mem_arbiter.sv", "sim_mem.sv"]],
         hdl_toplevel="golem_soc",
         build_dir=ROOT / "sim" / "build_soc",
         build_args=["-g2012", "-I", str(RTL)],

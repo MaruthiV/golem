@@ -4,7 +4,10 @@
 // Reads are single-outstanding; a read may return many words (mrd_len), all forwarded to the
 // requester until rd_last. Writes are posted via a 1-deep latch (KV writes are sparse -- ~1 per
 // 260 cycles -- so they always drain before the next).
-module mem_arbiter (
+module mem_arbiter #(
+    parameter [21:0] KV_BASE   = 22'd0,
+    parameter [21:0] KV_STRIDE = 22'd131072   // words between the two KV regions
+) (
     input  logic        clk,
     input  logic        rst,
 
@@ -36,10 +39,9 @@ module mem_arbiter (
     input  logic        i_rlast,
     input  logic [31:0] i_rdata
 );
-  `include "golem_mem.svh"
-  // K region at KV_BASE, V region 131072 words later
+  // one region at KV_BASE, the other KV_STRIDE words later
   function automatic [21:0] kvaddr(input logic sel, input logic [16:0] a);
-    kvaddr = 22'(MEM_KV_BASE) + (sel ? 22'd0 : 22'd131072) + {5'd0, a};
+    kvaddr = KV_BASE + (sel ? 22'd0 : KV_STRIDE) + {5'd0, a};
   endfunction
 
   logic wpend; logic [21:0] waddr_l; logic [31:0] wdata_l;

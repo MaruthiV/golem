@@ -19,12 +19,12 @@ FAMILY="GW2A-18C"
 if [ "$TOP" = "sdram_selftest" ]; then
   # bring-up design: no golem at all, just the memory path. Builds in ~1 min and is what the
   # clock/phase sweep flashes (T70 / gate G7).
-  RTL="rtl/uart_tx.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/sdram_selftest.sv"
+  RTL="rtl/uart_tx.sv lib/rtl/sdram_ctrl.sv rtl/pll.sv rtl/sdram_selftest.sv"
 else
   RTL="rtl/requant.sv rtl/divu.sv rtl/matmul_row.sv rtl/rmsnorm.sv rtl/softmax_row.sv \
-       rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv rtl/mem_arbiter.sv rtl/wstream.sv rtl/uart_tx.sv"
+       rtl/gelu_lut.sv rtl/block.sv rtl/golem.sv lib/rtl/mem_arbiter.sv lib/rtl/wstream.sv rtl/uart_tx.sv"
   if [ "$TOP" = "golem_board_top" ]; then
-    RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv rtl/sdram_ctrl.sv rtl/pll.sv rtl/golem_board_top.sv"
+    RTL="$RTL rtl/uart_rx.sv rtl/weight_loader.sv lib/rtl/sdram_ctrl.sv rtl/pll.sv rtl/golem_board_top.sv"
   else
     RTL="$RTL rtl/golem_fpga.sv"
   fi

@@ -5,6 +5,7 @@ from cocotb_tools.runner import get_runner
 
 ROOT = Path(__file__).resolve().parents[1]
 RTL = ROOT / "rtl"
+LIB = ROOT / "lib" / "rtl"
 
 
 def run(which):
@@ -16,10 +17,10 @@ def run(which):
         runner.test(hdl_toplevel="uart_rx", test_module="test_uart_rx",
                     test_dir=ROOT / "sim", build_dir=ROOT / "sim" / "build_uart_rx")
     else:
-        srcs = ["sdram_chip.sv", "sdram_ctrl.sv", "weight_loader.sv", "sim_mem.sv",
+        srcs = ["sdram_chip.sv", LIB / "sdram_ctrl.sv", "weight_loader.sv", "sim_mem.sv",
                 "requant.sv", "divu.sv", "matmul_row.sv", "rmsnorm.sv", "softmax_row.sv",
-                "gelu_lut.sv", "block.sv", "golem.sv", "mem_arbiter.sv"]
-        runner.build(sources=[RTL / s for s in srcs], hdl_toplevel="loader_sys",
+                "gelu_lut.sv", "block.sv", "golem.sv", LIB / "mem_arbiter.sv"]
+        runner.build(sources=[s if isinstance(s, Path) else RTL / s for s in srcs], hdl_toplevel="loader_sys",
                      build_dir=ROOT / "sim" / "build_loader",
                      build_args=["-g2012", "-I", str(RTL)], timescale=("1ns", "1ps"))
         runner.test(hdl_toplevel="loader_sys", test_module="test_loader", test_dir=ROOT / "sim",

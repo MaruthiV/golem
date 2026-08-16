@@ -9,12 +9,12 @@
 //
 // Lines are page-aligned and LINE <= one SDRAM page, so a burst never crosses a row (a sequential
 // SDRAM burst wraps inside its page, which would silently read the wrong row).
-// Fills are CLAMPED at MEM_KV_BASE. Without that, the last weight line straddles the KV region
-// (weights end at MEM_KV_BASE, which is not line-aligned), so a prefetch would read never-written
-// KV addresses -- board_tb's X-checker caught exactly this -- and a cached boundary line could go
-// stale under a KV write. With the clamp, mrd lines and the KV region are genuinely disjoint, so
-// KV writes cannot alias them and no invalidation is needed.
-module wstream #(parameter LB = 8) (
+// Fills are CLAMPED at LIMIT_ADDR: read-ahead must not run past the end of the read-only region.
+// If it does, a prefetch touches addresses nobody has written (board_tb's X-checker caught exactly
+// that), and a cached boundary line can go stale when someone writes above the limit. With the
+// clamp the cached lines and everything above LIMIT_ADDR are disjoint, so no invalidation is
+// needed. Leave it at all-ones if the whole space is read-only.
+module wstream #(parameter LB = 8, parameter [22:0] LIMIT_ADDR = 23'h7FFFFF) (
     input  logic clk,
     input  logic rst,
 
@@ -32,10 +32,9 @@ module wstream #(parameter LB = 8) (
     input  logic        m_last,
     input  logic [31:0] m_data
 );
-  `include "golem_mem.svh"
   localparam LINE = 1 << LB;
   localparam TW = 22 - LB;                  // tag width
-  localparam [22:0] LIMIT = 23'(MEM_KV_BASE);   // never fetch at or above the KV region
+  localparam [22:0] LIMIT = LIMIT_ADDR;
 
   logic [31:0]    line [0:2*LINE-1];        // {sel, idx}
   logic [TW-1:0]  tag  [0:1];

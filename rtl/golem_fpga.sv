@@ -38,11 +38,12 @@ module golem_fpga #(
                 .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(g_tvalid), .tok_out(g_tout));
-  wstream #(.LB(7)) u_ws(.clk(clk), .rst(rst),
+    `include "golem_mem.svh"
+  wstream #(.LB(7), .LIMIT_ADDR(23'(MEM_KV_BASE))) u_ws(.clk(clk), .rst(rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
                 .m_req(ws_req), .m_addr(ws_addr), .m_len(ws_len),
                 .m_valid(ws_valid), .m_last(ws_last), .m_data(ws_data));
-  mem_arbiter u_arb(.clk(clk), .rst(rst),
+  mem_arbiter #(.KV_BASE(22'(MEM_KV_BASE))) u_arb(.clk(clk), .rst(rst),
                 .mrd_req(ws_req), .mrd_addr(ws_addr), .mrd_len(ws_len),
                 .mrd_valid(ws_valid), .mrd_last(ws_last), .mrd_data(ws_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),

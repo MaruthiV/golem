@@ -29,7 +29,8 @@ module golem_top #(
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
                 .tok_valid(g_tvalid), .tok_out(g_tout));
   // single-word path (sdram_model): no bursts here, so len=1 and every word is the last
-  mem_arbiter u_arb(.clk(clk), .rst(rst),
+  `include "golem_mem.svh"
+  mem_arbiter #(.KV_BASE(22'(MEM_KV_BASE))) u_arb(.clk(clk), .rst(rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_len(9'd1),
                 .mrd_valid(mrd_valid), .mrd_last(), .mrd_data(mrd_data),
                 .kv_rreq(krq), .kv_raddr(kra), .kv_rsel(krs), .kv_rvalid(krv), .kv_rdata(krd),
