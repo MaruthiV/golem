@@ -10,14 +10,16 @@ from mind import config
 from quant.weights import load_fp32
 
 
-def quant_per_tensor(w):
-    s = max(float(np.max(np.abs(w))), 1e-8) / 127.0
-    return np.clip(np.round(w / s), -127, 127).astype(np.int8), s
+def quant_per_tensor(w, bits=8):
+    lim = (1 << (bits - 1)) - 1
+    s = max(float(np.max(np.abs(w))), 1e-8) / lim
+    return np.clip(np.round(w / s), -lim, lim).astype(np.int8), s
 
 
-def quant_per_channel(w):
-    s = np.maximum(np.max(np.abs(w), axis=1), 1e-8) / 127.0
-    q = np.clip(np.round(w / s[:, None]), -127, 127).astype(np.int8)
+def quant_per_channel(w, bits=8):
+    lim = (1 << (bits - 1)) - 1
+    s = np.maximum(np.max(np.abs(w), axis=1), 1e-8) / lim
+    q = np.clip(np.round(w / s[:, None]), -lim, lim).astype(np.int8)
     return q, s
 
 
@@ -32,6 +34,16 @@ def pack_multipliers(rs):
 
 
 def main():
+    import argparse
+    ap = argparse.ArgumentParser()
+    # T41: low-bit weights. Only the matmul weights and the tied token embedding are worth
+    # narrowing — they are ~95% of the bytes golem reads per token. Values stay in int8
+    # containers; the win is in the packing, and this measures only whether the model survives.
+    ap.add_argument("--wbits", type=int, default=8, help="matmul weight bits")
+    ap.add_argument("--ebits", type=int, default=8, help="token-embedding bits (tied output head)")
+    ap.add_argument("--out", default=None)
+    args = ap.parse_args()
+
     data = Path(config.DATA_DIR)
     w = load_fp32(Path(config.CHECKPOINT_DIR) / "golem_latest.safetensors")
     act = json.loads((data / "act_scales.json").read_text())
@@ -39,14 +51,14 @@ def main():
     norm_q = 1 << spec.NORM_INV_SHIFT
     out = {}
 
-    tok_q, s_tok = quant_per_tensor(w["tok_emb"])
+    tok_q, s_tok = quant_per_tensor(w["tok_emb"], args.ebits)
     pos_q, s_pos = quant_per_tensor(w["pos_emb"])
     out["tok_emb.w"], out["pos_emb.w"] = tok_q, pos_q
     out["emb_tok.m"], out["emb_tok.s"] = pack_multiplier(s_tok / act["x0"])
     out["emb_pos.m"], out["emb_pos.s"] = pack_multiplier(s_pos / act["x0"])
 
     def linear(dst, wname, s_in, s_out):
-        q, s_w = quant_per_channel(w[wname])
+        q, s_w = quant_per_channel(w[wname], args.wbits)
         out[dst + ".w"] = q
         out[dst + ".m"], out[dst + ".s"] = pack_multipliers(s_in * s_w / s_out)
 
@@ -84,7 +96,8 @@ def main():
     out["exp_lut"] = np.round(np.exp(-idx * spec.SM_SCALE) * (1 << spec.EXP_LUT_BITS)).astype(np.int64)
     out["logit_scale"] = np.float64(act["on"] * s_tok)
 
-    path = data / "golem_int8.npz"
+    path = data / (args.out or f"golem_w{args.wbits}e{args.ebits}.npz"
+                   if (args.wbits, args.ebits) != (8, 8) else "golem_int8.npz")
     np.savez(path, **out)
     weight_bytes = sum(v.nbytes for k, v in out.items() if k.endswith(".w"))
     print(f"saved {path}: {weight_bytes / 1e6:.2f}MB of int8 weights")
