@@ -1,0 +1,278 @@
+<title>Will it fit? A memory calculator for LLMs on FPGAs</title>
+<style>
+  :root {
+    --paper:#DCE2E1; --ink:#1E2426; --muted:#576261; --rule:#C4CDCB;
+    --accent:#A83A0B; --hair:#AAB5B3;
+    --serif:"Charter","Bitstream Charter","Iowan Old Style",Cambria,Georgia,serif;
+    --mono:ui-monospace,"SF Mono","Cascadia Mono",Menlo,Consolas,monospace;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#12181A; --ink:#DCE3E2; --muted:#7E8A88; --rule:#243033;
+      --accent:#F0894B; --hair:#36423F;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#12181A; --ink:#DCE3E2; --muted:#7E8A88; --rule:#243033;
+    --accent:#F0894B; --hair:#36423F;
+  }
+  * { box-sizing:border-box; }
+  html { -webkit-text-size-adjust:100%; }
+  body {
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:var(--serif); font-size:18px; line-height:1.62;
+    -webkit-font-smoothing:antialiased;
+  }
+  .col { max-width:44rem; margin:0 auto; padding:72px 24px 96px; }
+  p { margin:0 0 1.1em; }
+  a { color:var(--accent); }
+
+  .kicker { font-family:var(--mono); font-size:11px; letter-spacing:.16em;
+            text-transform:uppercase; color:var(--muted); margin:0 0 18px; }
+  h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,5.4vw,44px);
+       line-height:1.18; letter-spacing:-.015em; margin:0 0 18px; text-wrap:balance; }
+  .standfirst { font-size:19px; color:var(--muted); margin:0; max-width:38rem; }
+
+  section { border-top:1px solid var(--rule); margin-top:56px; padding-top:14px; }
+  .label { font-family:var(--mono); font-size:10.5px; letter-spacing:.16em;
+           text-transform:uppercase; color:var(--muted); margin:0 0 26px; }
+
+  /* the answer is the page */
+  .answer { display:flex; align-items:baseline; gap:.4em; flex-wrap:wrap; margin:0 0 6px; }
+  .rate { font-family:var(--serif); font-weight:600; font-size:clamp(60px,13vw,104px);
+          line-height:.92; letter-spacing:-.035em; font-variant-numeric:tabular-nums; }
+  .rate-unit { font-size:clamp(17px,2.4vw,21px); color:var(--muted); }
+  .reading { font-size:19px; margin:22px 0 0; }
+  .reading b { font-weight:600; }
+
+  /* the instrument */
+  figure { margin:0; }
+  .bus { position:relative; height:82px; border:1px solid var(--hair);
+         background:transparent; overflow:hidden; }
+  .bus .used { position:absolute; inset:0 auto 0 0; background:var(--accent);
+               transition:width .22s ease; }
+  .bus .naive { position:absolute; left:0; bottom:0; height:5px; background:var(--ink);
+                transition:width .22s ease; opacity:.55; }
+  @media (prefers-reduced-motion: reduce) { .bus .used, .bus .naive { transition:none; } }
+  .busmarks { display:flex; justify-content:space-between; font-family:var(--mono);
+              font-size:11px; color:var(--muted); margin-top:9px; letter-spacing:.03em; }
+  figcaption { font-size:15.5px; color:var(--muted); margin-top:16px; }
+  figcaption b { color:var(--ink); font-weight:600; }
+
+  /* the spec, as a sentence you edit */
+  .spec { font-size:19.5px; line-height:2.05; }
+  .spec input {
+    font-family:var(--mono); font-size:16px; color:var(--accent); background:transparent;
+    border:0; border-bottom:1.5px solid var(--accent); padding:0 1px 1px;
+    text-align:center; -moz-appearance:textfield;
+  }
+  .spec input::-webkit-outer-spin-button, .spec input::-webkit-inner-spin-button {
+    -webkit-appearance:none; margin:0; }
+  .spec input:focus { outline:none; background:color-mix(in srgb, var(--accent) 12%, transparent); }
+  .spec input:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
+
+  table { width:100%; border-collapse:collapse; font-size:16px; margin:0; }
+  .scroll { overflow-x:auto; }
+  th { font-family:var(--mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+       color:var(--muted); font-weight:400; text-align:left; padding:0 0 8px;
+       border-bottom:1px solid var(--rule); }
+  td { padding:9px 0; border-bottom:1px solid var(--rule); vertical-align:baseline; }
+  td.n { font-family:var(--mono); font-size:14.5px; text-align:right;
+         font-variant-numeric:tabular-nums; white-space:nowrap; }
+  tr.lead td { font-weight:600; }
+  tr.lead td.n { color:var(--accent); }
+  td .why { display:block; font-size:14.5px; color:var(--muted); line-height:1.45; }
+
+  .foot { font-size:15px; color:var(--muted); }
+  .foot b { color:var(--ink); font-weight:600; }
+  .verdictline { font-family:var(--mono); font-size:12px; letter-spacing:.06em;
+                 text-transform:uppercase; color:var(--muted); margin:14px 0 0; }
+  .verdictline .flag { color:var(--accent); }
+</style>
+
+<div class="col">
+
+  <p class="kicker">golem · memory-bandwidth calculator</p>
+  <h1>Most accelerators are not slow because of the math. They are waiting for memory.</h1>
+  <p class="standfirst">Every weight gets read once for every token you generate. That means the
+    memory bus usually sets your speed, not the multipliers. Change any number below and see which
+    limit actually bites.</p>
+
+  <section>
+    <p class="label">The answer</p>
+    <div class="answer">
+      <span class="rate" id="rate">13.2</span>
+      <span class="rate-unit">tokens per second</span>
+    </div>
+    <p class="reading" id="reading"></p>
+    <p class="verdictline" id="verdict"></p>
+  </section>
+
+  <section>
+    <p class="label">The bus, one second of it</p>
+    <figure>
+      <div class="bus">
+        <div class="used" id="busUsed" style="width:15%"></div>
+        <div class="naive" id="busNaive" style="width:1.3%"></div>
+      </div>
+      <div class="busmarks">
+        <span id="markUsed"></span>
+        <span id="markTotal"></span>
+      </div>
+      <figcaption id="buscap"></figcaption>
+    </figure>
+  </section>
+
+  <section>
+    <p class="label">Your spec</p>
+    <p class="spec">
+      A <input id="params" type="number" step="0.01" value="6.36"> M-parameter model,
+      <input id="layers" type="number" value="8"> layers wide
+      <input id="dmodel" type="number" step="64" value="256">, context
+      <input id="ctx" type="number" value="256">, weights at
+      <input id="wbits" type="number" value="8"> bits, feeding
+      <input id="lanes" type="number" value="4"> MAC lanes.
+      Memory is <input id="buswidth" type="number" value="32"> bits wide at
+      <input id="memclk" type="number" value="27"> MHz, rated for
+      <input id="ratedclk" type="number" value="166">, with
+      <input id="capacity" type="number" value="8"> MB of capacity,
+      <input id="page" type="number" value="256"> words to a page, on a part with
+      <input id="luts" type="number" value="20736"> LUT4 cells.
+    </p>
+  </section>
+
+  <section>
+    <p class="label">What a token costs</p>
+    <div class="scroll"><table>
+      <tr><th>Traffic</th><th style="text-align:right">Per token</th></tr>
+      <tr><td>Weights, each read once<span class="why">you cannot cache your way out of this one</span></td><td class="n" id="tW"></td></tr>
+      <tr><td>KV cache at full context<span class="why">grows as the context fills. Most estimates forget it.</span></td><td class="n" id="tKV"></td></tr>
+      <tr class="lead"><td>Total moved</td><td class="n" id="tTot"></td></tr>
+      <tr><td>Multiply-accumulates<span class="why">what the arithmetic actually costs</span></td><td class="n" id="tMac"></td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="label">Every ceiling, ranked</p>
+    <div class="scroll"><table>
+      <tr><th>Limit</th><th style="text-align:right">tok/s</th></tr>
+      <tr><td>Memory, this clock, full context</td><td class="n" id="cMem"></td></tr>
+      <tr><td>Memory, this clock, empty context</td><td class="n" id="cEmpty"></td></tr>
+      <tr><td>Compute, this clock</td><td class="n" id="cCmp"></td></tr>
+      <tr><td>Memory at the rated clock</td><td class="n" id="cRated"></td></tr>
+      <tr><td>One memory access per word<span class="why">what you get before any of this is fixed</span></td><td class="n" id="cNaive"></td></tr>
+    </table></div>
+  </section>
+
+  <section>
+    <p class="label">The schedule this implies</p>
+    <div class="scroll"><table id="sched"></table></div>
+  </section>
+
+  <section>
+    <p class="label">Where these numbers come from</p>
+    <p class="foot">Both efficiency figures are measured on golem, a 6.36M-parameter model on a $35
+      Tang Nano 20K, running through a real SDR SDRAM protocol in simulation. Reading one word at a
+      time uses <b>8.2%</b> of the bus. Full page bursts, with a page-aligned line buffer and ping-pong
+      prefetch, use <b>93.8%</b>. That is 12.13 cycles per weight word down to 1.07. Using the second
+      number for your own design assumes you go and build all three of those things.</p>
+    <p class="foot">At the defaults, <em>memory, empty context</em> comes out at <b>15.3 tok/s</b>.
+      golem's own measured figure is <b>15.25</b>. The fabric estimate just scales one measured design
+      by width, so treat it as give or take half. Place and route is the only real answer, and past
+      <b>90%</b> of a part's LUT4 nextpnr will not place at all. 88% places, 95% does not, both measured.</p>
+    <p class="foot" style="margin-bottom:0">Throughput here is <em>derived</em>, not observed. It is
+      cycles divided by a clock, and none of it has run on hardware yet. Schedule efficiency is also
+      not the same thing as a share of rated bandwidth. The two only line up when the memory runs at
+      the clock it is rated for.</p>
+  </section>
+
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+const EFF_OPT = 0.938, EFF_NAIVE = 0.082;   // measured on golem, same silicon, same model
+const PARAM_OVERHEAD = 0.045;               // measured: 6.64 MB read for 6.36 MB of weights
+const GOLEM_LUT = 18242, GOLEM_DMODEL = 256;
+
+const fmtB = b => b >= 1e6 ? (b/1e6).toFixed(2)+" MB" : b >= 1e3 ? (b/1e3).toFixed(1)+" kB" : Math.round(b)+" B";
+const fmtN = n => n >= 1e9 ? (n/1e9).toFixed(2)+" G" : n >= 1e6 ? (n/1e6).toFixed(2)+" M" : Math.round(n).toLocaleString();
+const num = id => parseFloat($(id).value) || 0;
+const sizeInput = el => { el.style.width = Math.max(2, el.value.length + 0.6) + "ch"; };
+
+function compute() {
+  const params=num("params")*1e6, layers=num("layers"), dmodel=num("dmodel"), ctx=num("ctx");
+  const wbits=num("wbits"), lanes=Math.max(1,num("lanes"));
+  const width=num("buswidth"), clk=num("memclk")*1e6, rated=num("ratedclk")*1e6;
+  const capBytes=num("capacity")*1e6, page=num("page"), partLuts=num("luts");
+
+  const wBytes = params * wbits/8 * (1 + PARAM_OVERHEAD);
+  const kvBytes = 2 * layers * dmodel * ctx;
+  const total = wBytes + kvBytes;
+  const macs = params + 2*layers*dmodel*ctx;
+
+  const theo = width/8 * clk;
+  const tokMem = theo*EFF_OPT/total, tokEmpty = theo*EFF_OPT/wBytes;
+  const tokNaive = theo*EFF_NAIVE/total, tokRated = width/8*rated*EFF_OPT/total;
+  const tokCmp = lanes*clk/macs;
+  const rate = Math.min(tokMem, tokCmp), memBound = tokMem <= tokCmp;
+  const fits = total <= capBytes;
+  const lutEst = GOLEM_LUT*(dmodel/GOLEM_DMODEL), lutPct = partLuts ? lutEst/partLuts*100 : 0;
+
+  $("rate").textContent = rate >= 100 ? rate.toFixed(0) : rate.toFixed(rate < 10 ? 2 : 1);
+
+  $("reading").innerHTML = memBound
+    ? `Each token pulls <b>${fmtB(total)}</b> through a bus that carries
+       <b>${(theo/1e6).toFixed(0)} MB/s</b>. More multipliers will not help. They are already sitting
+       idle, waiting for weights to show up.`
+    : `The bus can feed data faster than ${lanes} lane${lanes>1?"s":""} can chew through it. Here the
+       arithmetic is the limit, not the memory. Add lanes, or spend that area somewhere else.`;
+
+  const flags = [
+    memBound ? "memory-bound" : "compute-bound",
+    fits ? `fits in ${(capBytes/1e6).toFixed(0)} MB` : `will not fit, needs ${fmtB(total)}`,
+    `fabric about ${lutPct.toFixed(0)}% of the part` + (lutPct > 90 ? ", past the placement wall" : "")
+  ];
+  $("verdict").innerHTML = flags.map((f,i) =>
+    `<span class="${(i===1&&!fits)||(i===2&&lutPct>90) ? "flag" : ""}">${f}</span>`).join(" · ");
+
+  const usedPct = Math.min(100, rate*total/theo*100);
+  const naivePct = Math.min(100, tokNaive*total/theo*100);
+  $("busUsed").style.width = usedPct+"%";
+  $("busNaive").style.width = naivePct+"%";
+  $("markUsed").textContent = (theo*usedPct/100/1e6).toFixed(0)+" MB/s carrying weights";
+  $("markTotal").textContent = (theo/1e6).toFixed(0)+" MB/s available";
+  $("buscap").innerHTML = `The filled part is what your model pulls through. The rest of the bus sits
+    there doing nothing. That thin line along the bottom is the same design reading one word at a time
+    instead of a page at a time: <b>${naivePct.toFixed(1)}%</b> against <b>${usedPct.toFixed(1)}%</b>.
+    Run the memory at its rated ${(rated/1e6).toFixed(0)} MHz and this design reaches
+    <b>${tokRated.toFixed(tokRated<10?2:1)} tok/s</b>, so the clock is what is left to win, not the schedule.`;
+
+  $("tW").textContent = fmtB(wBytes);
+  $("tKV").textContent = fmtB(kvBytes);
+  $("tTot").textContent = fmtB(total);
+  $("tMac").textContent = fmtN(macs);
+  $("cMem").textContent = tokMem.toFixed(2);
+  $("cEmpty").textContent = tokEmpty.toFixed(2);
+  $("cCmp").textContent = tokCmp.toFixed(2);
+  $("cRated").textContent = tokRated.toFixed(2);
+  $("cNaive").textContent = tokNaive.toFixed(2);
+
+  const refi = Math.max(0, Math.round(15.625e-6*clk - page));
+  const rows = [
+    ["Burst length", page+" words", "one row activation per page instead of one per word. This is where the 11x comes from."],
+    ["Line buffer", page+" words, page-aligned", "a burst that crosses a row boundary quietly reads the wrong row"],
+    ["Buffering", "two lines, ping-pong", "fill the next line while the datapath drains the current one"],
+    ["Refresh interval", refi+" cycles", "tREFI times the clock, minus one full burst, since a refresh can only land between commands"],
+    ["Weight layout", "packed in read order", "sequential addresses are what make a full page burst legal in the first place"]
+  ];
+  $("sched").innerHTML = "<tr><th>Setting</th><th>Value</th></tr>" + rows.map(r =>
+    `<tr><td>${r[0]}<span class="why">${r[2]}</span></td>
+     <td class="n">${r[1]}</td></tr>`).join("");
+}
+
+document.querySelectorAll(".spec input").forEach(el => {
+  sizeInput(el);
+  el.addEventListener("input", () => { sizeInput(el); compute(); });
+});
+compute();
+</script>
