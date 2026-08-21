@@ -7,6 +7,7 @@ text with the trained tokenizer and prints the story as it arrives.
     python scripts/read_story.py /dev/tty.usbserial-XXXX
 (find the port with: ls /dev/tty.usbserial* , or `ls /dev/tty.*` after plugging in)
 """
+import os
 import sys
 from pathlib import Path
 
@@ -14,7 +15,7 @@ import serial
 from tokenizers import Tokenizer
 
 ROOT = Path(__file__).resolve().parents[1]
-BAUD = 115200
+BAUD = int(os.environ.get("GOLEM_BAUD", 921600))
 EOT = 0
 
 

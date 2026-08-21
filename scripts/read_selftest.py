@@ -1,10 +1,11 @@
 """Read one report line from the SDRAM self-test. Prints e.g. "P e0000 c066 p06"."""
+import os
 import sys
 import time
 
 import serial
 
-BAUD = 115200
+BAUD = int(os.environ.get("GOLEM_BAUD", 921600))
 
 
 def main():

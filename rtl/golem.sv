@@ -23,7 +23,8 @@ module golem (
     input  logic [31:0] kv_rdata,
 
     output logic        tok_valid,
-    output logic [11:0] tok_out
+    output logic [11:0] tok_out,
+    output logic [4:0]  dbg_st        // current phase, for the board LEDs
 );
   `include "golem_mem.svh"
   localparam V=4096, WSTART = 16 + 4096 + 64 + 64 + 64;
@@ -34,6 +35,7 @@ module golem (
     S_ON_G, S_ON_RUN, S_LG, S_DONE
   } st_t;
   st_t st;
+  assign dbg_st = 5'(st);
 
   logic [30:0] emt_m, emp_m, on_m;
   logic [5:0]  emt_s, emp_s, on_s;

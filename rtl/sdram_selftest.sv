@@ -9,7 +9,8 @@ module sdram_selftest #(
     parameter int USE_PLL = 0,
     parameter int PLL_IDIV = 8, parameter int PLL_FBDIV = 21, parameter int PLL_ODIV = 8,
     parameter int PLL_PHASE = 10,
-    parameter int CLKS_PER_BIT = 0        // 0 = derive from CLK_MHZ at 115200 baud
+    parameter int BAUD = 921600,
+    parameter int CLKS_PER_BIT = 0        // 0 = derive from CLK_MHZ and BAUD
 ) (
     input  logic        clk27,
     input  logic        rst_n,
@@ -24,7 +25,7 @@ module sdram_selftest #(
     output logic [1:0]  O_sdram_ba,
     inout  wire  [31:0] IO_sdram_dq
 );
-  localparam int CPB = (CLKS_PER_BIT > 0) ? CLKS_PER_BIT : (CLK_MHZ * 1000000) / 115200;
+  localparam int CPB = (CLKS_PER_BIT > 0) ? CLKS_PER_BIT : (CLK_MHZ * 1000000) / BAUD;
   localparam [9:0] LAST = 10'd1023;          // 4 rows x 256 cols per bank
 
   wire clk, sdram_clk;

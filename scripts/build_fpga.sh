@@ -33,6 +33,7 @@ fi
 # CLK_MHZ/USE_PLL pick the internal clock (T68). FREQ constrains nextpnr so timing is VERIFIED
 # at that clock rather than merely reported against himbaechel's 12 MHz default.
 CLK_MHZ=${CLK_MHZ:-27}
+BAUD=${BAUD:-921600}
 USE_PLL=${USE_PLL:-0}
 FREQ=${FREQ:-$CLK_MHZ}
 # PLL dividers: CLK_MHZ = 27*(FBDIV+1)/(IDIV+1), and VCO = CLK_MHZ*ODIV must be 400..1200 MHz.
@@ -53,7 +54,7 @@ if [ "$TOP" = "golem_board_top" ] || [ "$TOP" = "sdram_selftest" ]; then
   # -chparam on hierarchy, NOT the chparam command: chparam derives a copy and leaves the
   # original as top, so the parameters silently do not apply.
   CHP="-chparam CLK_MHZ $CLK_MHZ -chparam USE_PLL $USE_PLL -chparam PLL_IDIV $IDIV"
-  CHP="$CHP -chparam PLL_FBDIV $FBDIV -chparam PLL_ODIV $ODIV -chparam PLL_PHASE $PHASE"
+  CHP="$CHP -chparam PLL_FBDIV $FBDIV -chparam PLL_ODIV $ODIV -chparam PLL_PHASE $PHASE -chparam BAUD $BAUD"
 fi
 
 mkdir -p fpga/out

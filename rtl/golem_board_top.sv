@@ -12,7 +12,9 @@ module golem_board_top #(
     parameter int USE_PLL = 0,
     parameter int PLL_IDIV = 8, parameter int PLL_FBDIV = 21, parameter int PLL_ODIV = 8,
     parameter int PLL_PHASE = 10,          // SDRAM clock phase, 16ths of a period; swept on the board (T70/G7)
-    parameter int CLKS_PER_BIT = 0,        // 0 = derive from CLK_MHZ at 115200 baud
+    parameter int DEMO_SLOW = 0,           // hold each pipeline stage on the LEDs long enough to film
+    parameter int BAUD = 921600,           // 6.5 MB of weights is 9.4 min at 115200, 70 s here
+    parameter int CLKS_PER_BIT = 0,        // 0 = derive from CLK_MHZ and BAUD
     parameter [11:0] START_TOK = 12'd0,
     parameter [7:0]  MAX_TOKENS = 8'd120,
     parameter [21:0] N_WORDS = 22'd1624264
@@ -36,7 +38,7 @@ module golem_board_top #(
     output logic [1:0]  O_sdram_ba,
     inout  wire  [31:0] IO_sdram_dq
 );
-  localparam int CPB = (CLKS_PER_BIT > 0) ? CLKS_PER_BIT : (CLK_MHZ * 1000000) / 115200;
+  localparam int CPB = (CLKS_PER_BIT > 0) ? CLKS_PER_BIT : (CLK_MHZ * 1000000) / BAUD;
 
   wire clk, sdram_clk;
   generate if (USE_PLL) begin : g_pll
@@ -70,6 +72,7 @@ module golem_board_top #(
   // ---- golem + arbiter (RUN) ----
   wire fsm_rst = rst | loading;   // hold generation until weights are loaded
   logic g_start, g_busy, g_tvalid; logic [11:0] g_token, g_tout; logic [7:0] g_pos;
+  logic [4:0] g_st;
   logic mrd_req, mrd_valid; logic [21:0] mrd_addr; logic [31:0] mrd_data;
   logic ws_req, ws_valid, ws_last; logic [21:0] ws_addr; logic [8:0] ws_len; logic [31:0] ws_data;
   logic kw, kws, krs, krq, krv; logic [16:0] kwa, kra; logic [31:0] kwd, krd;
@@ -82,7 +85,7 @@ module golem_board_top #(
                 .busy(g_busy), .mrd_addr(mrd_addr), .mrd_req(mrd_req), .mrd_valid(mrd_valid),
                 .mrd_data(mrd_data), .kv_we(kw), .kv_wsel(kws), .kv_waddr(kwa), .kv_wdata(kwd),
                 .kv_raddr(kra), .kv_rsel(krs), .kv_rreq(krq), .kv_rvalid(krv), .kv_rdata(krd),
-                .tok_valid(g_tvalid), .tok_out(g_tout));
+                .tok_valid(g_tvalid), .tok_out(g_tout), .dbg_st(g_st));
     `include "golem_mem.svh"
   wstream #(.LB(7), .LIMIT_ADDR(23'(MEM_KV_BASE))) u_ws(.clk(clk), .rst(fsm_rst),
                 .mrd_req(mrd_req), .mrd_addr(mrd_addr), .mrd_valid(mrd_valid), .mrd_data(mrd_data),
@@ -150,5 +153,24 @@ module golem_board_top #(
     endcase
   end
 
-  assign led = {story_done, ~load_done, load_done, g_busy, 2'b0};
+  // LEDs follow the inference pipeline, one per stage, so the board shows what it is doing.
+  // The phases fly past in microseconds, so DEMO_SLOW stretches each one to ~50 ms for filming.
+  // It only holds the LED, never the datapath, so timing and results are untouched.
+  localparam S_ETOK=3, S_EPOS=4, S_ECMB=5, S_LX=6, S_WT=13, S_LG=18;
+  wire ph_emb = (g_st == S_ETOK) || (g_st == S_EPOS) || (g_st == S_ECMB);
+  wire ph_nrm = (g_st == S_LX);
+  wire ph_lay = (g_st == S_WT);
+  wire ph_log = (g_st == S_LG);
+  logic [5:0] stage_now, stage_held;
+  logic [21:0] hold;
+  assign stage_now = {story_done, ph_log, ph_lay, ph_nrm, ph_emb, loading};
+  always_ff @(posedge clk) begin
+    if (rst) begin stage_held <= 6'd0; hold <= 22'd0; end
+    else if (hold != 22'd0) hold <= hold - 22'd1;
+    else if (stage_now != stage_held) begin
+      stage_held <= stage_now;
+      hold <= DEMO_SLOW ? 22'(CLK_MHZ * 50000) : 22'd0;   // 50 ms per stage when filming
+    end
+  end
+  assign led = DEMO_SLOW ? stage_held : stage_now;
 endmodule

@@ -8,10 +8,11 @@ and streams each token id back as 2 bytes (hi, lo) — which this script decodes
     pip install pyserial tokenizers
     python scripts/upload_weights.py /dev/tty.usbserial-XXXX
 
-SDRAM is volatile, so the image is re-uploaded every power cycle. At 115200 baud
+SDRAM is volatile, so the image is re-uploaded every power cycle. At 921600 baud
 the ~6.5 MB image takes ~9-10 min to send (the UART is the bottleneck).
 """
 import struct
+import os
 import sys
 import time
 from pathlib import Path
@@ -20,7 +21,7 @@ import serial
 from tokenizers import Tokenizer
 
 ROOT = Path(__file__).resolve().parents[1]
-BAUD = 115200
+BAUD = int(os.environ.get("GOLEM_BAUD", 921600))
 EOT = 0
 CHUNK = 8192
 
